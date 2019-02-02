@@ -2,9 +2,6 @@ package org.ria.ifzz.RiaApp.utils;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
-
 public class CustomFileReader {
 
     public String fileContent(MultipartFile file){
@@ -24,12 +21,5 @@ public class CustomFileReader {
         }
 
         return completeData;
-    }
-
-    public File multipartToFile(MultipartFile multipart) throws IllegalStateException, IOException
-    {
-        File file = new File( multipart.getOriginalFilename());
-        multipart.transferTo(file);
-        return file;
     }
 }

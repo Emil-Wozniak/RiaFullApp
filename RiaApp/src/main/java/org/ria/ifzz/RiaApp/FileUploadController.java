@@ -1,9 +1,6 @@
 package org.ria.ifzz.RiaApp;
 
-import io.micrometer.core.instrument.util.IOUtils;
-import org.ria.ifzz.RiaApp.storage.StorageFileNotFoundException;
 import org.ria.ifzz.RiaApp.storage.StorageService;
-import org.ria.ifzz.RiaApp.utils.CustomFileReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -16,8 +13,10 @@ import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBui
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.*;
-import java.util.Objects;
-import java.util.Scanner;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
@@ -60,36 +59,44 @@ public class FileUploadController {
         storageService.store(file);
         redirectAttributes.addFlashAttribute("message",
                 "You successfully uploaded " + file.getOriginalFilename() + "!");
+        
+        System.out.println("File content:\n========================================================");
 
-        ByteArrayInputStream stream = new ByteArrayInputStream(file.getBytes());
-        String content =  readFromInputStream(stream);
-//        content.trim();
-
-        String startWord = "C:\\mbw\\results\\A16_225.txtRUN INFORMATION:================Counting protocol no: 16                                  Tue  8-Jan-2019  0:47Name: COPY_OF_H-3_KORTYZOL_5_MINCPM normalization protocol no:  2*** DETECTORS NOT NORMALIZEDCOLUMNS:======== \tSAMPLE\tPOS\tCCPM1\tCCPM1%\t \t";
-
-        System.out.println(startWord.length() + "\n");
-
-        System.out.println(content);
-
+        List<String> readStoreTxtFileList = readStoredTxtFile(file);
+        cleanStoredTxtFile(readStoreTxtFileList);
         return "redirect:/";
     }
 
-
-    private String readFromInputStream(InputStream inputStream) throws IOException {
-        StringBuilder resultStringBuilder = new StringBuilder();
-
-        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream))) {
-            String line;
-
-            while ((line = bufferedReader.readLine()) != null) {
-
-                resultStringBuilder.append(line);
-                resultStringBuilder.replace(0, 13, "").toString();
-                resultStringBuilder.append(line).append("\n");
-            }
+    private List<String> readStoredTxtFile(MultipartFile file) throws IOException {
+        List<String> list;
+        try (BufferedReader reader = Files.newBufferedReader(
+                Paths.get("upload-dir" + "/" + file.getOriginalFilename()))) {
+            list = reader.lines()
+                    .skip(13)
+                    .limit(500)
+                    .collect(Collectors.toList());
         }
-        return resultStringBuilder.toString();
+        return list;
     }
+
+    private List<String> cleanStoredTxtFile(List<String> list) throws IOException {
+        list.stream().filter(line->!line.startsWith("U")).collect(Collectors.toList());
+        list.removeIf(line -> line.startsWith("P"));
+        list.removeIf(line -> line.startsWith("C"));
+        list.removeIf(line -> line.startsWith("A"));
+        list.removeIf(line -> line.startsWith("E"));
+        list.removeIf(line -> line.startsWith("T"));
+        list.removeIf(line -> line.startsWith("="));
+        list.removeIf(line -> line.startsWith("B"));
+        list.removeIf(line -> line.startsWith("D"));
+        list.removeIf(line -> line.startsWith(" \t1"));
+        list.removeAll(Collections.singleton(null));
+
+        list.forEach(System.out::println);
+        return list;
+    }
+
 }
+
 
 
