@@ -9,9 +9,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -73,46 +73,31 @@ public class CustomFileReader {
     }
 
     /**
-     * Finds the index of all entries in the list that matches the regex
+     * Finds the all word in all entries in the list that matches with the column number
      * @param list The list of strings to check
-     * @param regex The regular expression to use
-     * @return list containing the indexes of all matching entries
+     * @param columnNumber The targeted column to use
+     * @return list containing the words of all matching entries
      */
-    public List<String> getMatchingStrings(List<String> list, String regex) {
+    public List<String> getMatchingStrings(List<String> list, Integer columnNumber) {
 
         List<String> matches = new ArrayList<>();
-        Pattern pattern = Pattern.compile(regex);
 
         for (String added : list) {
-            if (pattern.matcher(added).matches()) {
-                matches.add(added);
-            }else{
-                matches.add("No matches string");
+            List<String> wordInLine = Arrays.asList(added.split("\\t"));
+            if (wordInLine.size() == 5) {
+                if (!wordInLine.isEmpty()) {
+                    matches.add(wordInLine.get(columnNumber));
+                }
+            } else {
+                matches.isEmpty();
             }
         }
-        System.out.println(matches);
+        matches.remove(0);
         return matches;
     }
 
-    /**
-     * Finds the index of all entries in the list that matches the regex
-     * @param list The list of strings to check
-     * @param regex The regular expression to use
-     * @return list containing the indexes of all matching entries
-     */
-    public List<Integer> getMatchingIndexes(List<String> list, String regex) {
-        ListIterator<String> iterator = list.listIterator();
-
-        List<Integer> indexes = new ArrayList<>();
-
-        while(iterator.hasNext()) {
-            int i = iterator.nextIndex();
-            String next = iterator.next();
-            if(Pattern.matches(regex, next)) {
-                indexes.add(i);
-            }
-        }
-        System.out.println(indexes);
-        return indexes;
+    public List<String> getIndex(List<String> list, Integer columnNumber) {
+        List<String> matches = getMatchingStrings(list, columnNumber);
+        return matches;
     }
 }

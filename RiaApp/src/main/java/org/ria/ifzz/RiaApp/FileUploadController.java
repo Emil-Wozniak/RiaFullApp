@@ -64,9 +64,13 @@ public class FileUploadController {
         System.out.println(customFileReader.getUploadComment());
         List<String> readStoreTxtFileList = customFileReader.readStoredTxtFile(file);
         List<String> cleanedList = customFileReader.cleanStoredTxtFile(readStoreTxtFileList);
-        System.out.println(cleanedList);
-        customFileReader.getMatchingStrings(cleanedList, customFileReader.getPositionRegex());
-        customFileReader.getMatchingIndexes(cleanedList, "[\\d]");
+
+        List index = customFileReader.getIndex(cleanedList, 1);
+        System.out.println("Index: " + index);
+        List position = customFileReader.getMatchingStrings(cleanedList, 2);
+        System.out.println("Position: " + position);
+        List ccpm = customFileReader.getMatchingStrings(cleanedList, 3);
+        System.out.println("CCPM: " + ccpm);
 
         return "redirect:/";
     }
