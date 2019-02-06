@@ -1,14 +1,18 @@
-package org.ria.ifzz.RiaApp.storage;
+package org.ria.ifzz.RiaApp.services;
 
+import org.ria.ifzz.RiaApp.domain.FileEntity;
+import org.ria.ifzz.RiaApp.exceptions.StorageException;
+import org.ria.ifzz.RiaApp.exceptions.StorageFileNotFoundException;
+import org.ria.ifzz.RiaApp.repositories.FileEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
-import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -16,16 +20,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.stream.Stream;
 
 @RestController
 public class FileSystemStorageService implements StorageService {
 
     private final Path rootLocation;
+    private final FileEntityRepository fileEntityRepository;
 
     @Autowired
-    public FileSystemStorageService(StorageProperties properties) {
+    public FileSystemStorageService(StorageProperties properties, FileEntityRepository fileEntityRepository) {
         this.rootLocation = Paths.get(properties.getLocation());
+        this.fileEntityRepository = fileEntityRepository;
     }
 
     @Override
@@ -52,16 +57,11 @@ public class FileSystemStorageService implements StorageService {
     }
 
     @Override
-    public Stream<Path> loadAll() {
-        try {
-            return Files.walk(this.rootLocation, 1)
-                .filter(path -> !path.equals(this.rootLocation))
-                .map(this.rootLocation::relativize);
-        }
-        catch (IOException e) {
-            throw new StorageException("Failed to read stored files", e);
-        }
-
+    public Iterable<FileEntity> loadAll() {
+        return fileEntityRepository.findAll();
+//                    Files.walk(this.rootLocation, 1)
+//                .filter(path -> !path.equals(this.rootLocation))
+//                .map(this.rootLocation::relativize);
     }
 
     @Override
@@ -91,6 +91,21 @@ public class FileSystemStorageService implements StorageService {
     @Override
     public void deleteAll() {
         FileSystemUtils.deleteRecursively(rootLocation.toFile());
+    }
+
+    @Override
+    public FileEntity getById(Long id) throws FileNotFoundException {
+        FileEntity fileEntity = fileEntityRepository.getById(id);
+        if (fileEntity == null) {
+            throw new FileNotFoundException(
+                    "Project does not exist");
+        }
+        return fileEntity;
+    }
+
+    @Override
+    public Iterable<FileEntity> findAllFile() {
+        return fileEntityRepository.findAll();
     }
 
     @Override

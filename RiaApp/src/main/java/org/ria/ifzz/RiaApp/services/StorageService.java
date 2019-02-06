@@ -1,10 +1,11 @@
-package org.ria.ifzz.RiaApp.storage;
+package org.ria.ifzz.RiaApp.services;
 
+import org.ria.ifzz.RiaApp.domain.FileEntity;
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileNotFoundException;
 import java.nio.file.Path;
-import java.util.stream.Stream;
 
 public interface StorageService {
 
@@ -12,7 +13,7 @@ public interface StorageService {
 
     void store(MultipartFile file);
 
-    Stream<Path> loadAll();
+    Iterable<FileEntity> loadAll();
 
     Path load(String filename);
 
@@ -20,4 +21,7 @@ public interface StorageService {
 
     void deleteAll();
 
+    FileEntity getById(Long id) throws FileNotFoundException;
+
+    Iterable<FileEntity> findAllFile();
 }

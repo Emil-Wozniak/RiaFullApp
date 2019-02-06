@@ -1,8 +1,9 @@
-package org.ria.ifzz.RiaApp;
+package org.ria.ifzz.RiaApp.controller;
 
-import org.ria.ifzz.RiaApp.storage.FileEntity;
-import org.ria.ifzz.RiaApp.storage.FileEntityRepository;
-import org.ria.ifzz.RiaApp.storage.StorageService;
+import org.ria.ifzz.RiaApp.domain.FileEntity;
+import org.ria.ifzz.RiaApp.repositories.FileEntityRepository;
+import org.ria.ifzz.RiaApp.services.FileEntityService;
+import org.ria.ifzz.RiaApp.services.StorageService;
 import org.ria.ifzz.RiaApp.utils.CustomFileReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -13,11 +14,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.constraints.NotNull;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
@@ -28,17 +29,18 @@ import java.util.concurrent.ThreadLocalRandom;
 @CrossOrigin(value = {"*"}, exposedHeaders = {"Content-Disposition"})
 public class FileUploadController {
 
-
     private final StorageService storageService;
     private final CustomFileReader customFileReader;
     private final FileEntityRepository fileEntityRepository;
+    private final FileEntityService fileEntityService;
 
     @Autowired
     public FileUploadController(StorageService storageService,
-                                CustomFileReader customFileReader, FileEntityRepository fileEntityRepository) {
+                                CustomFileReader customFileReader, FileEntityRepository fileEntityRepository, FileEntityService fileEntityService) {
         this.storageService = storageService;
         this.customFileReader = customFileReader;
         this.fileEntityRepository = fileEntityRepository;
+        this.fileEntityService = fileEntityService;
     }
 
     @GetMapping
@@ -65,19 +67,6 @@ public class FileUploadController {
         return new ResponseEntity<>(fileEntity.getData(), header, HttpStatus.OK);
     }
 
-//    @GetMapping("/")
-//    public String listUploadedFiles(Model model) {
-//
-//        String removePart = "http://localhost:8080/files/";
-//
-//        model.addAttribute("trim", storageService.loadAll().map(
-//                path -> MvcUriComponentsBuilder.fromMethodName(FileUploadController.class,
-//                        "serveFile", path.getFileName().toString()).build().toString().replace(removePart, ""))
-//                .collect(Collectors.toList()));
-//
-//        return "index";
-//    }
-
     @GetMapping("/files/{filename:.+}")
     @ResponseBody
     public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
@@ -87,8 +76,17 @@ public class FileUploadController {
                 "attachment; filename=\"" + file.getFilename() + "\"").body(file);
     }
 
+    @GetMapping("/{fileEntityId}")
+    public ResponseEntity<FileEntity> getAllProjects(@PathVariable Long fileEntityId) throws FileNotFoundException {
+        FileEntity fileEntity = storageService.getById(fileEntityId);
+        return new ResponseEntity<>(fileEntity, HttpStatus.OK);}
+
+    @GetMapping("/all")
+    public Iterable<FileEntity> getAllFiles(){return fileEntityService.loadAll();}
+
+
     @PostMapping
-    public ResponseEntity<Void> handleFileUpload(@NotNull @RequestParam("file") MultipartFile file,
+    public ResponseEntity<FileEntity> handleFileUpload(@NotNull @RequestParam("file") MultipartFile file,
                                                    RedirectAttributes redirectAttributes) throws IOException {
 
         FileEntity fileEntity = new FileEntity(file.getOriginalFilename(), file.getContentType(),
@@ -112,11 +110,6 @@ public class FileUploadController {
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
         return ResponseEntity.created(location).build();
-    }
-
-    @RequestMapping("/upload-file")
-    public void uploadFile (MultipartHttpServletRequest multipartHttpServletRequest) {
-        //save on server logic comes here
     }
 }
 

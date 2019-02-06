@@ -1,11 +1,13 @@
-package org.ria.ifzz.RiaApp.storage;
+package org.ria.ifzz.RiaApp.domain;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
 @Data
+@NoArgsConstructor
 public class FileEntity {
 
     @Id
@@ -18,9 +20,6 @@ public class FileEntity {
 
     @Lob
     private byte[] data;
-
-    public FileEntity() {
-    }
 
     public FileEntity(String fileName, String contentType, byte[] data) {
         this.fileName = fileName;

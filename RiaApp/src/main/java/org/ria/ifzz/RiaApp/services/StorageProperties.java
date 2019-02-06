@@ -1,8 +1,8 @@
-package org.ria.ifzz.RiaApp.storage;
+package org.ria.ifzz.RiaApp.services;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties("storage")
+@ConfigurationProperties("services")
 public class StorageProperties {
 
     /**
