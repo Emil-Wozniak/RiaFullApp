@@ -1,8 +1,10 @@
 package org.ria.ifzz.RiaApp.services;
 
+import org.ria.ifzz.RiaApp.domain.FileData;
 import org.ria.ifzz.RiaApp.domain.FileEntity;
 import org.ria.ifzz.RiaApp.exceptions.StorageException;
 import org.ria.ifzz.RiaApp.exceptions.StorageFileNotFoundException;
+import org.ria.ifzz.RiaApp.repositories.FileDataRepository;
 import org.ria.ifzz.RiaApp.repositories.FileEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -26,11 +28,13 @@ public class FileSystemStorageService implements StorageService {
 
     private final Path rootLocation;
     private final FileEntityRepository fileEntityRepository;
+    private final FileDataRepository fileDataRepository;
 
     @Autowired
-    public FileSystemStorageService(StorageProperties properties, FileEntityRepository fileEntityRepository) {
+    public FileSystemStorageService(StorageProperties properties, FileEntityRepository fileEntityRepository, FileDataRepository fileDataRepository) {
         this.rootLocation = Paths.get(properties.getLocation());
         this.fileEntityRepository = fileEntityRepository;
+        this.fileDataRepository = fileDataRepository;
     }
 
     @Override
@@ -94,13 +98,13 @@ public class FileSystemStorageService implements StorageService {
     }
 
     @Override
-    public FileEntity getById(Long id) throws FileNotFoundException {
-        FileEntity fileEntity = fileEntityRepository.getById(id);
-        if (fileEntity == null) {
+    public FileData getById(Long id) throws FileNotFoundException {
+        FileData fileData = fileDataRepository.getById(id);
+        if (fileData == null) {
             throw new FileNotFoundException(
                     "Project does not exist");
         }
-        return fileEntity;
+        return fileData;
     }
 
     @Override
@@ -113,8 +117,8 @@ public class FileSystemStorageService implements StorageService {
         try {
             Files.createDirectories(rootLocation);
         }
-        catch (IOException e) {
-            throw new StorageException("Could not initialize storage", e);
+        catch (IOException exception) {
+            throw new StorageException("Could not initialize storage", exception);
         }
     }
 }

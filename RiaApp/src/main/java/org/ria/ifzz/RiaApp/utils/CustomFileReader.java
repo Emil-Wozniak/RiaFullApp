@@ -36,7 +36,7 @@ public class CustomFileReader {
         try (BufferedReader reader = Files.newBufferedReader(
                 Paths.get("upload-dir" + "/" + file.getOriginalFilename()))) {
             list = reader.lines()
-                    .skip(13)
+//                    .skip(13)
                     .limit(500)
                     .collect(Collectors.toList());
         }
@@ -54,6 +54,9 @@ public class CustomFileReader {
     public List<String> cleanStoredTxtFile(List<String> list) {
         try {
             list.stream().filter(line->!line.startsWith("U")).collect(Collectors.toList());
+            list.removeIf(line -> line.startsWith("R"));
+            list.removeIf(line -> line.startsWith("N"));
+            list.removeIf(line -> line.startsWith("*"));
             list.removeIf(line -> line.startsWith("P"));
             list.removeIf(line -> line.startsWith("C"));
             list.removeIf(line -> line.startsWith("A"));

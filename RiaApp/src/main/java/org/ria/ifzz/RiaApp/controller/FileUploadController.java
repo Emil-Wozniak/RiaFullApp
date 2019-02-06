@@ -1,8 +1,10 @@
 package org.ria.ifzz.RiaApp.controller;
 
+import org.ria.ifzz.RiaApp.domain.FileData;
 import org.ria.ifzz.RiaApp.domain.FileEntity;
+import org.ria.ifzz.RiaApp.repositories.FileDataRepository;
 import org.ria.ifzz.RiaApp.repositories.FileEntityRepository;
-import org.ria.ifzz.RiaApp.services.FileEntityService;
+import org.ria.ifzz.RiaApp.services.FileDataService;
 import org.ria.ifzz.RiaApp.services.StorageService;
 import org.ria.ifzz.RiaApp.utils.CustomFileReader;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +13,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -24,7 +25,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-@Controller
+@RestController
 @RequestMapping("/api/files")
 @CrossOrigin(value = {"*"}, exposedHeaders = {"Content-Disposition"})
 public class FileUploadController {
@@ -32,15 +33,17 @@ public class FileUploadController {
     private final StorageService storageService;
     private final CustomFileReader customFileReader;
     private final FileEntityRepository fileEntityRepository;
-    private final FileEntityService fileEntityService;
+    private final FileDataService fileDataService;
+    private final FileDataRepository fileDataRepository;
 
     @Autowired
     public FileUploadController(StorageService storageService,
-                                CustomFileReader customFileReader, FileEntityRepository fileEntityRepository, FileEntityService fileEntityService) {
+                                CustomFileReader customFileReader, FileEntityRepository fileEntityRepository, FileDataService fileDataService, FileDataRepository fileDataRepository) {
         this.storageService = storageService;
         this.customFileReader = customFileReader;
         this.fileEntityRepository = fileEntityRepository;
-        this.fileEntityService = fileEntityService;
+        this.fileDataService = fileDataService;
+        this.fileDataRepository = fileDataRepository;
     }
 
     @GetMapping
@@ -76,26 +79,25 @@ public class FileUploadController {
                 "attachment; filename=\"" + file.getFilename() + "\"").body(file);
     }
 
-    @GetMapping("/{fileEntityId}")
-    public ResponseEntity<FileEntity> getAllProjects(@PathVariable Long fileEntityId) throws FileNotFoundException {
-        FileEntity fileEntity = storageService.getById(fileEntityId);
-        return new ResponseEntity<>(fileEntity, HttpStatus.OK);}
+    @GetMapping("/{fileDataId}")
+    public ResponseEntity<FileData> getAllProjects(@PathVariable Long fileDataId) throws FileNotFoundException {
+        FileData fileData = storageService.getById(fileDataId);
+        return new ResponseEntity<FileData>(fileData, HttpStatus.OK);
+    }
 
     @GetMapping("/all")
-    public Iterable<FileEntity> getAllFiles(){return fileEntityService.loadAll();}
-
+    public Iterable<FileEntity> getAllFiles() {
+        return storageService.loadAll();
+    }
 
     @PostMapping
-    public ResponseEntity<FileEntity> handleFileUpload(@NotNull @RequestParam("file") MultipartFile file,
-                                                   RedirectAttributes redirectAttributes) throws IOException {
+    public ResponseEntity<Void> handleFileUpload(@NotNull @RequestParam("file") MultipartFile file,
+                                                       RedirectAttributes redirectAttributes) throws IOException {
 
         FileEntity fileEntity = new FileEntity(file.getOriginalFilename(), file.getContentType(),
                 file.getBytes());
 
         storageService.store(file);
-        redirectAttributes.addFlashAttribute("message",
-                "You successfully uploaded " + file.getOriginalFilename() + "!");
-
         System.out.println(customFileReader.getUploadComment());
         List<String> readStoreTxtFileList = customFileReader.readStoredTxtFile(file);
         List<String> cleanedList = customFileReader.cleanStoredTxtFile(readStoreTxtFileList);
@@ -106,6 +108,12 @@ public class FileUploadController {
         System.out.println("Position: " + position);
         List ccpm = customFileReader.getMatchingStrings(cleanedList, 3);
         System.out.println("CCPM: " + ccpm);
+
+
+        redirectAttributes.addFlashAttribute("message",
+                "You successfully uploaded " + file.getOriginalFilename() + "!");
+
+        //Databased files
         fileEntityRepository.save(fileEntity);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
