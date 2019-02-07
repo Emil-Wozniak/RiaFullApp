@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import store from "./store";
-import { Row, Container } from "reactstrap";
+import { Col, Row, Container } from "reactstrap";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import { Provider } from "react-redux";
 import Dashboard from "./components/Dashboard";

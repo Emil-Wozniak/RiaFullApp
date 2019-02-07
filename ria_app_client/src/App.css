@@ -90,3 +90,9 @@ img {
 .form-control::placeholder {
   color: #bbb !important;
 }
+
+.divider{
+  width:5px;
+  height:auto;
+  display:inline-block;
+}
