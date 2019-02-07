@@ -18,6 +18,7 @@ public class Result {
     public String samples;
     public String position;
     public String ccpm;
+
     @JsonFormat(pattern = "yyyy-mm-dd")
     private Date dueDate;
     @JsonFormat(pattern = "yyyy-mm-dd")

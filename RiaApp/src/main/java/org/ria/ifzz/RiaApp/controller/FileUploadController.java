@@ -98,6 +98,7 @@ public class FileUploadController {
                 file.getBytes());
 
         storageService.store(file);
+
         System.out.println(customFileReader.getUploadComment());
         List<String> readStoreTxtFileList = customFileReader.readStoredTxtFile(file);
         List<String> cleanedList = customFileReader.cleanStoredTxtFile(readStoreTxtFileList);
