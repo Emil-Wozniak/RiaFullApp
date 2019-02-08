@@ -84,7 +84,6 @@ public class FileSystemStorageService implements StorageService {
             else {
                 throw new StorageFileNotFoundException(
                         "Could not read file: " + filename);
-
             }
         }
         catch (MalformedURLException e) {
@@ -98,13 +97,13 @@ public class FileSystemStorageService implements StorageService {
     }
 
     @Override
-    public FileData getById(Long id) throws FileNotFoundException {
-        FileData fileData = fileDataRepository.getById(id);
-        if (fileData == null) {
+    public FileEntity getById(Long id) throws FileNotFoundException {
+        FileEntity fileEntity = fileEntityRepository.getById(id);
+        if (fileEntity == null) {
             throw new FileNotFoundException(
                     "Project does not exist");
         }
-        return fileData;
+        return fileEntity;
     }
 
     @Override

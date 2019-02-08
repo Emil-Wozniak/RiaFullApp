@@ -27,7 +27,8 @@ import java.util.concurrent.ThreadLocalRandom;
 
 @RestController
 @RequestMapping("/api/files")
-@CrossOrigin(value = {"*"}, exposedHeaders = {"Content-Disposition"})
+//@CrossOrigin(value = {"*"}, exposedHeaders = {"Content-Disposition"})
+@CrossOrigin(origins = "http://localhost:3000")
 public class FileUploadController {
 
     private final StorageService storageService;
@@ -70,19 +71,28 @@ public class FileUploadController {
         return new ResponseEntity<>(fileEntity.getData(), header, HttpStatus.OK);
     }
 
-    @GetMapping("/files/{filename:.+}")
+    @GetMapping("/download/{filename:.+}")
     @ResponseBody
     public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
 
         Resource file = storageService.loadAsResource(filename);
-        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
-                "attachment; filename=\"" + file.getFilename() + "\"").body(file);
+        if (file.exists()) {
+            HttpHeaders headers=new HttpHeaders();
+            //instructing web browser how to treat downloaded file
+            headers.add(HttpHeaders.CONTENT_DISPOSITION,"attachment; filename=\"" + file.getFilename() + "\"");
+            //allowing web browser to read additional headers from response
+            headers.add("Access-Control-Expose-Headers",HttpHeaders.CONTENT_DISPOSITION + "," + HttpHeaders.CONTENT_LENGTH);
+            //put headers and file within response body
+            return ResponseEntity.ok().headers(headers).body(file);
+        }
+        //in case requested file does not exists
+        return ResponseEntity.notFound().build();
     }
 
     @GetMapping("/{fileDataId}")
-    public ResponseEntity<FileData> getAllProjects(@PathVariable Long fileDataId) throws FileNotFoundException {
-        FileData fileData = storageService.getById(fileDataId);
-        return new ResponseEntity<FileData>(fileData, HttpStatus.OK);
+    public ResponseEntity<FileEntity> getFileEntityById(@PathVariable Long fileDataId) throws FileNotFoundException {
+        FileEntity fileEntity = storageService.getById(fileDataId);
+        return new ResponseEntity<>(fileEntity, HttpStatus.OK);
     }
 
     @GetMapping("/all")
