@@ -26,12 +26,13 @@ img {
   width: 100%;
 }
 
-.navbar {
+/* .navbar {
   background-color: #18a2b9;
   color: #ffff;
   height: 10vh;
   margin-bottom: 30px;
-}
+} */
+
 .fa.fa-edit {
   color: #18a2b9;
 }
