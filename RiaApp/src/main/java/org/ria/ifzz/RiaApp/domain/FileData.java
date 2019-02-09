@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
@@ -24,6 +26,9 @@ public class FileData {
     @JoinColumn(name = "file_entity_id", nullable = false)
     @JsonIgnore
     private FileEntity fileEntity;
+
+    @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER, mappedBy = "fileData", orphanRemoval = true)
+    private List<Result> projectTasks = new ArrayList<>();
 
     public FileData(String fileName, String contentType, Integer data) {
         this.fileName = fileName;

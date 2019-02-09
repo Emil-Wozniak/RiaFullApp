@@ -8,7 +8,7 @@ import { Container } from "reactstrap";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import { Provider } from "react-redux";
 import Dashboard from "./components/Dashboard";
-import UploadFile from "./components/Upload/UploadFile";
+import UploadFile from "./components/layout/Upload/UploadFile";
 import Navbar from "./components/layout/ui/Navbar";
 import { withStyles } from "@material-ui/core/styles";
 

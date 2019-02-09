@@ -63,9 +63,6 @@ public class FileSystemStorageService implements StorageService {
     @Override
     public Iterable<FileEntity> loadAll() {
         return fileEntityRepository.findAll();
-//                    Files.walk(this.rootLocation, 1)
-//                .filter(path -> !path.equals(this.rootLocation))
-//                .map(this.rootLocation::relativize);
     }
 
     @Override

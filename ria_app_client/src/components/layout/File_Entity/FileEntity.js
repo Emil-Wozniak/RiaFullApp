@@ -3,7 +3,7 @@ import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { deleteFileEntity } from "../../../actions/filesActions";
-import DownloadFile from "../../Download/DownloadFile";
+import DownloadFile from "../Download/DownloadFile";
 import { withStyles } from "@material-ui/core/styles";
 
 import Avatar from "@material-ui/core/Avatar";

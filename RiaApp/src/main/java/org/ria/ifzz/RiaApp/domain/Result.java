@@ -1,6 +1,7 @@
 package org.ria.ifzz.RiaApp.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -19,13 +20,18 @@ public class Result {
     public String position;
     public String ccpm;
 
-    @JsonFormat(pattern = "yyyy-mm-dd")
-    private Date dueDate;
-    @JsonFormat(pattern = "yyyy-mm-dd")
+    public String fileName;
+
+    @JsonFormat(pattern = "yyyy-MM-dd' 'HH:mm:ss")
     @Column(updatable = false)
     private Date created_at;
-    @JsonFormat(pattern = "yyyy-mm-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd' 'HH:mm:ss")
     private Date update_at;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="file_data_id", updatable = false, nullable = false)
+    @JsonIgnore
+    private FileData fileData;
 
     @PrePersist
     protected void onCreate(){

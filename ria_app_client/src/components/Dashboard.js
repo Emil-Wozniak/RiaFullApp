@@ -7,6 +7,13 @@ import { Col, Row, Container, Table } from "reactstrap";
 import FileEntity from "./layout/File_Entity/FileEntity";
 import { withStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
+import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
+import createPalette from '@material-ui/core/styles/createPalette';
+import grey from '@material-ui/core/colors/green';
+import red from '@material-ui/core/colors/red';
+import green from '@material-ui/core/colors/green';
+import yellow from '@material-ui/core/colors/yellow';
+import purple from '@material-ui/core/colors/purple';
 
 const styles = theme => ({
   root: {
@@ -24,6 +31,40 @@ const styles = theme => ({
     padding: theme.spacing.unit * 2
   }
 });
+
+const theme = createMuiTheme({
+  palette: createPalette({
+    type: 'light',
+    primary: purple,
+    secondary: green,
+    accent: grey,
+    error: red,
+    success: green,
+    inProgress: yellow
+  }),
+  typography: {
+    // Use the system font instead of the default Roboto font.
+    fontFamily: [
+      '-apple-system',
+      'BlinkMacSystemFont',
+      '"Segoe UI"',
+      'Roboto',
+      '"Helvetica Neue"',
+      'Arial',
+      'sans-serif',
+      '"Apple Color Emoji"',
+      '"Segoe UI Emoji"',
+      '"Segoe UI Symbol"',
+    ].join(','),
+  },
+  overrides: {
+    MuiButton: { // Name of the component ⚛️ / style sheet
+      text: { // Name of the rule
+        color: 'white', // Some CSS
+      },
+    },
+  },
+})
 
 class Dashboard extends Component {
   state = {
@@ -46,6 +87,7 @@ class Dashboard extends Component {
     const { file_entities } = this.props.file_entity;
 
     return (
+      <MuiThemeProvider theme={theme}>
       <Container>
         <Row>
           <Col md={12}>
@@ -71,6 +113,7 @@ class Dashboard extends Component {
           </Col>
         </Row>
       </Container>
+      </MuiThemeProvider>
     );
   }
 }

@@ -2,11 +2,12 @@ package org.ria.ifzz.RiaApp.controller;
 
 import org.ria.ifzz.RiaApp.domain.FileData;
 import org.ria.ifzz.RiaApp.domain.FileEntity;
+import org.ria.ifzz.RiaApp.domain.Result;
 import org.ria.ifzz.RiaApp.repositories.FileDataRepository;
 import org.ria.ifzz.RiaApp.repositories.FileEntityRepository;
-import org.ria.ifzz.RiaApp.services.FileDataService;
+import org.ria.ifzz.RiaApp.repositories.ResultRepository;
+import org.ria.ifzz.RiaApp.services.ResultService;
 import org.ria.ifzz.RiaApp.services.StorageService;
-import org.ria.ifzz.RiaApp.utils.CustomFileReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -27,24 +28,26 @@ import java.util.concurrent.ThreadLocalRandom;
 
 @RestController
 @RequestMapping("/api/files")
-//@CrossOrigin(value = {"*"}, exposedHeaders = {"Content-Disposition"})
 @CrossOrigin(origins = "http://localhost:3000")
 public class FileUploadController {
 
     private final StorageService storageService;
-    private final CustomFileReader customFileReader;
     private final FileEntityRepository fileEntityRepository;
-    private final FileDataService fileDataService;
+    private final ResultService resultService;
     private final FileDataRepository fileDataRepository;
+    private final ResultRepository resultRepository;
 
     @Autowired
     public FileUploadController(StorageService storageService,
-                                CustomFileReader customFileReader, FileEntityRepository fileEntityRepository, FileDataService fileDataService, FileDataRepository fileDataRepository) {
+                                FileEntityRepository fileEntityRepository,
+                                ResultService resultService,
+                                FileDataRepository fileDataRepository,
+                                ResultRepository resultRepository) {
         this.storageService = storageService;
-        this.customFileReader = customFileReader;
         this.fileEntityRepository = fileEntityRepository;
-        this.fileDataService = fileDataService;
+        this.resultService = resultService;
         this.fileDataRepository = fileDataRepository;
+        this.resultRepository = resultRepository;
     }
 
     @GetMapping
@@ -77,11 +80,11 @@ public class FileUploadController {
 
         Resource file = storageService.loadAsResource(filename);
         if (file.exists()) {
-            HttpHeaders headers=new HttpHeaders();
+            HttpHeaders headers = new HttpHeaders();
             //instructing web browser how to treat downloaded file
-            headers.add(HttpHeaders.CONTENT_DISPOSITION,"attachment; filename=\"" + file.getFilename() + "\"");
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"");
             //allowing web browser to read additional headers from response
-            headers.add("Access-Control-Expose-Headers",HttpHeaders.CONTENT_DISPOSITION + "," + HttpHeaders.CONTENT_LENGTH);
+            headers.add("Access-Control-Expose-Headers", HttpHeaders.CONTENT_DISPOSITION + "," + HttpHeaders.CONTENT_LENGTH);
             //put headers and file within response body
             return ResponseEntity.ok().headers(headers).body(file);
         }
@@ -89,9 +92,9 @@ public class FileUploadController {
         return ResponseEntity.notFound().build();
     }
 
-    @GetMapping("/{fileDataId}")
-    public ResponseEntity<FileEntity> getFileEntityById(@PathVariable Long fileDataId) throws FileNotFoundException {
-        FileEntity fileEntity = storageService.getById(fileDataId);
+    @GetMapping("/{fileEntityId}")
+    public ResponseEntity<FileEntity> getFileEntityById(@PathVariable Long fileEntityId) throws FileNotFoundException {
+        FileEntity fileEntity = storageService.getById(fileEntityId);
         return new ResponseEntity<>(fileEntity, HttpStatus.OK);
     }
 
@@ -100,26 +103,22 @@ public class FileUploadController {
         return storageService.loadAll();
     }
 
+    /**
+     * it is responsible for handle a file upload and generate database tables,
+     * then assign values from file to appropriate variables.
+     *
+     * @param file               which will be handle
+     * @param redirectAttributes message shown if upload goes well
+     * @throws IOException
+     */
     @PostMapping
     public ResponseEntity<Void> handleFileUpload(@NotNull @RequestParam("file") MultipartFile file,
-                                                       RedirectAttributes redirectAttributes) throws IOException {
+                                                 RedirectAttributes redirectAttributes) throws IOException {
 
         FileEntity fileEntity = new FileEntity(file.getOriginalFilename(), file.getContentType(),
                 file.getBytes());
 
         storageService.store(file);
-
-        System.out.println(customFileReader.getUploadComment());
-        List<String> readStoreTxtFileList = customFileReader.readStoredTxtFile(file);
-        List<String> cleanedList = customFileReader.cleanStoredTxtFile(readStoreTxtFileList);
-
-        List index = customFileReader.getIndex(cleanedList, 1);
-        System.out.println("Index: " + index);
-        List position = customFileReader.getMatchingStrings(cleanedList, 2);
-        System.out.println("Position: " + position);
-        List ccpm = customFileReader.getMatchingStrings(cleanedList, 3);
-        System.out.println("CCPM: " + ccpm);
-
 
         redirectAttributes.addFlashAttribute("message",
                 "You successfully uploaded " + file.getOriginalFilename() + "!");
@@ -127,9 +126,21 @@ public class FileUploadController {
         //Databased files
         fileEntityRepository.save(fileEntity);
 
+        FileData fileData = new FileData();
+        fileData.setFileEntity(fileEntity);
+        fileDataRepository.save(fileData);
+
+        List<String> cleanedList = resultService.getFileData(file);
+
+        resultService.createResultFromColumnsLength(cleanedList, file, fileData);
+        Result result = resultService.assignCcmpToResult(cleanedList, file);
+
+        resultRepository.save(result);
+
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
         return ResponseEntity.created(location).build();
     }
+
 }
 
 

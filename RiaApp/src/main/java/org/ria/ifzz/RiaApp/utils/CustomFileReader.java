@@ -10,7 +10,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,7 +25,7 @@ public class CustomFileReader {
     private String positionRegex = "[\\w]";
 
     /**
-     * reads file from "/upload" directory, skips first 13 lines and set maximum limit of expected lines;
+     * reads file from "/upload" directory, set maximum limit of expected lines;
      * @param file is upload to "/upload" directory
      * @return list of String if file is not empty
      * @throws IOException
@@ -36,7 +35,6 @@ public class CustomFileReader {
         try (BufferedReader reader = Files.newBufferedReader(
                 Paths.get("upload-dir" + "/" + file.getOriginalFilename()))) {
             list = reader.lines()
-//                    .skip(13)
                     .limit(500)
                     .collect(Collectors.toList());
         }
@@ -51,9 +49,8 @@ public class CustomFileReader {
      * only lines which doesn't start with not expected letters,
      * otherwise return exception
      */
-    public List<String> cleanStoredTxtFile(List<String> list) {
+    public List<String> removeUnnecessaryLineFromListedFile(List<String> list) {
         try {
-            list.stream().filter(line->!line.startsWith("U")).collect(Collectors.toList());
             list.removeIf(line -> line.startsWith("R"));
             list.removeIf(line -> line.startsWith("N"));
             list.removeIf(line -> line.startsWith("*"));
@@ -66,10 +63,12 @@ public class CustomFileReader {
             list.removeIf(line -> line.startsWith("B"));
             list.removeIf(line -> line.startsWith("D"));
             list.removeIf(line -> line.startsWith(" \t1"));
-            list.removeAll(Collections.singleton(null));
+            list.removeIf(item -> item == null || "".equals(item));
+            list.stream().filter(line->line.startsWith(" \tUnk")).collect(Collectors.toList());
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         list.forEach(System.out::println);
         return list;
     }
