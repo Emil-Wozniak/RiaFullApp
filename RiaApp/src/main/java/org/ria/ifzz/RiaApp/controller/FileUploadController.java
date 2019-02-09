@@ -3,11 +3,11 @@ package org.ria.ifzz.RiaApp.controller;
 import org.ria.ifzz.RiaApp.domain.FileData;
 import org.ria.ifzz.RiaApp.domain.FileEntity;
 import org.ria.ifzz.RiaApp.domain.Result;
-import org.ria.ifzz.RiaApp.repositories.FileDataRepository;
-import org.ria.ifzz.RiaApp.repositories.FileEntityRepository;
-import org.ria.ifzz.RiaApp.repositories.ResultRepository;
-import org.ria.ifzz.RiaApp.services.ResultService;
-import org.ria.ifzz.RiaApp.services.StorageService;
+import org.ria.ifzz.RiaApp.repositorie.FileDataRepository;
+import org.ria.ifzz.RiaApp.repositorie.FileEntityRepository;
+import org.ria.ifzz.RiaApp.repositorie.ResultRepository;
+import org.ria.ifzz.RiaApp.service.ResultService;
+import org.ria.ifzz.RiaApp.service.StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -134,6 +134,7 @@ public class FileUploadController {
 
         resultService.createResultFromColumnsLength(cleanedList, file, fileData);
         Result result = resultService.assignCcmpToResult(cleanedList, file);
+
 
         resultRepository.save(result);
 

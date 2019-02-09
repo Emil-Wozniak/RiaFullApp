@@ -1,7 +1,7 @@
-package org.ria.ifzz.RiaApp.services;
+package org.ria.ifzz.RiaApp.service;
 
 import org.ria.ifzz.RiaApp.domain.FileEntity;
-import org.ria.ifzz.RiaApp.repositories.FileEntityRepository;
+import org.ria.ifzz.RiaApp.repositorie.FileEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

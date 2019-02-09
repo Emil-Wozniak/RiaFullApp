@@ -1,8 +1,8 @@
-package org.ria.ifzz.RiaApp.services;
+package org.ria.ifzz.RiaApp.service;
 
 import org.ria.ifzz.RiaApp.domain.FileData;
 import org.ria.ifzz.RiaApp.domain.Result;
-import org.ria.ifzz.RiaApp.repositories.ResultRepository;
+import org.ria.ifzz.RiaApp.repositorie.ResultRepository;
 import org.ria.ifzz.RiaApp.utils.CustomFileReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
@@ -95,7 +95,26 @@ public class ResultService {
             result.setCcpm(CCMP.get(i).toString());
             System.out.println(" \tResult CCMP value: " + result.getCcpm());
         }
+        for (int i = 0; i < list.size() - 1; i++) {
+            List position = customFileReader.getMatchingStrings(list, 2);
+
+            int index = i + 1;
+            result = resultRepository.findByFileName(fileName + "_" + index);
+
+            result.setPosition(position.get(i).toString());
+            System.out.println(" \tResult position value: " + result.getPosition());
+        }
+        for (int i = 0; i < list.size() - 1; i++) {
+            List Samples = customFileReader.getMatchingStrings(list, 1);
+
+            int index = i + 1;
+            result = resultRepository.findByFileName(fileName + "_" + index);
+
+            result.setSamples(Samples.get(i).toString());
+            System.out.println(" \tResult samples value: " + result.getSamples());
+        }
         return result;
     }
+
 
 }

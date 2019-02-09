@@ -1,7 +1,7 @@
 package org.ria.ifzz.RiaApp;
 
-import org.ria.ifzz.RiaApp.services.StorageProperties;
-import org.ria.ifzz.RiaApp.services.StorageService;
+import org.ria.ifzz.RiaApp.service.StorageProperties;
+import org.ria.ifzz.RiaApp.service.StorageService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

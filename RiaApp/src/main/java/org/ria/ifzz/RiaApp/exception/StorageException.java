@@ -1,4 +1,4 @@
-package org.ria.ifzz.RiaApp.exceptions;
+package org.ria.ifzz.RiaApp.exception;
 
 public class StorageException extends RuntimeException {
 

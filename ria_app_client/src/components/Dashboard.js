@@ -4,7 +4,6 @@ import { connect } from "react-redux";
 import { getFiles } from "../actions/filesActions";
 import PropTypes from "prop-types";
 import { Col, Row, Container, Table } from "reactstrap";
-import FileEntity from "./layout/File_Entity/FileEntity";
 import { withStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
@@ -14,6 +13,8 @@ import red from '@material-ui/core/colors/red';
 import green from '@material-ui/core/colors/green';
 import yellow from '@material-ui/core/colors/yellow';
 import purple from '@material-ui/core/colors/purple';
+
+import FileEntity from "./layout/fileEntity/FileEntity";
 
 const styles = theme => ({
   root: {

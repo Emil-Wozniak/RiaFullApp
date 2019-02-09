@@ -20,7 +20,7 @@ const styles = theme => ({
   }
 });
 
-class FileEntity extends Component {
+class Result extends Component {
   render() {
     const { file_entity } = this.props;
 
@@ -47,7 +47,7 @@ class FileEntity extends Component {
   }
 }
 
-FileEntity.propTypes = {
+Result.propTypes = {
   classes: PropTypes.object.isRequired,
   file_entity: PropTypes.object.isRequired,
   deleteFileEntity: PropTypes.func.isRequired
@@ -59,4 +59,4 @@ export default compose(
     null,
     { deleteFileEntity }
   )
-)(FileEntity);
+)(Result);

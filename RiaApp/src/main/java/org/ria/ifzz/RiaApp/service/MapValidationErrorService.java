@@ -1,4 +1,4 @@
-package org.ria.ifzz.RiaApp.services;
+package org.ria.ifzz.RiaApp.service;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

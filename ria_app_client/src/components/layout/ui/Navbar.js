@@ -47,7 +47,7 @@ const theme = createMuiTheme({
   },
 })
 
-const NavBar = (props) => {
+const NavBar = () => {
   return (
     <MuiThemeProvider theme={theme}>
     <AppBar position="static" color="theme">

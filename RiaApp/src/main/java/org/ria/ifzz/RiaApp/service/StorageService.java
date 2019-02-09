@@ -1,4 +1,4 @@
-package org.ria.ifzz.RiaApp.services;
+package org.ria.ifzz.RiaApp.service;
 
 import org.ria.ifzz.RiaApp.domain.FileEntity;
 import org.springframework.core.io.Resource;
