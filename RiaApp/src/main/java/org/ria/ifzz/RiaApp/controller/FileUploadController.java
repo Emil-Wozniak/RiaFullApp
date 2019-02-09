@@ -135,7 +135,6 @@ public class FileUploadController {
         resultService.createResultFromColumnsLength(cleanedList, file, fileData);
         Result result = resultService.assignCcmpToResult(cleanedList, file);
 
-
         resultRepository.save(result);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();

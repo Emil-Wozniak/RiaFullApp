@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { confirmDeleteFile } from "../../../actions/filesActions";
+import { deleteFileEntity } from "../../../actions/filesActions";
 import DownloadFile from "../../../requests/download/DownloadFile";
 import { withStyles } from "@material-ui/core/styles";
 
@@ -50,13 +50,13 @@ class FileEntity extends Component {
 FileEntity.propTypes = {
   classes: PropTypes.object.isRequired,
   file_entity: PropTypes.object.isRequired,
-  confirmDeleteFile: PropTypes.func.isRequired
+  deleteFileEntity: PropTypes.func.isRequired
 };
 
 export default compose(
   withStyles(styles),
   connect(
     null,
-    { confirmDeleteFile }
+    { deleteFileEntity }
   )
 )(FileEntity);

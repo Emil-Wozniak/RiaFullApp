@@ -86,6 +86,8 @@ public class ResultService {
 
         Result result = null;
         String fileName = file.getOriginalFilename();
+
+        //Assign CCMP to Result
         for (int i = 0; i < list.size() - 1; i++) {
             List CCMP = customFileReader.getMatchingStrings(list, 3);
 
@@ -95,6 +97,8 @@ public class ResultService {
             result.setCcpm(CCMP.get(i).toString());
             System.out.println(" \tResult CCMP value: " + result.getCcpm());
         }
+
+        //Assign position to Result
         for (int i = 0; i < list.size() - 1; i++) {
             List position = customFileReader.getMatchingStrings(list, 2);
 
@@ -104,6 +108,8 @@ public class ResultService {
             result.setPosition(position.get(i).toString());
             System.out.println(" \tResult position value: " + result.getPosition());
         }
+
+        //Assign samples to Result
         for (int i = 0; i < list.size() - 1; i++) {
             List Samples = customFileReader.getMatchingStrings(list, 1);
 
