@@ -33,9 +33,9 @@ class Result extends Component {
                 <FolderIcon />
               </Avatar>
             </td>
-            <td> {result.fileName}</td>
-            <td>{result.contentType}</td>
-            <td>{result.created_date}</td>
+            <td> {result.samples}</td>
+            <td>{result.position}</td>
+            <td>{result.ccpm}</td>
             <td>
             </td>
           </tr>

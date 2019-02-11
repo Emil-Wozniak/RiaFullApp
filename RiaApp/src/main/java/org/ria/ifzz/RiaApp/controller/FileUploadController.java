@@ -93,9 +93,9 @@ public class FileUploadController {
         return ResponseEntity.notFound().build();
     }
 
-    @GetMapping("/{fileEntityDataId}")
-    public ResponseEntity<FileEntity> getFileEntityById(@PathVariable String fileEntityDataId) throws FileNotFoundException {
-        FileEntity fileEntity = storageService.getByDataId(fileEntityDataId);
+    @GetMapping("/{dataId}")
+    public ResponseEntity<FileEntity> getFileEntityById(@PathVariable String dataId) throws FileNotFoundException {
+        FileEntity fileEntity = storageService.getByDataId(dataId);
         return new ResponseEntity<>(fileEntity, HttpStatus.OK);
     }
 

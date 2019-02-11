@@ -33,10 +33,10 @@ public class BacklogController {
         return resultService.getFileDataById(dataId);
     }
 
-    @GetMapping("/{dataId}/{result_id}")
-    public ResponseEntity<?> getResult(@PathVariable String fileDataId, @PathVariable String result_id) throws FileNotFoundException {
+    @GetMapping("/{dataId}/{fileName}")
+    public ResponseEntity<?> getResult(@PathVariable String dataId, @PathVariable String fileName) throws FileNotFoundException {
 
-        Result result = backlogService.findResultById(fileDataId, result_id);
+        Result result = backlogService.findResultById(dataId, fileName);
         return new ResponseEntity<Result>(result, HttpStatus.OK);
     }
 }

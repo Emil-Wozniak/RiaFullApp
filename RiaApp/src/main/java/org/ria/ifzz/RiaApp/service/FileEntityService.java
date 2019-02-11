@@ -18,7 +18,7 @@ public class FileEntityService {
     }
 
     public FileEntity getFileEntityByDataId(String dataId) throws FileNotFoundException {
-        FileEntity fileEntity = fileEntityRepository.findByDataId(dataId.toUpperCase());
+        FileEntity fileEntity = fileEntityRepository.findByDataId(dataId);
         if (fileEntity == null) {
             throw new FileNotFoundException(
                     "File does not exist");

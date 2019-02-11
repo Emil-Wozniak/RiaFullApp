@@ -31,15 +31,15 @@ public class BacklogService {
         return backlog;
     }
 
-    public Result findResultById(String backlog_id, String dataId) throws FileNotFoundException {
+    public Result findResultById(String backlog_id, String fileName) throws FileNotFoundException {
         fileEntityService.getFileEntityByDataId(backlog_id);
 
-        Result result = resultRepository.findByDataId(dataId);
+        Result result = resultRepository.findByFileName(fileName);
         if (result == null) {
-            throw new FileEntityNotFoundException("Result '" + dataId + "' not found");
+            throw new FileEntityNotFoundException("Result '" + fileName + "' not found");
         }
-        if (!result.getId().equals(backlog_id)) {
-            throw new FileEntityNotFoundException("Result '" + dataId + "' does not exist: '" + backlog_id);
+        if (!result.getDataId().equals(backlog_id)) {
+            throw new FileEntityNotFoundException("Result '" + fileName + "' does not exist: '" + backlog_id);
         }
         return result;
     }

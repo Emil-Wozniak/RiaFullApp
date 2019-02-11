@@ -72,7 +72,7 @@ class Dashboard extends Component {
     alignItems: "center"
   };
 
-  handleChange = key => (event, value) => {
+  handleChange = key => (value) => {
     this.setState({
       [key]: value
     });
