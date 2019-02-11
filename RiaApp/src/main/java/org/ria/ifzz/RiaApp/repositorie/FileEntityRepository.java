@@ -4,12 +4,8 @@ import org.ria.ifzz.RiaApp.domain.FileEntity;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
 public interface FileEntityRepository extends CrudRepository<FileEntity, Long> {
-
-    List<FileEntity> findAllByFileName(String fileName);
 
     @Override
     Iterable<FileEntity> findAll();
@@ -17,7 +13,11 @@ public interface FileEntityRepository extends CrudRepository<FileEntity, Long> {
     @Override
     Iterable<FileEntity> findAllById(Iterable<Long> longs);
 
-    FileEntity getById(Long id);
+//    FileEntity getById(Long id);
 
+    FileEntity getByDataId(String dataId);
 
+    FileEntity findAllByDataId(String dataId);
+
+    FileEntity findByDataId(String dataId);
 }

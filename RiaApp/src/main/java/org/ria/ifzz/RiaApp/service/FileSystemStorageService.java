@@ -3,7 +3,6 @@ package org.ria.ifzz.RiaApp.service;
 import org.ria.ifzz.RiaApp.domain.FileEntity;
 import org.ria.ifzz.RiaApp.exception.StorageException;
 import org.ria.ifzz.RiaApp.exception.StorageFileNotFoundException;
-import org.ria.ifzz.RiaApp.repositorie.FileDataRepository;
 import org.ria.ifzz.RiaApp.repositorie.FileEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -27,13 +26,10 @@ public class FileSystemStorageService implements StorageService {
 
     private final Path rootLocation;
     private final FileEntityRepository fileEntityRepository;
-    private final FileDataRepository fileDataRepository;
-
     @Autowired
-    public FileSystemStorageService(StorageProperties properties, FileEntityRepository fileEntityRepository, FileDataRepository fileDataRepository) {
+    public FileSystemStorageService(StorageProperties properties, FileEntityRepository fileEntityRepository) {
         this.rootLocation = Paths.get(properties.getLocation());
         this.fileEntityRepository = fileEntityRepository;
-        this.fileDataRepository = fileDataRepository;
     }
 
     @Override
@@ -93,8 +89,8 @@ public class FileSystemStorageService implements StorageService {
     }
 
     @Override
-    public FileEntity getById(Long id) throws FileNotFoundException {
-        FileEntity fileEntity = fileEntityRepository.getById(id);
+    public FileEntity getByDataId(String dataId) throws FileNotFoundException {
+        FileEntity fileEntity = fileEntityRepository.getByDataId(dataId);
         if (fileEntity == null) {
             throw new FileNotFoundException(
                     "Project does not exist");
@@ -103,12 +99,8 @@ public class FileSystemStorageService implements StorageService {
     }
 
     @Override
-    public Iterable<FileEntity> findAllFile() {
-        return fileEntityRepository.findAll();
-    }
-
-    @Override
     public void init() {
+
         try {
             Files.createDirectories(rootLocation);
         }

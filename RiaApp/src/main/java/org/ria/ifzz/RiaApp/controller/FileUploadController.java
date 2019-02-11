@@ -1,9 +1,9 @@
 package org.ria.ifzz.RiaApp.controller;
 
-import org.ria.ifzz.RiaApp.domain.FileData;
+import org.ria.ifzz.RiaApp.domain.Backlog;
 import org.ria.ifzz.RiaApp.domain.FileEntity;
 import org.ria.ifzz.RiaApp.domain.Result;
-import org.ria.ifzz.RiaApp.repositorie.FileDataRepository;
+import org.ria.ifzz.RiaApp.repositorie.BacklogRepository;
 import org.ria.ifzz.RiaApp.repositorie.FileEntityRepository;
 import org.ria.ifzz.RiaApp.repositorie.ResultRepository;
 import org.ria.ifzz.RiaApp.service.ResultService;
@@ -34,24 +34,24 @@ public class FileUploadController {
     private final StorageService storageService;
     private final FileEntityRepository fileEntityRepository;
     private final ResultService resultService;
-    private final FileDataRepository fileDataRepository;
+    private final BacklogRepository backlogRepository;
     private final ResultRepository resultRepository;
 
     @Autowired
     public FileUploadController(StorageService storageService,
                                 FileEntityRepository fileEntityRepository,
                                 ResultService resultService,
-                                FileDataRepository fileDataRepository,
+                                BacklogRepository backlogRepository,
                                 ResultRepository resultRepository) {
         this.storageService = storageService;
         this.fileEntityRepository = fileEntityRepository;
         this.resultService = resultService;
-        this.fileDataRepository = fileDataRepository;
+        this.backlogRepository = backlogRepository;
         this.resultRepository = resultRepository;
     }
 
-    @GetMapping
-    public ResponseEntity<byte[]> getRandomFile() {
+    @GetMapping("/download")
+    public ResponseEntity<byte[]> getFile() {
         long amountOfFiles = fileEntityRepository.count();
         Long randomPrimaryKey;
 
@@ -70,7 +70,7 @@ public class FileUploadController {
         header.setContentType(MediaType.valueOf(fileEntity.getContentType()));
         header.setContentLength(fileEntity.getData().length);
         header.set("Content-Disposition", "attachment; filename=" + fileEntity.getFileName());
-
+        System.out.println("\n\n\n\n==============="+header+"===============\n\n\n");
         return new ResponseEntity<>(fileEntity.getData(), header, HttpStatus.OK);
     }
 
@@ -85,6 +85,7 @@ public class FileUploadController {
             headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"");
             //allowing web browser to read additional headers from response
             headers.add("Access-Control-Expose-Headers", HttpHeaders.CONTENT_DISPOSITION + "," + HttpHeaders.CONTENT_LENGTH);
+
             //put headers and file within response body
             return ResponseEntity.ok().headers(headers).body(file);
         }
@@ -92,9 +93,9 @@ public class FileUploadController {
         return ResponseEntity.notFound().build();
     }
 
-    @GetMapping("/{fileEntityId}")
-    public ResponseEntity<FileEntity> getFileEntityById(@PathVariable Long fileEntityId) throws FileNotFoundException {
-        FileEntity fileEntity = storageService.getById(fileEntityId);
+    @GetMapping("/{fileEntityDataId}")
+    public ResponseEntity<FileEntity> getFileEntityById(@PathVariable String fileEntityDataId) throws FileNotFoundException {
+        FileEntity fileEntity = storageService.getByDataId(fileEntityDataId);
         return new ResponseEntity<>(fileEntity, HttpStatus.OK);
     }
 
@@ -116,7 +117,7 @@ public class FileUploadController {
                                                  RedirectAttributes redirectAttributes) throws IOException {
 
         FileEntity fileEntity = new FileEntity(file.getOriginalFilename(), file.getContentType(),
-                file.getBytes());
+                file.getBytes() );
 
         storageService.store(file);
 
@@ -124,16 +125,24 @@ public class FileUploadController {
                 "You successfully uploaded " + file.getOriginalFilename() + "!");
 
         //Databased files
+
+        fileEntityRepository.save(fileEntity);
+        fileEntity.setDataId(fileEntity.getFileName()+"_"+fileEntity.getId());
         fileEntityRepository.save(fileEntity);
 
-        FileData fileData = new FileData();
-        fileData.setFileEntity(fileEntity);
-        fileDataRepository.save(fileData);
+        Backlog backlog = new Backlog();
+        backlog.setFileEntity(fileEntity);
+        backlog.setFileName(fileEntity.getFileName());
+        backlog.setDataId(fileEntity.getDataId());
+        backlog.setContentType(fileEntity.getContentType());
+        backlogRepository.save(backlog);
+        fileEntity.setBacklog(backlog);
+        fileEntityRepository.save(fileEntity);
 
         List<String> cleanedList = resultService.getFileData(file);
 
-        resultService.createResultFromColumnsLength(cleanedList, file, fileData);
-        Result result = resultService.assignCcmpToResult(cleanedList, file);
+        resultService.createResultFromColumnsLength(cleanedList, file, backlog);
+        Result result = resultService.assignCcmpToResult(cleanedList, file, fileEntity);
 
         resultRepository.save(result);
 

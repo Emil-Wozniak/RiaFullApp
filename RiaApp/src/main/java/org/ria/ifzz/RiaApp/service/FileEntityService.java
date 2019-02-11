@@ -17,11 +17,11 @@ public class FileEntityService {
         return fileEntityRepository.findAll();
     }
 
-    public FileEntity getById(Long id) throws FileNotFoundException {
-        FileEntity fileEntity = fileEntityRepository.getById(id);
+    public FileEntity getFileEntityByDataId(String dataId) throws FileNotFoundException {
+        FileEntity fileEntity = fileEntityRepository.findByDataId(dataId.toUpperCase());
         if (fileEntity == null) {
             throw new FileNotFoundException(
-                    "Project does not exist");
+                    "File does not exist");
         }
         return fileEntity;
     }

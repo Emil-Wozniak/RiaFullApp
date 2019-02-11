@@ -3,7 +3,6 @@ import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { deleteFileEntity } from "../../../actions/filesActions";
-import DownloadFile from "../Download/DownloadFile";
 import { withStyles } from "@material-ui/core/styles";
 
 import Avatar from "@material-ui/core/Avatar";
@@ -22,23 +21,22 @@ const styles = theme => ({
 
 class Result extends Component {
   render() {
-    const { file_entity } = this.props;
+    const { result } = this.props;
 
     return (
       <React.Fragment>
         <tbody>
           <tr>
-            <th scope="row">{file_entity.id}</th>
+            <th scope="row">{result.id}</th>
             <td>
               <Avatar>
                 <FolderIcon />
               </Avatar>
             </td>
-            <td> {file_entity.fileName}</td>
-            <td>{file_entity.contentType}</td>
-            <td>{file_entity.created_date}</td>
+            <td> {result.fileName}</td>
+            <td>{result.contentType}</td>
+            <td>{result.created_date}</td>
             <td>
-              <DownloadFile />
             </td>
           </tr>
         </tbody>
@@ -49,7 +47,7 @@ class Result extends Component {
 
 Result.propTypes = {
   classes: PropTypes.object.isRequired,
-  file_entity: PropTypes.object.isRequired,
+  result: PropTypes.object.isRequired,
   deleteFileEntity: PropTypes.func.isRequired
 };
 

@@ -4,11 +4,13 @@ import org.ria.ifzz.RiaApp.domain.Result;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface ResultRepository extends JpaRepository<Result, Long> {
     Result findByFileName(String fileName);
 
-    Result findBySamples(String byFileName);
+    List<Result> findByDataIdOrderByFileName(String dataId);
 
-    Result getById(Long id);
+    Result findByDataId(String dataId);
 }

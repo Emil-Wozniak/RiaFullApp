@@ -11,28 +11,22 @@ import java.util.List;
 @Entity
 @Data
 @NoArgsConstructor
-public class FileData {
+public class Backlog {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String fileName;
     private String contentType;
-    private Integer data;
 
-    private String fileId;
+    private String dataId;
 
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "file_entity_id", nullable = false)
     @JsonIgnore
     private FileEntity fileEntity;
 
-    @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER, mappedBy = "fileData", orphanRemoval = true)
-    private List<Result> projectTasks = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER, mappedBy = "backlog", orphanRemoval = true)
+    private List<Result> results = new ArrayList<>();
 
-    public FileData(String fileName, String contentType, Integer data) {
-        this.fileName = fileName;
-        this.contentType = contentType;
-        this.data = data;
-    }
 }

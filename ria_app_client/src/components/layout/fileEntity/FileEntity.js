@@ -5,9 +5,10 @@ import { connect } from "react-redux";
 import { deleteFileEntity } from "../../../actions/filesActions";
 import DownloadFile from "../../../requests/download/DownloadFile";
 import { withStyles } from "@material-ui/core/styles";
-
+import { Link } from "react-router-dom";
 import Avatar from "@material-ui/core/Avatar";
 import FolderIcon from "@material-ui/icons/Folder";
+import { Button } from "reactstrap";
 
 const styles = theme => ({
   root: {
@@ -39,6 +40,12 @@ class FileEntity extends Component {
             <td>{file_entity.created_date}</td>
             <td>
               <DownloadFile />
+            </td>
+            <td>
+              {" "}
+              <Link to={`/fileBoard/${file_entity.dataId}`}>
+                <Button className="btn fa fa-file"></Button>
+              </Link>
             </td>
           </tr>
         </tbody>

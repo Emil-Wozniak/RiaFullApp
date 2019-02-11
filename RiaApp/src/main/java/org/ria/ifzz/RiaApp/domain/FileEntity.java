@@ -19,7 +19,7 @@ public class FileEntity {
     private String fileName;
     private String contentType;
 
-    private String fileId;
+    private String dataId;
 
     @JsonFormat(pattern = "yyyy-MM-dd' 'HH:mm:ss")
     @Column(updatable = false)
@@ -29,7 +29,7 @@ public class FileEntity {
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "fileEntity")
     @JsonIgnore
-    private FileData fileData;
+    private Backlog backlog;
 
     @Lob
     private byte[] data;

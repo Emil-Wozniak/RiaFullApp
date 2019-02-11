@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { FileService } from "../service/FileService"
+import { FileService } from "../service/FileService";
 import { getFiles } from "../../actions/filesActions";
 import { Button } from "reactstrap";
 import { saveAs } from "file-saver";
@@ -11,16 +11,28 @@ class DownloadFile extends Component {
     super(props);
     this.fileService = new FileService();
     this.state = {
-      downloading: false
+      downloading: false,
+      fileName: ""
     };
   }
 
+  componentDidMount() {
+    const { fileName } = this.props;
+    this.props.getFiles(fileName, this.props.history);
+  }
+
+
   downloadFile = () => {
     this.setState({
-      downloading: true
+      downloading: true,
+      fileName: this.props.fileName
     });
 
-    var filename = this.props.fileName;
+    const { file_entity } = this.props;
+    // var filename = this.props.fileName;
+    const filename = "file.txt";
+    const name = file_entity.fileName;
+
     let self = this;
     this.fileService
       .getFileFromServer()
@@ -36,7 +48,7 @@ class DownloadFile extends Component {
         console.log(error);
         self.setState({ downloading: false });
         if (error.response) {
-          console.log("Error", error.response.status);
+          console.log("Error", error.response.status, name);
         } else {
           console.log("Error", error.message);
         }
@@ -46,8 +58,8 @@ class DownloadFile extends Component {
   render() {
     return (
       <React.Fragment>
-        <Button className="btn" onClick={this.downloadFile}>
-          Download file{" "}
+        <Button className="btn fa fa-file-export" onClick={this.downloadFile}>
+          {" "}
         </Button>
         <label>{this.state.downloading ? "Downloading in progress" : ""}</label>
       </React.Fragment>

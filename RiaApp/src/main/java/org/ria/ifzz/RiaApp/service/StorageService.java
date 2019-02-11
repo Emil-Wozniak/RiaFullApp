@@ -21,7 +21,6 @@ public interface StorageService {
 
     void deleteAll();
 
-    FileEntity getById(Long id) throws FileNotFoundException;
+    FileEntity getByDataId(String dataId) throws FileNotFoundException;
 
-    Iterable<FileEntity> findAllFile();
 }
