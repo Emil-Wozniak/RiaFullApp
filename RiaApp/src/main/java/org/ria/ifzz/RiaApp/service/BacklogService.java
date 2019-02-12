@@ -22,24 +22,26 @@ public class BacklogService {
     @Autowired
     private ResultRepository resultRepository;
 
-    public Backlog getByDataId(String dataId) throws FileNotFoundException {
-        Backlog backlog = backlogRepository.findByDataId(dataId);
-        if (backlog == null) {
-            throw new FileNotFoundException(
-                    "File does not exist");
-        }
-        return backlog;
+    /**
+     *
+     * @param dataId unique identifier
+     * @return Result from repository if exists
+     * @throws FileNotFoundException
+     */
+    public Iterable<Result> findBacklogByDataId(String dataId) throws FileNotFoundException {
+        fileEntityService.findFileEntityByDataId(dataId);
+        return resultRepository.findByDataIdOrderByFileName(dataId);
     }
 
-    public Result findResultById(String backlog_id, String fileName) throws FileNotFoundException {
-        fileEntityService.getFileEntityByDataId(backlog_id);
+    public Result findResultByDataId(String dataId, String fileName) throws FileNotFoundException {
+        fileEntityService.findFileEntityByDataId(dataId);
 
         Result result = resultRepository.findByFileName(fileName);
         if (result == null) {
-            throw new FileEntityNotFoundException("Result '" + fileName + "' not found");
+            throw new FileEntityNotFoundException("File with ID: '" + fileName + "' not found");
         }
-        if (!result.getDataId().equals(backlog_id)) {
-            throw new FileEntityNotFoundException("Result '" + fileName + "' does not exist: '" + backlog_id);
+        if (!result.getDataId().equals(dataId)) {
+            throw new FileEntityNotFoundException("Result '" + fileName + "' does not exist: '" + dataId);
         }
         return result;
     }

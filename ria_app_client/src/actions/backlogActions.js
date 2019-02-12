@@ -1,14 +1,12 @@
 import axios from "axios";
 import * as types from "./types";
 
-//Fix bug with priority in Spring Boot Server, needs to check null first
-
 export const getBacklog = dataId => async dispatch => {
   try {
-    const { data } = await axios.get(`/api/backlog/${dataId}`);
+    const res = await axios.get(`http://localhost:8080/api/backlog/${dataId}`);
     dispatch({
       type: types.GET_BACKLOG,
-      payload: data
+      payload: res.data
     });
   } catch (err) {
     dispatch({
@@ -18,9 +16,12 @@ export const getBacklog = dataId => async dispatch => {
   }
 };
 
-export const getResult = (dataId, resultId, history) => async dispatch => {
+export const getResult = (
+  dataId, 
+  fileName, 
+  history) => async dispatch => {
   try {
-    const { data } = await axios.get(`/api/backlog/${dataId}/${resultId}`);
+    const { data } = await axios.get(`http://localhost:8080/api/backlog/${dataId}/${fileName}`);
     dispatch({
       type: types.GET_RESULT,
       payload: data

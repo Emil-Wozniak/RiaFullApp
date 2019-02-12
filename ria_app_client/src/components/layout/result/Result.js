@@ -28,11 +28,6 @@ class Result extends Component {
         <tbody>
           <tr>
             <th scope="row">{result.id}</th>
-            <td>
-              <Avatar>
-                <FolderIcon />
-              </Avatar>
-            </td>
             <td> {result.samples}</td>
             <td>{result.position}</td>
             <td>{result.ccpm}</td>

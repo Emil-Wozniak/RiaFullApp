@@ -135,14 +135,16 @@ public class FileUploadController {
         backlog.setFileName(fileEntity.getFileName());
         backlog.setDataId(fileEntity.getDataId());
         backlog.setContentType(fileEntity.getContentType());
+
         backlogRepository.save(backlog);
+
         fileEntity.setBacklog(backlog);
         fileEntityRepository.save(fileEntity);
 
         List<String> cleanedList = resultService.getFileData(file);
 
-        resultService.createResultFromColumnsLength(cleanedList, file, backlog);
-        Result result = resultService.assignCcmpToResult(cleanedList, file, fileEntity);
+        resultService.createResultFromColumnsLength(cleanedList, backlog);
+        Result result = resultService.assignCcmpToResult(cleanedList, fileEntity);
 
         resultRepository.save(result);
 

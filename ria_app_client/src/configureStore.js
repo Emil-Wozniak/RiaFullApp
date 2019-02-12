@@ -1,16 +1,14 @@
-import { createStore } from 'redux';
-import rootReducer from '../reducers';
+import {createStore, applyMiddleware} from 'redux';  
+import rootReducer from '../reducers/rootReducer';  
+import thunk from 'redux-thunk';
+import { composeWithDevTools } from "redux-devtools-extension";
 
-export default function configureStore(initialState) {
-  let store = (window.devToolsExtension ? window.devToolsExtension()(createStore) : createStore)(rootReducer, initialState);
-
-  if (module.hot) {
-    // Enable Webpack hot module replacement for reducers
-    module.hot.accept('../reducers', () => {
-      const nextReducer = require('../reducers');
-      store.replaceReducer(nextReducer);
-    });
-  }
-
-  return store;
+export default function configureStore() {  
+    const composeEnhancers = composeWithDevTools({
+        // Specify name here, actionsBlacklist, actionsCreators and other options if needed
+      });
+  return createStore(
+    rootReducer,
+    applyMiddleware(thunk)
+  );
 }

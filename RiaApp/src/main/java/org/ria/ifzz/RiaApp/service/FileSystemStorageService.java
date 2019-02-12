@@ -93,7 +93,7 @@ public class FileSystemStorageService implements StorageService {
         FileEntity fileEntity = fileEntityRepository.getByDataId(dataId);
         if (fileEntity == null) {
             throw new FileNotFoundException(
-                    "Project does not exist");
+                    "File does not exist");
         }
         return fileEntity;
     }

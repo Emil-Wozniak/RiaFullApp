@@ -56,8 +56,6 @@ class FileEntity extends Component {
 
 FileEntity.propTypes = {
   classes: PropTypes.object.isRequired,
-  file_entity: PropTypes.object.isRequired,
-  deleteFileEntity: PropTypes.func.isRequired
 };
 
 export default compose(

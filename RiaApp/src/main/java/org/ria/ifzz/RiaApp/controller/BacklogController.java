@@ -3,7 +3,6 @@ package org.ria.ifzz.RiaApp.controller;
 import org.ria.ifzz.RiaApp.domain.Result;
 import org.ria.ifzz.RiaApp.service.BacklogService;
 import org.ria.ifzz.RiaApp.service.MapValidationErrorService;
-import org.ria.ifzz.RiaApp.service.ResultService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,30 +12,28 @@ import java.io.FileNotFoundException;
 
 @RestController
 @RequestMapping("/api/backlog")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin
 public class BacklogController {
 
     @Autowired
     MapValidationErrorService errorService;
 
     private final BacklogService backlogService;
-    private final ResultService resultService;
 
     @Autowired
-    public BacklogController(BacklogService backlogService, ResultService resultService) {
+    public BacklogController(BacklogService backlogService) {
         this.backlogService = backlogService;
-        this.resultService = resultService;
     }
 
     @GetMapping("/{dataId}")
-    public Iterable<Result> getFileEntityByFileDataId(@PathVariable String dataId) throws FileNotFoundException {
-        return resultService.getFileDataById(dataId);
+    public Iterable<Result> getFileEntityBacklog(@PathVariable String dataId) throws FileNotFoundException {
+        return backlogService.findBacklogByDataId(dataId);
     }
 
     @GetMapping("/{dataId}/{fileName}")
     public ResponseEntity<?> getResult(@PathVariable String dataId, @PathVariable String fileName) throws FileNotFoundException {
 
-        Result result = backlogService.findResultById(dataId, fileName);
+        Result result = backlogService.findResultByDataId(dataId, fileName);
         return new ResponseEntity<Result>(result, HttpStatus.OK);
     }
 }

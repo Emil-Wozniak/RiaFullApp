@@ -11,6 +11,7 @@ public interface ResultRepository extends CrudRepository<Result, Long> {
     Result findByFileName(String fileName);
 
     List<Result> findByDataIdOrderByFileName(String dataId);
+    List<Result> findByFileNameOrderByDataId(String dataId);
 
     Result getById(Long id);
 }

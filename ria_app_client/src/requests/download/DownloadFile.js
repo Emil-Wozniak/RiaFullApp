@@ -16,22 +16,13 @@ class DownloadFile extends Component {
     };
   }
 
-  componentDidMount() {
-    const { fileName } = this.props;
-    this.props.getFiles(fileName, this.props.history);
-  }
-
-
   downloadFile = () => {
     this.setState({
       downloading: true,
       fileName: this.props.fileName
     });
 
-    const { file_entity } = this.props;
-    // var filename = this.props.fileName;
     const filename = "file.txt";
-    const name = file_entity.fileName;
 
     let self = this;
     this.fileService
@@ -39,16 +30,13 @@ class DownloadFile extends Component {
       .then(response => {
         console.log("Response", response);
         this.setState({ downloading: false });
-        //extract file name from Content-Disposition header
-
-        //invoke 'Save As' dialog
         saveAs(response.data, filename);
       })
       .catch(function(error) {
         console.log(error);
         self.setState({ downloading: false });
         if (error.response) {
-          console.log("Error", error.response.status, name);
+          console.log("Error", error.response.status, filename);
         } else {
           console.log("Error", error.message);
         }
@@ -77,6 +65,6 @@ const mapStateToProps = state => ({
 });
 
 export default connect(
-  mapStateToProps,
+  null,
   { getFiles }
 )(DownloadFile);

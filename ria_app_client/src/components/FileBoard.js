@@ -3,7 +3,6 @@ import Backlog from "./layout/backlog/Backlog";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { getBacklog } from "../actions/backlogActions";
-import { Table } from "reactstrap";
 
 class FileBoard extends Component {
   //constructor to handle errors
@@ -26,7 +25,6 @@ class FileBoard extends Component {
   }
 
   render() {
-    const { backlog } = this.props;
     const { results } = this.props.backlog;
     const { errors } = this.state;
 
@@ -58,22 +56,6 @@ class FileBoard extends Component {
       <div className="container">
         <hr />
         {BoardContent}
-        <Table striped>
-        {backlog.id}
-          <thead>
-            <tr>
-              <th>#</th>
-              <th />
-              <th>File Name</th>
-              <th>Content Type:</th>
-              <th>Uploaded</th>
-              <th />
-            </tr>
-          </thead>
-          {results.map(result => (
-            <Backlog key={result.id} result={result} />
-          ))}
-        </Table>
       </div>
     );
   }
