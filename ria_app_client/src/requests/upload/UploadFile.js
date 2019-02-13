@@ -1,8 +1,10 @@
 import React, { Component } from "react";
 import compose from "recompose/compose";
 import PropTypes from "prop-types";
+import { connect } from "react-redux";
 import { Container } from "reactstrap";
 import { withStyles } from "@material-ui/core/styles";
+import { uploadFile } from "../../actions/uploadActions";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
@@ -148,4 +150,7 @@ AddFile.propTypes = {
   theme: PropTypes.object.isRequire
 };
 
-export default compose(withStyles(styles, { withTheme: true }))(AddFile);
+export default compose(withStyles(styles, { withTheme: true }), connect(
+  null,
+  { uploadFile }
+))(AddFile);

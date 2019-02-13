@@ -11,21 +11,19 @@ class Backlog extends Component {
     ));
 
     return (
-      <div className="container">
-        <hr />
+      <React.Fragment>
         <Table striped>
           <thead>
             <tr>
-              <th>#</th>
+              <th></th>
               <th>samples:</th>
               <th>position</th>
               <th>CCMP:</th>
-              <th />
             </tr>
           </thead>
           {results}
         </Table>
-      </div>
+      </React.Fragment>
     );
   }
 }

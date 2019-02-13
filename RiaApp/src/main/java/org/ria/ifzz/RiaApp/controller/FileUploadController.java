@@ -124,8 +124,6 @@ public class FileUploadController {
         redirectAttributes.addFlashAttribute("message",
                 "You successfully uploaded " + file.getOriginalFilename() + "!");
 
-        //Databased files
-
         fileEntityRepository.save(fileEntity);
         fileEntity.setDataId(fileEntity.getFileName()+"_"+fileEntity.getId());
         fileEntityRepository.save(fileEntity);
@@ -143,8 +141,8 @@ public class FileUploadController {
 
         List<String> cleanedList = resultService.getFileData(file);
 
-        resultService.createResultFromColumnsLength(cleanedList, backlog);
-        Result result = resultService.assignCcmpToResult(cleanedList, fileEntity);
+        resultService.createResultFromColumnsLength(cleanedList, file, backlog);
+        Result result = resultService.assignDataToResult(cleanedList, file, fileEntity);
 
         resultRepository.save(result);
 

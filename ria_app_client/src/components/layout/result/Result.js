@@ -5,9 +5,6 @@ import { connect } from "react-redux";
 import { deleteFileEntity } from "../../../actions/filesActions";
 import { withStyles } from "@material-ui/core/styles";
 
-import Avatar from "@material-ui/core/Avatar";
-import FolderIcon from "@material-ui/icons/Folder";
-
 const styles = theme => ({
   root: {
     flexGrow: 1
@@ -27,12 +24,10 @@ class Result extends Component {
       <React.Fragment>
         <tbody>
           <tr>
-            <th scope="row">{result.id}</th>
+            <th scope="row"></th>
             <td> {result.samples}</td>
             <td>{result.position}</td>
             <td>{result.ccpm}</td>
-            <td>
-            </td>
           </tr>
         </tbody>
       </React.Fragment>

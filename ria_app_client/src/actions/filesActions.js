@@ -17,11 +17,11 @@ export const getFile = filename => async dispatch => {
   });
 };
 
-const confirmDeleteFile = file_entity_id => window.confirm(`You are deleting file_entity task ${file_entity_id}, this action cannot be undone`);
+const confirmDeleteFile = file_entity_id => window.confirm(`You are deleting file ${file_entity_id}, this action cannot be undone`);
 
 export const deleteFileEntity = file_entity_id => async dispatch => {
     if (confirmDeleteFile(file_entity_id)) {
-    await axios.delete(`/api/files/${file_entity_id}`);
+    await axios.delete(`http://localhost:8080/api/files/${file_entity_id}`);
     dispatch({
       type: types.DELETE_FILE_ENTITY,
       payload: file_entity_id

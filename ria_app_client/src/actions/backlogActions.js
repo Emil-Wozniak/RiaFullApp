@@ -16,12 +16,11 @@ export const getBacklog = dataId => async dispatch => {
   }
 };
 
-export const getResult = (
-  dataId, 
-  fileName, 
-  history) => async dispatch => {
+export const getResult = (dataId, fileName, history) => async dispatch => {
   try {
-    const { data } = await axios.get(`http://localhost:8080/api/backlog/${dataId}/${fileName}`);
+    const { data } = await axios.get(
+      `http://localhost:8080/api/backlog/${dataId}/${fileName}`
+    );
     dispatch({
       type: types.GET_RESULT,
       payload: data
