@@ -66,7 +66,7 @@ public class ResultService {
                 result = new Result();
 
                 //set fileName followed by '_lineIndex'
-                result.setFileName("row_" + list.indexOf(line) + "_" + createFileName(file));
+                result.setFileName("row_" + list.indexOf(line) + "_" + setFileName(file));
                 result.setBacklog(backlog);
 
                 resultRepository.save(result);
@@ -93,7 +93,7 @@ public class ResultService {
             List CCMP = customFileReader.getMatchingStrings(list, 3);
 
             int index = i + 1;
-            result = resultRepository.findByFileName("row_" + index+ "_" + createFileName(file));
+            result = resultRepository.findByFileName("row_" + index+ "_" + setFileName(file));
 
             // convert String value of CCMP to Integer
             String ccmpString = CCMP.get(i).toString();
@@ -107,7 +107,7 @@ public class ResultService {
             List position = customFileReader.getMatchingStrings(list, 2);
 
             int index = i + 1;
-            result = resultRepository.findByFileName("row_" + index+ "_" + createFileName(file));
+            result = resultRepository.findByFileName("row_" + index+ "_" + setFileName(file));
 
             result.setPosition(position.get(i).toString());
             System.out.println(" \tResult position value: " + result.getPosition());
@@ -118,7 +118,7 @@ public class ResultService {
             List Samples = customFileReader.getMatchingStrings(list, 1);
 
             int index = i + 1;
-            result = resultRepository.findByFileName("row_" + index+ "_" + createFileName(file));
+            result = resultRepository.findByFileName("row_" + index+ "_" + setFileName(file));
             result.setDataId(fileId);
             result.setSamples(Samples.get(i).toString());
             System.out.println(" \tResult samples value: " + result.getSamples());
@@ -130,25 +130,27 @@ public class ResultService {
     public Result assignNgPerMl(List<String> list, @NotNull MultipartFile file) {
 
         Result result = new Result();
-        List<Result> curve = new ArrayList<>();
+        List<Double> curve = new ArrayList<>();
         double[] controlCurve;
         double[] standardsCurve;
 
         countResultUtil.doseLog(CORTISOL_PATTERN);
         try {
-            for (int i = 1; i < 8; i++) {
-                result = resultRepository.findByFileName("row_" + i + "_" + createFileName(file));
-                System.out.println(result.getCcpm());
-                curve.add(result);
+            for (int i = 1; i < 9; i++) {
+                result = resultRepository.findByFileName("row_" + i + "_" + setFileName(file));
+                double point = result.getCcpm();
+                curve.add(point);
             }
         } catch (Exception exception) {
             throw new StorageException("File" + file.getOriginalFilename() + " doesn't contain a proper size; \n" + exception.getMessage());
         }
+        System.out.println("Find result:");
+        curve.forEach(System.out::println);
 
         return result;
     }
 
-    public String createFileName(MultipartFile file) {
+    public String setFileName(MultipartFile file) {
         String fileName = file.getOriginalFilename();
         fileName.replace(".txt", "");
         return fileName;
