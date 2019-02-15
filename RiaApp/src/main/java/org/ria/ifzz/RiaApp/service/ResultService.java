@@ -3,16 +3,20 @@ package org.ria.ifzz.RiaApp.service;
 import org.ria.ifzz.RiaApp.domain.Backlog;
 import org.ria.ifzz.RiaApp.domain.FileEntity;
 import org.ria.ifzz.RiaApp.domain.Result;
+import org.ria.ifzz.RiaApp.exception.StorageException;
 import org.ria.ifzz.RiaApp.repositorie.ResultRepository;
+import org.ria.ifzz.RiaApp.utils.CountResultUtil;
 import org.ria.ifzz.RiaApp.utils.CustomFileReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+
+import static org.ria.ifzz.RiaApp.domain.HormonesPattern.CORTISOL_PATTERN;
 
 @RestController
 public class ResultService {
@@ -22,10 +26,12 @@ public class ResultService {
 
     private final CustomFileReader customFileReader;
     private final ResultRepository resultRepository;
+    private final CountResultUtil countResultUtil;
 
-    public ResultService(CustomFileReader customFileReader, ResultRepository resultRepository) {
+    public ResultService(CustomFileReader customFileReader, ResultRepository resultRepository, CountResultUtil countResultUtil) {
         this.customFileReader = customFileReader;
         this.resultRepository = resultRepository;
+        this.countResultUtil = countResultUtil;
     }
 
     /**
@@ -91,7 +97,7 @@ public class ResultService {
 
             // convert String value of CCMP to Integer
             String ccmpString = CCMP.get(i).toString();
-            Integer ccmpInteger = Integer.parseInt(ccmpString);
+            Double ccmpInteger = Double.parseDouble(ccmpString);
             result.setCcpm(ccmpInteger);
             System.out.println(" \tResult CCMP value: " + result.getCcpm());
         }
@@ -117,6 +123,28 @@ public class ResultService {
             result.setSamples(Samples.get(i).toString());
             System.out.println(" \tResult samples value: " + result.getSamples());
         }
+
+        return result;
+    }
+
+    public Result assignNgPerMl(List<String> list, @NotNull MultipartFile file) {
+
+        Result result = new Result();
+        List<Result> curve = new ArrayList<>();
+        double[] controlCurve;
+        double[] standardsCurve;
+
+        countResultUtil.doseLog(CORTISOL_PATTERN);
+        try {
+            for (int i = 1; i < 8; i++) {
+                result = resultRepository.findByFileName("row_" + i + "_" + createFileName(file));
+                System.out.println(result.getCcpm());
+                curve.add(result);
+            }
+        } catch (Exception exception) {
+            throw new StorageException("File" + file.getOriginalFilename() + " doesn't contain a proper size; \n" + exception.getMessage());
+        }
+
         return result;
     }
 

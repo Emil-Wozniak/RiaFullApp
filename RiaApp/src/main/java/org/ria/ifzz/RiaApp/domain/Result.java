@@ -18,11 +18,10 @@ public class Result {
     private Long id;
     private String samples;
     private String position;
-    private Integer ccpm;
-
+    private Double ccpm;
     private String fileName;
-
     private String dataId;
+    private Double ngPerMl;
 
     @JsonFormat(pattern = "yyyy-MM-dd' 'HH:mm:ss")
     @Column(updatable = false)

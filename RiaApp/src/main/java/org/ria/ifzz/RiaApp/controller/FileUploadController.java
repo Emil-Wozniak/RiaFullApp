@@ -70,7 +70,6 @@ public class FileUploadController {
         header.setContentType(MediaType.valueOf(fileEntity.getContentType()));
         header.setContentLength(fileEntity.getData().length);
         header.set("Content-Disposition", "attachment; filename=" + fileEntity.getFileName());
-        System.out.println("\n\n\n\n==============="+header+"===============\n\n\n");
         return new ResponseEntity<>(fileEntity.getData(), header, HttpStatus.OK);
     }
 
@@ -143,7 +142,9 @@ public class FileUploadController {
 
         resultService.createResultFromColumnsLength(cleanedList, file, backlog);
         Result result = resultService.assignDataToResult(cleanedList, file, fileEntity);
+        resultRepository.save(result);
 
+        result = resultService.assignNgPerMl(cleanedList,file);
         resultRepository.save(result);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();

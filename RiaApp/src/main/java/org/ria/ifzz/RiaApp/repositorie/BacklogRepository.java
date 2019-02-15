@@ -9,8 +9,4 @@ public interface BacklogRepository extends CrudRepository<Backlog, Long> {
 
     @Override
     Iterable<Backlog> findAll();
-
-    Backlog getById(Long id);
-
-    Backlog findByDataId(String id);
 }
