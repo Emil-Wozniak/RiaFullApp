@@ -15,8 +15,10 @@ public class CountResultUtil {
     private Double nonSpecificBinding;
     private Double binding;
     private List<Double> curve;
+    private List<Double> standardsCMP;
 
     ResultMath resultMath = new ResultMath();
+
 
     public List<Double> setControlCurveCCMP(List<Double> controlCurve) {
         curve = new ArrayList<>();
@@ -34,7 +36,6 @@ public class CountResultUtil {
             double n2 = 0;
             double n3 = 0;
 
-            // set Total
             for (int i = 0; i < curve.size(); i++) {
                 t1 = curve.get(0);
                 t2 = curve.get(1);
@@ -42,10 +43,11 @@ public class CountResultUtil {
                 zero2 = curve.get(3);
                 zero3 = curve.get(4);
                 n1 = curve.get(5);
-                n2 = curve.get(7);
-                n3 = curve.get(6);
+                n2 = curve.get(6);
+                n3 = curve.get(7);
             }
 
+            // set Total ZERO NSBN
             total = resultMath.AVERAGE_TWO(t1, t2);
             zero = resultMath.AVERAGE_THREE(zero1, zero2, zero3);
             nonSpecificBinding = resultMath.AVERAGE_THREE(n1, n3, n2);
@@ -60,27 +62,17 @@ public class CountResultUtil {
 
 
     //tableC && tableG -> Control Curve CCMP
-    public List<Double> addStandardCCP() {
-        List<Double> result = new ArrayList<>();
-        if (result.isEmpty()) {
-            result.add(402.0);
-            result.add(392.0);
-            result.add(358.0);
-            result.add(349.0);
-            result.add(289.0);
-            result.add(299.0);
-            result.add(208.0);
-            result.add(200.0);
-            result.add(144.0);
-            result.add(155.0);
-            result.add(9.0);
-            result.add(104.0);
-            result.add(67.0);
-            result.add(73.0);
+    public List<Double> setStandardsCMP(List<Double> controlCurve) {
+        standardsCMP = new ArrayList<>();
+        if (!controlCurve.isEmpty()) {
+            for (int i = 8; i< controlCurve.size();i++) {
+                double point =controlCurve.get(i);
+                standardsCMP.add(point);
+            }
         }
-        System.out.println("Standard CCMP:");
-        result.forEach(System.out::println);
-        return result;
+        System.out.println("Standard CMP:");
+        standardsCMP.forEach(System.out::println);
+        return standardsCMP;
     }
 
     //table M == table I
@@ -104,7 +96,7 @@ public class CountResultUtil {
     Bg = O
      */
     public List<Double> percentN_Per_O() {
-        List<Double> subtraction = resultMath.subtractTablesElement(addStandardCCP(), doseLog(CORTISOL_PATTERN));
+        List<Double> subtraction = resultMath.subtractTablesElement(setStandardsCMP(standardsCMP), doseLog(CORTISOL_PATTERN));
         List<Double> multiplication = resultMath.multiplyList(100.0, subtraction);
         List<Double> result = resultMath.divideTableElements(binding, multiplication); // %Bo-Bg
         return result;

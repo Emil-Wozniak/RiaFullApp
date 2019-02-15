@@ -146,9 +146,7 @@ public class ResultService {
         }
 
         countResultUtil.setControlCurveCCMP(curve);
-
-        // List for Totals, NSBNs and ZEROs
-        System.out.println("Curve points:");
+        countResultUtil.setStandardsCMP(curve);
 
         return result;
     }
