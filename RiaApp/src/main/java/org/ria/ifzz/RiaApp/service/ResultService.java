@@ -145,8 +145,9 @@ public class ResultService {
             throw new CurveException("\nFile " + file.getOriginalFilename() + " doesn't have a proper size; \nIt must contain at least 24 line for curve and 2 line of results;\n" + exception.getCause());
         }
 
-        countResultUtil.setControlCurveCCMP(curve);
+        countResultUtil.setControlCurveCMP(curve);
         countResultUtil.setStandardsCMP(curve);
+        countResultUtil.bindingPercent();
 
         return result;
     }
@@ -154,7 +155,7 @@ public class ResultService {
 
     public String setFileName(MultipartFile file) {
         String fileName = file.getOriginalFilename();
-        fileName.replace(".txt", "");
+        fileName.replace(".txt", "").toString();
         return fileName;
     }
 }

@@ -36,7 +36,7 @@ public class ResultMath {
         Double sub;
         Double value;
         Double result;
-//        System.out.println("S:" + subtrahend.size() + " | V: " + values.size());
+        System.out.println("\nSubtract Tables Element\nS:" + subtrahend.size() + " | V: " + values.size());
         List<Double> results = new ArrayList<>();
         for (int i =0; i<subtrahend.size(); i++) {
             sub = subtrahend.get(i);
@@ -44,7 +44,7 @@ public class ResultMath {
             result = sub - value;
             results.add(result);
         }
-//        results.forEach(System.out::println);
+        results.forEach(System.out::println);
         return results;
     }
 
@@ -125,7 +125,7 @@ public class ResultMath {
     }
 
     public  List<Double> multiplyList(Double multiplier, List<Double> values) {
-        System.out.println("multiplyList:");
+        System.out.println("\nMultiply List:");
         Double number = 0.0;
         List<Double> newList= new ArrayList<>();
         for (int i = 0; i < values.size(); i++) {

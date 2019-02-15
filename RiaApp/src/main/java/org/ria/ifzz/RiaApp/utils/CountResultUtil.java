@@ -5,8 +5,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.ria.ifzz.RiaApp.domain.HormonesPattern.CORTISOL_PATTERN;
-
 @Service
 public class CountResultUtil {
 
@@ -16,17 +14,19 @@ public class CountResultUtil {
     private Double binding;
     private List<Double> curve;
     private List<Double> standardsCMP;
+    private List<Double> logDoseList;
 
     ResultMath resultMath = new ResultMath();
 
-
-    public List<Double> setControlCurveCCMP(List<Double> controlCurve) {
+    /**
+     * @param controlCurve CCMP results List
+     * @return List which represents first 8 points of Control Curve (T, N, O)
+     * and average results of total, zero and nonSpecificBinding
+     */
+    public List<Double> setControlCurveCMP(List<Double> controlCurve) {
         curve = new ArrayList<>();
         if (!controlCurve.isEmpty()) {
-            for (double point : controlCurve) {
-                curve.add(point);
-                System.out.println(point);
-            }
+            curve.addAll(controlCurve);
             double t1 = 0;
             double t2 = 0;
             double zero1 = 0;
@@ -36,7 +36,7 @@ public class CountResultUtil {
             double n2 = 0;
             double n3 = 0;
 
-            for (int i = 0; i < curve.size(); i++) {
+            for (int i = 0; i < 8; i++) {
                 t1 = curve.get(0);
                 t2 = curve.get(1);
                 zero1 = curve.get(2);
@@ -52,6 +52,7 @@ public class CountResultUtil {
             zero = resultMath.AVERAGE_THREE(zero1, zero2, zero3);
             nonSpecificBinding = resultMath.AVERAGE_THREE(n1, n3, n2);
 
+            // J18 = I18 - I16
             binding = nonSpecificBinding - zero;
             System.out.println("Curve:");
             curve.forEach(System.out::println);
@@ -62,32 +63,40 @@ public class CountResultUtil {
 
 
     //tableC && tableG -> Control Curve CCMP
+
+    /**
+     *
+     * @param controlCurve array of CMP of hormone standardized pattern e.g CORTISOL_PATTERN
+     * @return array of CMP of hormone standardized pattern e.g CORTISOL_PATTERN
+     */
     public List<Double> setStandardsCMP(List<Double> controlCurve) {
         standardsCMP = new ArrayList<>();
-        if (!controlCurve.isEmpty()) {
-            for (int i = 8; i< controlCurve.size();i++) {
-                double point =controlCurve.get(i);
+        if (standardsCMP.size() < 8) {
+            for (int i = 8; i < controlCurve.size()-2; i++) {
+                double point = controlCurve.get(i);
                 standardsCMP.add(point);
             }
         }
-        System.out.println("Standard CMP:");
+        System.out.println("\nStandard CMP: Size => "+ standardsCMP.size());
         standardsCMP.forEach(System.out::println);
         return standardsCMP;
     }
 
     //table M == table I
+    /**
+     *
+     * @param result array of hormone standardized pattern e.g CORTISOL_PATTERN
+     * @return Double List
+     */
     public List<Double> doseLog(double[] result) {
         List<Double> standardPattern = new ArrayList<>();
         System.out.println("Standard points:");
-        if (standardPattern.isEmpty()) {
-            for (double point : result) {
-                standardPattern.add(point);
-                System.out.println(point);
-            }
+        for (double point : result) {
+            standardPattern.add(point);
         }
-        List<Double> dose = resultMath.logarithmTable(standardPattern);
-        System.out.println("doseLog curve size: " + dose.size());
-        return dose;
+        logDoseList = resultMath.logarithmTable(standardPattern);
+        System.out.println("doseLog curve size: " + logDoseList.size());
+        return logDoseList;
     }
 
     /*
@@ -95,10 +104,12 @@ public class CountResultUtil {
     Bo = N
     Bg = O
      */
-    public List<Double> percentN_Per_O() {
-        List<Double> subtraction = resultMath.subtractTablesElement(setStandardsCMP(standardsCMP), doseLog(CORTISOL_PATTERN));
+    public List<Double> bindingPercent() {
+        List<Double> subtraction = resultMath.subtractTablesElement(standardsCMP, logDoseList);
         List<Double> multiplication = resultMath.multiplyList(100.0, subtraction);
         List<Double> result = resultMath.divideTableElements(binding, multiplication); // %Bo-Bg
+        System.out.println("Binding percent:");
+        result.forEach(System.out::println);
         return result;
     }
 
@@ -107,13 +118,12 @@ public class CountResultUtil {
     =(G23-$I$16)*100/$J$18
      */
     public List<Double> logitRealZero() {
-        List<Double> tableJ;
-        List<Double> subtractPercentNO = resultMath.subtractTable(100.0, percentN_Per_O());
+        List<Double> subtractPercentNO = resultMath.subtractTable(100.0, bindingPercent());
         System.out.println("subtractPercentNO size" + subtractPercentNO.size() + "\n\n");
-        List<Double> divideTable = resultMath.divisionTable(percentN_Per_O(), subtractPercentNO);
+        List<Double> divideTable = resultMath.divisionTable(bindingPercent(), subtractPercentNO);
         System.out.println("\n\ndivideTable:");
         divideTable.forEach(System.out::println);
-//        tableJ = resultMath.LOGARITHM_TABLES(percentN_Per_O(), 100,subtractPercentNO);
+//        tableJ = resultMath.LOGARITHM_TABLES(bindingPercent(), 100,subtractPercentNO);
 
         System.out.println("End logit RealZero\n\n");
 //        tableJ.forEach(System.out::println);
@@ -156,7 +166,7 @@ public class CountResultUtil {
 //        Double sum_productMJinN = resultMath.SUM_PRODUCT(doseLog(), logitRealZero());
 //
 //        countRegressionParameterB *= sum_productMJinN;
-//        System.out.println(" + (Log()dose + logitrealZero)" + sum_productMJinN);
+//        System.out.println(" + (Log()logDoseList + logitrealZero)" + sum_productMJinN);
 //
 //        Double sumJinN = resultMath.SUM(logitRealZero());
 //        countRegressionParameterB += sumJinN;
