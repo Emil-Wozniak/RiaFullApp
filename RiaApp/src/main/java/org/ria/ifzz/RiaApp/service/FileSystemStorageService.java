@@ -26,6 +26,8 @@ public class FileSystemStorageService implements StorageService {
 
     private final Path rootLocation;
     private final FileEntityRepository fileEntityRepository;
+
+
     @Autowired
     public FileSystemStorageService(StorageProperties properties, FileEntityRepository fileEntityRepository) {
         this.rootLocation = Paths.get(properties.getLocation());
@@ -51,7 +53,7 @@ public class FileSystemStorageService implements StorageService {
             }
         }
         catch (IOException e) {
-            throw new StorageException("Failed to store file " + filename, e);
+            throw new StorageException("Failed to store file " + filename);
         }
     }
 
@@ -79,7 +81,7 @@ public class FileSystemStorageService implements StorageService {
             }
         }
         catch (MalformedURLException e) {
-            throw new StorageFileNotFoundException("Could not read file: " + filename, e);
+            throw new StorageFileNotFoundException("Could not read file: " + filename);
         }
     }
 
@@ -105,7 +107,7 @@ public class FileSystemStorageService implements StorageService {
             Files.createDirectories(rootLocation);
         }
         catch (IOException exception) {
-            throw new StorageException("Could not initialize storage", exception);
+            throw new StorageException("Could not initialize storage");
         }
     }
 }

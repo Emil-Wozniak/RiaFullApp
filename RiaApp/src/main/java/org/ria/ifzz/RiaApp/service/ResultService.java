@@ -3,7 +3,7 @@ package org.ria.ifzz.RiaApp.service;
 import org.ria.ifzz.RiaApp.domain.Backlog;
 import org.ria.ifzz.RiaApp.domain.FileEntity;
 import org.ria.ifzz.RiaApp.domain.Result;
-import org.ria.ifzz.RiaApp.exception.StorageException;
+import org.ria.ifzz.RiaApp.exception.CurveException;
 import org.ria.ifzz.RiaApp.repositorie.ResultRepository;
 import org.ria.ifzz.RiaApp.utils.CountResultUtil;
 import org.ria.ifzz.RiaApp.utils.CustomFileReader;
@@ -57,8 +57,7 @@ public class ResultService {
      * @param file
      * @return Result entities
      */
-    public Result createResultFromColumnsLength(List<String> list, @NotNull MultipartFile file, Backlog backlog) {
-
+    public Result setResultFromColumnsLength(List<String> list, @NotNull MultipartFile file, Backlog backlog) {
         Result result = null;
 
         for (String line : list) {
@@ -127,28 +126,33 @@ public class ResultService {
         return result;
     }
 
-    public Result assignNgPerMl(List<String> list, @NotNull MultipartFile file) {
+    public Result assignNgPerMl(@NotNull MultipartFile file) {
 
         Result result = new Result();
         List<Double> curve = new ArrayList<>();
-        double[] controlCurve;
-        double[] standardsCurve;
 
+        // get standard pattern
         countResultUtil.doseLog(CORTISOL_PATTERN);
+
+        // get all results of control curve (Totals, ZEROs, NSBNs) + control points (t1 + t2)
         try {
-            for (int i = 1; i < 9; i++) {
+            for (int i = 1; i < 25; i++) {
                 result = resultRepository.findByFileName("row_" + i + "_" + setFileName(file));
                 double point = result.getCcpm();
                 curve.add(point);
             }
         } catch (Exception exception) {
-            throw new StorageException("File" + file.getOriginalFilename() + " doesn't contain a proper size; \n" + exception.getMessage());
+            throw new CurveException("\nFile " + file.getOriginalFilename() + " doesn't have a proper size; \nIt must contain at least 24 line for curve and 2 line of results;\n" + exception.getCause());
         }
-        System.out.println("Find result:");
-        curve.forEach(System.out::println);
+
+        countResultUtil.setControlCurveCCMP(curve);
+
+        // List for Totals, NSBNs and ZEROs
+        System.out.println("Curve points:");
 
         return result;
     }
+
 
     public String setFileName(MultipartFile file) {
         String fileName = file.getOriginalFilename();

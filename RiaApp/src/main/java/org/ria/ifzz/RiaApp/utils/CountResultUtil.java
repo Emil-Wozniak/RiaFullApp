@@ -7,34 +7,56 @@ import java.util.List;
 
 import static org.ria.ifzz.RiaApp.domain.HormonesPattern.CORTISOL_PATTERN;
 
-//@Data
 @Service
 public class CountResultUtil {
 
-    public CountResultUtil() {
-    }
+    private Double total;
+    private Double zero;
+    private Double nonSpecificBinding;
+    private Double binding;
+    private List<Double> curve;
 
     ResultMath resultMath = new ResultMath();
 
-    public List<Double> setControlCurveCCMP() {
-        List<Double> result =new ArrayList<>();
-        if (result.isEmpty()) {
-            result.add(2400.0);  // T
-            result.add(2300.0);  // T
-            result.add(23.0);  // Bg
-            result.add(23.0);  // Bg
-            result.add(23.0);  // Bg
-            result.add(400.0);  // Bo
-            result.add(400.0);  // Bo
-            result.add(400.0);  // Bo
-        }
-        return result;
-    }
+    public List<Double> setControlCurveCCMP(List<Double> controlCurve) {
+        curve = new ArrayList<>();
+        if (!controlCurve.isEmpty()) {
+            for (double point : controlCurve) {
+                curve.add(point);
+                System.out.println(point);
+            }
+            double t1 = 0;
+            double t2 = 0;
+            double zero1 = 0;
+            double zero2 = 0;
+            double zero3 = 0;
+            double n1 = 0;
+            double n2 = 0;
+            double n3 = 0;
 
-    private Double total = resultMath.AVERAGE_TWO(setControlCurveCCMP().get(0), setControlCurveCCMP().get(1));
-    private Double zero = resultMath.AVERAGE_THREE(setControlCurveCCMP().get(2), setControlCurveCCMP().get(4), setControlCurveCCMP().get(3));
-    private Double nonSpecificBinding = resultMath.AVERAGE_THREE(setControlCurveCCMP().get(5), setControlCurveCCMP().get(7), setControlCurveCCMP().get(6));
-    private Double binding = nonSpecificBinding - zero;
+            // set Total
+            for (int i = 0; i < curve.size(); i++) {
+                t1 = curve.get(0);
+                t2 = curve.get(1);
+                zero1 = curve.get(2);
+                zero2 = curve.get(3);
+                zero3 = curve.get(4);
+                n1 = curve.get(5);
+                n2 = curve.get(7);
+                n3 = curve.get(6);
+            }
+
+            total = resultMath.AVERAGE_TWO(t1, t2);
+            zero = resultMath.AVERAGE_THREE(zero1, zero2, zero3);
+            nonSpecificBinding = resultMath.AVERAGE_THREE(n1, n3, n2);
+
+            binding = nonSpecificBinding - zero;
+            System.out.println("Curve:");
+            curve.forEach(System.out::println);
+            System.out.println("T: " + total + " | N: " + nonSpecificBinding + " | O: " + zero + " >>> N - O = " + binding);
+        }
+        return curve;
+    }
 
 
     //tableC && tableG -> Control Curve CCMP
@@ -66,7 +88,7 @@ public class CountResultUtil {
         List<Double> standardPattern = new ArrayList<>();
         System.out.println("Standard points:");
         if (standardPattern.isEmpty()) {
-            for (double point: result) {
+            for (double point : result) {
                 standardPattern.add(point);
                 System.out.println(point);
             }

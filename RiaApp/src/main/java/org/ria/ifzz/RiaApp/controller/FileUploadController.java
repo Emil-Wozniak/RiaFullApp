@@ -8,6 +8,7 @@ import org.ria.ifzz.RiaApp.repositorie.FileEntityRepository;
 import org.ria.ifzz.RiaApp.repositorie.ResultRepository;
 import org.ria.ifzz.RiaApp.service.ResultService;
 import org.ria.ifzz.RiaApp.service.StorageService;
+import org.ria.ifzz.RiaApp.utils.CustomFileReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -116,15 +117,16 @@ public class FileUploadController {
                                                  RedirectAttributes redirectAttributes) throws IOException {
 
         FileEntity fileEntity = new FileEntity(file.getOriginalFilename(), file.getContentType(),
-                file.getBytes() );
+                file.getBytes());
 
+        //TODO handle to not accept duplicates
         storageService.store(file);
 
         redirectAttributes.addFlashAttribute("message",
                 "You successfully uploaded " + file.getOriginalFilename() + "!");
 
         fileEntityRepository.save(fileEntity);
-        fileEntity.setDataId(fileEntity.getFileName()+"_"+fileEntity.getId());
+        fileEntity.setDataId(fileEntity.getFileName() + "_" + fileEntity.getId());
         fileEntityRepository.save(fileEntity);
 
         Backlog backlog = new Backlog();
@@ -140,11 +142,11 @@ public class FileUploadController {
 
         List<String> cleanedList = resultService.getFileData(file);
 
-        resultService.createResultFromColumnsLength(cleanedList, file, backlog);
+        resultService.setResultFromColumnsLength(cleanedList, file, backlog);
         Result result = resultService.assignDataToResult(cleanedList, file, fileEntity);
         resultRepository.save(result);
 
-        result = resultService.assignNgPerMl(cleanedList,file);
+        result = resultService.assignNgPerMl(file);
         resultRepository.save(result);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();

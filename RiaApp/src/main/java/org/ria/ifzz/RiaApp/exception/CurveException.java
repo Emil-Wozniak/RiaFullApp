@@ -4,10 +4,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.BAD_REQUEST)
-public class StorageException extends RuntimeException {
+public class CurveException extends StorageException {
 
-    public StorageException(String message) {
+    public CurveException(String message) {
         super(message);
     }
-
 }
