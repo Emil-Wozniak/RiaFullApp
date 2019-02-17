@@ -148,7 +148,10 @@ public class ResultService {
         countResultUtil.setControlCurveCMP(curve);
         countResultUtil.setStandardsCMP(curve);
         countResultUtil.bindingPercent();
+        countResultUtil.logitRealZero();
 
+        countResultUtil.countRegressionParameterB();
+        countResultUtil.countRegressionParameterA();
         return result;
     }
 

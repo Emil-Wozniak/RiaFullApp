@@ -4,43 +4,41 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
 
 public class ResultMath {
 
-    public Double AVERAGE_TWO(Double first, Double second) {
-        return (first+ second) / 2;
+    public double count(List<Double> values) {
+        System.out.println("values.size: " + values.size());
+        return values.size();
     }
 
-    public  double AVERAGE_THREE(double first, double second, double third) {
-       double result = (first+second+third) / 3 ;
-        System.out.println("AVERAGE_THREE: " + result);
+    public Double averageTwo(Double first, Double second) {
+        return (first + second) / 2;
+    }
+
+    public double averageThree(double first, double second, double third) {
+        double result = (first + second + third) / 3;
+        System.out.println("averageThree: " + result);
         return result;
     }
 
-    public  Double SUBTRACT_VALUE(Double subtrahend, Double subtractValue) {
-        return subtractValue - subtrahend;
-    }
-
-    public  List<Double> subtractTable(Double subtrahend, List<Double> values) {
+    public List<Double> subtractTableElements(Double subtrahend, List<Double> values) {
         List<Double> result = new ArrayList<>();
         for (Double value : values) {
-            result.add(value - subtrahend);
+            result.add(subtrahend - value);
         }
-        System.out.println("subtractTable: " +result.size());
+        System.out.println("subtractTableElements: ");
         result.forEach(System.out::println);
         return result;
     }
 
-    public  List<Double> subtractTablesElement(List<Double> subtrahend, List<Double> values) {
-//        System.out.println("subtractTablesElement:");
+    public List<Double> subtractTablesElement(List<Double> subtrahend,  double value) {
         Double sub;
-        Double value;
         Double result;
-        System.out.println("\nSubtract Tables Element\nS:" + subtrahend.size() + " | V: " + values.size());
         List<Double> results = new ArrayList<>();
-        for (int i =0; i<subtrahend.size(); i++) {
+        for (int i = 0; i < subtrahend.size(); i++) {
             sub = subtrahend.get(i);
-            value = values.get(i);
             result = sub - value;
             results.add(result);
         }
@@ -48,48 +46,38 @@ public class ResultMath {
         return results;
     }
 
-    public  List<Double> divideTableElements(double factor, List<Double> multiplier) {
+    public List<Double> divideTableElements(double factor, List<Double> values) {
 
         double product;
         List<Double> productTable = new ArrayList<>();
-        for (int i = 0; i < multiplier.size(); i++) {
+        for (int i = 0; i < values.size(); i++) {
 
-            product = multiplier.get(i) / factor;
+            product = values.get(i) / factor;
             productTable.add(product);
-//            System.out.println("\n"+i+")");
-//            productTable.forEach(System.out::println);
         }
-//        System.out.println("\nDIVISION_TABLE:");
+        System.out.println("\ndivideTableElements:");
+        productTable.forEach(System.out::println);
         return productTable;
     }
 
-    public  List<Double> logarithmTable(List<Double> logarithmTable) {
-        List<Double> newTable = logarithmTable.stream().map(tableElement -> Math.log(tableElement)).collect(Collectors.toList());
-        System.out.println("\nLogarithmTable:");
-        newTable.forEach(System.out::println);
-        return newTable;
+    public List<Double> logarithmTable(List<Double> logarithmTable) {
+        List<Double> resultTable = new ArrayList<>();
+        resultTable = logarithmTable.stream().map(Math::log10).collect(Collectors.toList());
+        System.out.println("\nLogarithm Table:");
+        resultTable.forEach(System.out::println);
+        return resultTable;
     }
 
-    public  List<Double> LOGARITHM_TABLES(List<Double> divisionTable, Double subtrahend, List<Double> subtractTable) {
+    public List<Double> logarithmTables(List<Double> divisionTable, List<Double> subtractTable) {
 
         List<Double> productTable = new ArrayList<>();
         List<Double> subtractNumbers = new ArrayList<>();
         List<Double> logarithmicNumbers = new ArrayList<>();
 
-//        System.out.println("\nSIZE subtractTable: " + subtractTable.size());
-        for (int i = 1; i < subtractTable.size(); i++) {
-            Double product;
-            product = SUBTRACT_VALUE(subtrahend, subtractTable.get(i));
-            subtractNumbers.add(product);
-        }
-
-//        System.out.println("SIZE divisionTable: " + divisionTable.size());
         for (int i = 1; i < divisionTable.size(); i++) {
             logarithmicNumbers = divisionTable(divisionTable, subtractNumbers);
-//            logarithmicNumbers.forEach(System.out::println);
         }
 
-//        System.out.println("SIZE logarithmicNumbers: " + logarithmicNumbers.size());
         for (int i = 0; i < logarithmicNumbers.size(); i++) {
             Double getLoc = logarithmicNumbers.get(i);
             Double logLoc = Math.log(getLoc);
@@ -99,88 +87,84 @@ public class ResultMath {
         return productTable;
     }
 
-    public  List<Double> divisionTable(List<Double> factor, List<Double> multiplier) {
+    public List<Double> divisionTable(List<Double> factor, List<Double> values) {
 
         double product;
-        System.out.println("f: " + factor.size() + " | m: "+ multiplier.size());
         List<Double> productTable = new ArrayList<>();
         for (int i = 0; i < factor.size(); i++) {
 
-            product = factor.get(i) / multiplier.get(i);
+            product = factor.get(i) / values.get(i);
             productTable.add(product);
-//            System.out.println("\n"+i+")");
-//            productTable.forEach(System.out::println);
         }
-//        System.out.println("\nDIVISION_TABLE:");
-
+        System.out.println("\nDivision Table:");
+        productTable.forEach(System.out::println);
         return productTable;
     }
 
-    public  Double MULTIPLY(double multiplier, List<Double> values) {
-        Double result = 0.0;
-
-        for (Double value : values)
-            result = value * multiplier;
+    public List<Double> multiply(List<Double>  multiplier, List<Double> values) {
+        List<Double>  result = new ArrayList<>();
+        Double first = 0.0;
+        Double second = 0.0;
+        for (int i = 0; i < values.size(); i++) {
+            first = values.get(i);
+            second = multiplier.get(i);
+            Double sum = first * second;
+            result.add(sum);
+        }
         return result;
     }
 
-    public  List<Double> multiplyList(Double multiplier, List<Double> values) {
+    public List<Double> multiplyList(Double multiplier, List<Double> values) {
         System.out.println("\nMultiply List:");
         Double number = 0.0;
-        List<Double> newList= new ArrayList<>();
+        List<Double> newList = new ArrayList<>();
         for (int i = 0; i < values.size(); i++) {
             number = values.get(i);
-            BigDecimal newNumber =  BigDecimal.valueOf(multiplier).multiply(BigDecimal.valueOf(number));
+            BigDecimal newNumber = BigDecimal.valueOf(multiplier).multiply(BigDecimal.valueOf(number));
 
             Double finalNumber = Double.parseDouble(String.valueOf(newNumber));
             newList.add(finalNumber);
         }
-//        values.forEach(value -> MULTIPLY(multiplier, values));
         newList.forEach(System.out::println);
-        System.out.println("====");
         return newList;
     }
 
 
-    public  double SUM(List<Double> values) {
-        Double result = 0.0;
+    public double sum(List<Double> values) {
+        double result = 0.0;
+
+        double[] target = new double[values.size()];
         for (int i = 0; i < values.size(); i++) {
-            result += values.get(i);
+            target[i] = values.get(i).doubleValue();
         }
-//        System.out.println("SUM: " + result);
+
+        result = DoubleStream.of(target).sum();
+        System.out.println("Sum result: " + result);
         return result;
     }
 
-    public  double COUNT(List<Double> values) {
-//        System.out.println("values.length: " + values.length);
-        return values.size();
-    }
+    public Double sumProduct(List<Double> factor, List<Double> multiplier) {
 
-    public  Double SUM_PRODUCT(List<Double> factor, List<Double> multiplier) {
+        Double product = 0.0;
+        List<Double> multiplyTable = new ArrayList<>();
+        multiplyTable =multiply(multiplier,factor);
 
-        Double product;
-        List<Double> productTable = new ArrayList<>();
-//        System.out.println("SIZE multiplier: " + multiplier.size());
-//        System.out.println("SIZE factor: " + factor.size());
-        for (int i = 1; i < factor.size(); i++) {
-
-            product = factor.get(i) * multiplier.get(i);
-//            System.out.println(product);
-            productTable.add(product);
-        }
-
-        product = SUM(productTable);
-//        System.out.println(product);
+        product = sum(multiplyTable);
+        System.out.println("sumProduct: " + product);
         return product;
     }
 
-    public Double SUMSQ(List<Double> values) {
-//        System.out.println("SUMSQ:");
-        double result = 0;
+    public Double sumsq(List<Double> values) {
+        double result = 0.0;
+        List<Double> powerValues = new ArrayList<>();
+
         for (double value : values) {
             result = Math.pow(value, 2);
+            powerValues.add(result);
         }
-//        System.out.println(result);
+        result = sum(powerValues);
+
+        System.out.println("sumsq: " + result);
         return result;
     }
 

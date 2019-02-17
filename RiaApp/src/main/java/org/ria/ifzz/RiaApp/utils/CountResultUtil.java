@@ -15,6 +15,9 @@ public class CountResultUtil {
     private List<Double> curve;
     private List<Double> standardsCMP;
     private List<Double> logDoseList;
+    private List<Double> bindingPercent;
+    private List<Double> logitRealZeroTable;
+    private Double countRegressionParameterB;
 
     ResultMath resultMath = new ResultMath();
 
@@ -48,9 +51,9 @@ public class CountResultUtil {
             }
 
             // set Total ZERO NSBN
-            total = resultMath.AVERAGE_TWO(t1, t2);
-            zero = resultMath.AVERAGE_THREE(zero1, zero2, zero3);
-            nonSpecificBinding = resultMath.AVERAGE_THREE(n1, n3, n2);
+            total = resultMath.averageTwo(t1, t2);
+            zero = resultMath.averageThree(zero1, zero2, zero3);
+            nonSpecificBinding = resultMath.averageThree(n1, n3, n2);
 
             // J18 = I18 - I16
             binding = nonSpecificBinding - zero;
@@ -65,74 +68,143 @@ public class CountResultUtil {
     //tableC && tableG -> Control Curve CCMP
 
     /**
-     *
      * @param controlCurve array of CMP of hormone standardized pattern e.g CORTISOL_PATTERN
      * @return array of CMP of hormone standardized pattern e.g CORTISOL_PATTERN
      */
     public List<Double> setStandardsCMP(List<Double> controlCurve) {
         standardsCMP = new ArrayList<>();
         if (standardsCMP.size() < 8) {
-            for (int i = 8; i < controlCurve.size()-2; i++) {
+            for (int i = 8; i < controlCurve.size() - 2; i++) {
                 double point = controlCurve.get(i);
                 standardsCMP.add(point);
             }
         }
-        System.out.println("\nStandard CMP: Size => "+ standardsCMP.size());
+        System.out.println("\nStandard CMP: ");
         standardsCMP.forEach(System.out::println);
         return standardsCMP;
     }
 
     //table M == table I
+
     /**
+     * take double array which contains standardized pattern and
+     * performs a logarithmic function for each elements of the array
      *
      * @param result array of hormone standardized pattern e.g CORTISOL_PATTERN
      * @return Double List
      */
     public List<Double> doseLog(double[] result) {
         List<Double> standardPattern = new ArrayList<>();
-        System.out.println("Standard points:");
+        System.out.println("\n\nStandard points:" + "\n======================================================");
         for (double point : result) {
             standardPattern.add(point);
         }
         logDoseList = resultMath.logarithmTable(standardPattern);
-        System.out.println("doseLog curve size: " + logDoseList.size());
         return logDoseList;
     }
 
-    /*
-    Table H %Bo-Bg
-    Bo = N
-    Bg = O
+    // Table H == %(N-O)
+   // =(G23-$I$16)*100/$J$18
+
+    /**
+     * subtracts each value from standards CMP List by each value result from doseLog(),
+     * then multiply each result by 100, divides those by binding
+     *
+     * @return
      */
     public List<Double> bindingPercent() {
-        List<Double> subtraction = resultMath.subtractTablesElement(standardsCMP, logDoseList);
+        System.out.println("\n\nbinding percent" + "\n======================================================");
+        List<Double> subtraction = resultMath.subtractTablesElement(standardsCMP, zero);
         List<Double> multiplication = resultMath.multiplyList(100.0, subtraction);
         List<Double> result = resultMath.divideTableElements(binding, multiplication); // %Bo-Bg
-        System.out.println("Binding percent:");
+        System.out.println("\nBinding percent:");
         result.forEach(System.out::println);
-        return result;
+        bindingPercent = result;
+        return bindingPercent;
     }
 
     /*
     Table J
-    =(G23-$I$16)*100/$J$18
+    =LOG(H23/(100-H23))
      */
     public List<Double> logitRealZero() {
-        List<Double> subtractPercentNO = resultMath.subtractTable(100.0, bindingPercent());
-        System.out.println("subtractPercentNO size" + subtractPercentNO.size() + "\n\n");
-        List<Double> divideTable = resultMath.divisionTable(bindingPercent(), subtractPercentNO);
-        System.out.println("\n\ndivideTable:");
-        divideTable.forEach(System.out::println);
-//        tableJ = resultMath.LOGARITHM_TABLES(bindingPercent(), 100,subtractPercentNO);
-
-        System.out.println("End logit RealZero\n\n");
-//        tableJ.forEach(System.out::println);
-        return divideTable;
+        System.out.println("\n\nLogit Real Zero:" + "\n======================================================");
+        List<Double> subtractPercentNO = resultMath.subtractTableElements(100.0, bindingPercent);
+        List<Double> divideTable = resultMath.divisionTable(bindingPercent, subtractPercentNO);
+        logitRealZeroTable = resultMath.logarithmTable(divideTable);
+        return logitRealZeroTable;
     }
 
+    /*
+    R19 == N20
+    var M25:M40 => logDose
+    var N25:N40 => logitRealZero
+    * = sum(N25:N40)
+    * / count(M25:M40)
+    * - N19 => countRegressionParameterB
+    * * sum(M25:M40)
+    * / count(M25:M40)
+    */
+    public Double countRegressionParameterA() {
+        System.out.println("\n\ncountRegressionParameterA:" +
+                "\n======================================================");
+        Double regressionParameterA;
+        regressionParameterA = resultMath.sum(logitRealZeroTable);
+        regressionParameterA /= resultMath.count(logDoseList);
+        regressionParameterA -= countRegressionParameterB;
+        regressionParameterA *= resultMath.sum(logDoseList);
+        regressionParameterA /= resultMath.count(logDoseList);
 
-//    private Double r20 = countRegressionParameterB();  // regression parameter b
-//
+        System.out.println(regressionParameterA);
+        return regressionParameterA;
+    }
+
+    /*
+    N19
+    var M25:M40 => logDose
+    var N25:N40 => logitRealZero
+    = (
+    * count(M25:M40)                    logDose
+    * *SUMPRODUCT(M25:M40;N25:N40)      logDose logitRealZero
+    * -sum(M25:M40)
+    * *sum(N25:N40)
+    * )
+    * /(
+    * count(M25:M40)
+    * *sumsq(M25:M40)
+    * -(sum(M25:M40)
+    * )
+    * ^2)
+     */
+    public Double countRegressionParameterB() {
+        System.out.println("\n\ncountRegressionParameterB:" +
+                "\n======================================================");
+        Double firstFactor;
+        Double secondFactor;
+        System.out.println("\nFirst factor");
+        firstFactor = resultMath.count(logDoseList);
+        firstFactor *= resultMath.sumProduct(logDoseList, logitRealZeroTable);
+        firstFactor -= resultMath.sum(logDoseList);
+        System.out.println("["+firstFactor + " * ");
+        firstFactor *= resultMath.sum(logitRealZeroTable);
+        firstFactor *= -1;
+        System.out.println("First " + firstFactor);
+
+        System.out.println("\nSecond factor");
+        secondFactor = resultMath.count(logDoseList);
+        secondFactor *= resultMath.sumsq(logDoseList);
+        Double sqr = resultMath.sum(logDoseList);
+        sqr = sqr *sqr;
+        secondFactor -=sqr;
+        System.out.println("Second "+secondFactor + "\n");
+
+        System.out.println("Math.pow: " + secondFactor);
+
+        countRegressionParameterB = firstFactor / secondFactor;
+        System.out.println("countRegressionParameterB result: " + countRegressionParameterB);
+        return countRegressionParameterB;
+    }
+
 //    public Double countResult(Double ccmp) {
 //        System.out.println("======================================================\nStep 1");
 //        Double log = Math.log((ccmp - zero) * 100 / binding / (100 - (ccmp - zero) * 100 / binding));
@@ -149,70 +221,5 @@ public class CountResultUtil {
 //    public double averageCountedResult(double countResult1, double countResult2) {
 //        return (countResult1 + countResult2) / 2;
 //    }
-
-    /*
-
-    N19
-    =(COUNT(M25:M40)*SUMPRODUCT(M25:M40;N25:N40)-SUM(M25:M40)*SUM(N25:N40))/(COUNT(M25:M40)*SUMSQ(M25:M40)-(SUM(M25:M40))^2)
-     */
-//    public Double countRegressionParameterB() {
-//        System.out.println("\n\ncountRegressionParameterB:\n======================================================");
-//        Double countRegressionParameterB;
-//        Double countMinN = resultMath.COUNT(doseLog());
-//        countRegressionParameterB = countMinN;
-//        System.out.println("doseLog:\n");
-//
-//        doseLog().forEach(System.out::println);
-//        Double sum_productMJinN = resultMath.SUM_PRODUCT(doseLog(), logitRealZero());
-//
-//        countRegressionParameterB *= sum_productMJinN;
-//        System.out.println(" + (Log()logDoseList + logitrealZero)" + sum_productMJinN);
-//
-//        Double sumJinN = resultMath.SUM(logitRealZero());
-//        countRegressionParameterB += sumJinN;
-//        System.out.println(" + SUM(logitRealZero()");
-//
-//        Double sumMinN = resultMath.SUM(doseLog());
-//        countRegressionParameterB -= sumMinN;
-//        System.out.println(" + Sum(doseLog()):");
-//
-//        countRegressionParameterB *= sumJinN;
-//        System.out.println(" + SUM(logitRealZero() 2");
-//
-//        Double sumsqInN = resultMath.SUMSQ(tableM);
-//        System.out.println(" + SUMSQ(doseLog)");
-//
-//        Double powerInN = Math.pow(resultMath.SUM(tableM), 2);
-//        System.out.println(" + power(* , 2)");
-//        countRegressionParameterB = countRegressionParameterB / (countMinN * sumsqInN - powerInN);
-//        System.out.println(countRegressionParameterB);
-//        return countRegressionParameterB;
-//    }
-
-    /*
-        R19 == N20
-        =SUM(N25:N40)/COUNT(M25:M40)-N19*SUM(M25:M40)/COUNT(M25:M40)
-        */
-//    public Double countRegressionParameterA() {
-//        System.out.println("\n\ncountRegressionParameterA:\n======================================================");
-//        Double regressionParameterA;
-//        regressionParameterA = resultMath.SUM(logitRealZero());
-//        System.out.println("====>\t\t\t|1");
-//        regressionParameterA = regressionParameterA / resultMath.COUNT(tableM);
-//        System.out.println("=========>\t\t|2");
-//        regressionParameterA = regressionParameterA - countRegressionParameterB();
-//        System.out.println("=============>\t|3");
-//        regressionParameterA = regressionParameterA * resultMath.SUM(tableM);
-//        System.out.println("==================>|4");
-//        System.out.println("-> rpa: " + regressionParameterA);
-//        System.out.println("-> cTM: " + resultMath.COUNT(tableM));
-//        regressionParameterA = regressionParameterA / resultMath.COUNT(tableM);
-//
-//
-//        System.out.println(regressionParameterA);
-//        return regressionParameterA;
-//    }
-
-
 }
 
