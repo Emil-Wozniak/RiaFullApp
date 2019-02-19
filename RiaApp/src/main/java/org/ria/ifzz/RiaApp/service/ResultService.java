@@ -148,7 +148,7 @@ public class ResultService {
         countResultUtil.setControlCurveCMP(curve);
         countResultUtil.setStandardsCMP(curve);
         countResultUtil.bindingPercent();
-        countResultUtil.logitRealZero();
+        countResultUtil.logarithmRealZero();
         countResultUtil.countRegressionParameterB();
         countResultUtil.countRegressionParameterA();
 
@@ -158,7 +158,7 @@ public class ResultService {
                 result = resultRepository.findByFileName("row_" + i + "_" + setFileName(file));
                 double point = result.getCcpm();
                 double counted = countResultUtil.countResult(point);
-                int index = i + 26;
+                int index = i;
                 System.out.println("nr: " + index + " counted: " + counted);
                 countedList.add(counted);
             }

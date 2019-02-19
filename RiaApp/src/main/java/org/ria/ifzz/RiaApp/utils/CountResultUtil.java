@@ -1,10 +1,12 @@
 package org.ria.ifzz.RiaApp.utils;
 
+import org.apache.commons.math3.util.Precision;
 import org.springframework.stereotype.Service;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CountResultUtil {
@@ -119,9 +121,10 @@ public class CountResultUtil {
         List<Double> subtraction = resultMath.subtractTablesElement(standardsCMP, zero);
         List<Double> multiplication = resultMath.multiplyList(100.0, subtraction);
         List<Double> result = resultMath.divideTableElements(binding, multiplication); // %Bo-Bg
+        List<Double> ceilTable = result.stream().map(element -> Math.ceil(element)).collect(Collectors.toList());
         System.out.println("\nBinding percent:");
-        result.forEach(System.out::println);
-        bindingPercent = result;
+        ceilTable.forEach(System.out::println);
+        bindingPercent = ceilTable;
         return bindingPercent;
     }
 
@@ -129,18 +132,21 @@ public class CountResultUtil {
     Table J
     =LOG(H23/(100-H23))
      */
-    public List<Double> logitRealZero() {
+    public List<Double> logarithmRealZero() {
         System.out.println("\n\nLogit Real Zero:" + "\n======================================================");
         List<Double> subtractPercentNO = resultMath.subtractTableElements(100.0, bindingPercent);
         List<Double> divideTable = resultMath.divisionTable(bindingPercent, subtractPercentNO);
-        logitRealZeroTable = resultMath.logarithmTable(divideTable);
+        List<Double> logTable = resultMath.logarithmTable(divideTable);
+        List<Double> rounded = resultMath.roundAvoid(logTable);
+        rounded.forEach(System.out::println);
+        logitRealZeroTable = rounded;
         return logitRealZeroTable;
     }
 
     /*
     R19 == N20
     var M25:M40 => logDose
-    var N25:N40 => logitRealZero
+    var N25:N40 => logarithmRealZero
     * = sum(N25:N40)
     * / count(M25:M40)
     * - N19 => regressionParameterB
@@ -150,11 +156,11 @@ public class CountResultUtil {
     public Double countRegressionParameterA() {
         System.out.println("\n\ncountRegressionParameterA:" +
                 "\n======================================================");
-        regressionParameterA = resultMath.sum(logitRealZeroTable);
-        regressionParameterA /= resultMath.count(logDoseList);
-        regressionParameterA -= regressionParameterB;
-        regressionParameterA *= resultMath.sum(logDoseList);
-        regressionParameterA /= resultMath.count(logDoseList);
+        Double sumLogRealZero = resultMath.sum(logitRealZeroTable);
+        Double countLogDose = resultMath.count(logDoseList);
+        Double sumLogDose = resultMath.sum(logDoseList);
+
+        regressionParameterA = sumLogRealZero / countLogDose - regressionParameterB * sumLogDose / countLogDose;
 
         System.out.println(regressionParameterA);
         return regressionParameterA;
@@ -163,83 +169,77 @@ public class CountResultUtil {
     /*
     N19
     var M25:M40 => logDose
-    var N25:N40 => logitRealZero
-    = (
-    * count(M25:M40)                    logDose
-    * *SUMPRODUCT(M25:M40;N25:N40)      logDose logitRealZero
-    * -sum(M25:M40)
-    * *sum(N25:N40)
+    var N25:N40 => logarithmRealZero
+    *
+    * =(
+    * COUNT(M25:M40)
+    * *SUMPRODUCT(M25:M40;N25:N40)
+    * -SUM(M25:M40)
+    * *SUM(N25:N40)
     * )
     * /(
-    * count(M25:M40)
-    * *sumsq(M25:M40)
-    * -(sum(M25:M40)
-    * )
-    * ^2)
+    * COUNT(M25:M40)
+    * *SUMSQ(M25:M40)
+    * -(SUM(M25:M40)
+    * )^2)
      */
     public Double countRegressionParameterB() {
         System.out.println("\n\nregressionParameterB:" +
                 "\n======================================================");
+
         Double firstFactor;
         Double secondFactor;
-        System.out.println("\nFirst factor");
-        firstFactor = resultMath.count(logDoseList);
-        firstFactor *= resultMath.sumProduct(logDoseList, logitRealZeroTable);
-        firstFactor -= resultMath.sum(logDoseList);
-        System.out.println("[" + firstFactor + " * ");
-        firstFactor *= resultMath.sum(logitRealZeroTable);
 
-        /* That interesting Excel return negative value when it divides two negative values */
-        firstFactor *= -1;
+        System.out.println("\nFirst factor");
+
+        Double logDoseCount = resultMath.count(logDoseList);
+        Double sum = resultMath.sumProduct(logDoseList, logitRealZeroTable);
+        Double precision = Precision.round(sum,0);
+        System.out.println(precision);
+        Double sumLogDose = resultMath.sum(logDoseList);
+        Double sumLogRealZero = resultMath.sum(logitRealZeroTable);
+
+        firstFactor = logDoseCount * precision - sumLogDose * sumLogRealZero;
         System.out.println("First " + firstFactor);
 
         System.out.println("\nSecond factor");
-        secondFactor = resultMath.count(logDoseList);
-        secondFactor *= resultMath.sumsq(logDoseList);
+        Double sumsqSecondFactor = resultMath.sumsq(logDoseList);
         Double sqr = resultMath.sum(logDoseList);
-        sqr = sqr * sqr;
-        secondFactor -= sqr;
+        sqr = Math.pow(sqr,2);
+        System.out.println("Sum logit floor:" + sqr);
+
+        secondFactor = logDoseCount * sumsqSecondFactor -sqr;
         System.out.println("Second " + secondFactor + "\n");
 
-        System.out.println("Power: " + secondFactor);
-
-        regressionParameterB = firstFactor / secondFactor;
+        Double resultSum =  firstFactor / secondFactor;
+        regressionParameterB = resultSum;
         System.out.println("regressionParameterB result: " + regressionParameterB);
         return regressionParameterB;
     }
 
     /*
     * = 10^
-    * (
-    * (
-    * LOG(
-    *
-    * FIRST PART:
-    * (B44-$I$16)
+    * ((
+    * LOG((B44-$I$16)
     * *100
     * /$J$18
-    *
     * /
-    *
-    * SECOND PART:
-    * (
-    * 100-(B44-$I$16)
+    * (100-(B44-$I$16)
     * *100
-    * /$J$18)
-    * )
-    *
+    * /$J$18))
     * -$R$19)
     * /$R$20)
      */
 
-    private static DecimalFormat decimalFormat = new DecimalFormat(".####");
-
-    public Double countResult(Double ccmp) {
+    public Double countResult(Double CMP) {
         System.out.println("\n\nCount Result:" +
                 "\n======================================================");
-        Double product = Math.log10((ccmp - zero) * 100 / binding / (100 - (ccmp - zero) * 100 / binding)) - regressionParameterA / regressionParameterB;
-        Double power = Math.pow(product, 10);
-        decimalFormat.format(power);
+        System.out.println("CMP: "+CMP);
+        Double firstPart = ((Math.log10((CMP - zero) * 100 / binding / (100 - (CMP - zero) * 100 / binding)) - regressionParameterA)/ regressionParameterB);
+        System.out.println("First part: "+ firstPart);
+        Double power = Math.pow(10,firstPart );
+        System.out.println(power);
+        power = Precision.round(power,2);
         return power;
     }
 

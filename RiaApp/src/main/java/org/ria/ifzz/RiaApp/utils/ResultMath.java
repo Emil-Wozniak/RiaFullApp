@@ -1,6 +1,9 @@
 package org.ria.ifzz.RiaApp.utils;
 
+import org.apache.commons.math3.util.Precision;
+
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,13 +17,17 @@ public class ResultMath {
     }
 
     public Double averageTwo(Double first, Double second) {
-        return (first + second) / 2;
+        double result = (first + second) / 2;
+        double ceil = Math.ceil(result);
+        return ceil;
     }
 
     public double averageThree(double first, double second, double third) {
         double result = (first + second + third) / 3;
-        System.out.println("averageThree: " + result);
-        return result;
+        Math.ceil(result);
+        double ceil = Math.ceil(result);
+        System.out.println("Average three: " + ceil);
+        return ceil;
     }
 
     public List<Double> subtractTableElements(Double subtrahend, List<Double> values) {
@@ -135,7 +142,7 @@ public class ResultMath {
 
         double[] target = new double[values.size()];
         for (int i = 0; i < values.size(); i++) {
-            target[i] = values.get(i).doubleValue();
+            target[i] = values.get(i);
         }
 
         result = DoubleStream.of(target).sum();
@@ -168,5 +175,13 @@ public class ResultMath {
         return result;
     }
 
+    public List<Double> roundAvoid(List<Double> values) {
+        List<Double> rounded = new ArrayList<>();
+        for (double value: values) {
+            Double converted = Precision.round(value, 2);
+            rounded.add(converted);
+        }
+        return rounded;
+    }
 }
 
