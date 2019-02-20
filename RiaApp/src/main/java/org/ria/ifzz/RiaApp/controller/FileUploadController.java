@@ -44,6 +44,7 @@ public class FileUploadController {
                                 ResultService resultService,
                                 BacklogRepository backlogRepository,
                                 ResultRepository resultRepository) {
+
         this.storageService = storageService;
         this.fileEntityRepository = fileEntityRepository;
         this.resultService = resultService;
@@ -146,7 +147,7 @@ public class FileUploadController {
         Result result = resultService.assignDataToResult(cleanedList, file, fileEntity);
         resultRepository.save(result);
 
-        result = resultService.assignNgPerMl(file);
+        result = resultService.assignNgPerMl(file, cleanedList);
         resultRepository.save(result);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();

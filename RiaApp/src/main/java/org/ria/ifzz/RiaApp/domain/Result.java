@@ -16,12 +16,12 @@ public class Result {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String samples;
+    private Integer samples;
     private String position;
     private Double ccpm;
     private String fileName;
     private String dataId;
-    private Double ngPerMl;
+    private Double ng;
 
     @JsonFormat(pattern = "yyyy-MM-dd' 'HH:mm:ss")
     @Column(updatable = false)

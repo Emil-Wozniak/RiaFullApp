@@ -16,6 +16,7 @@ const styles = theme => ({
   }
 });
 
+
 class Result extends Component {
   render() {
     const { result } = this.props;
@@ -24,10 +25,10 @@ class Result extends Component {
       <React.Fragment>
         <tbody>
           <tr>
-            <th scope="row"></th>
             <td> {result.samples}</td>
             <td>{result.position}</td>
             <td>{result.ccpm}</td>
+            <td>{result.ng}</td>
           </tr>
         </tbody>
       </React.Fragment>

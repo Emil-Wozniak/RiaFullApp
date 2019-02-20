@@ -119,14 +119,18 @@ public class ResultService {
             int index = i + 1;
             result = resultRepository.findByFileName("row_" + index+ "_" + setFileName(file));
             result.setDataId(fileId);
-            result.setSamples(Samples.get(i).toString());
+
+            String cleanedSamples = Samples.get(i).toString();
+            String replacedSamples = cleanedSamples.replace("Unk_", "");
+            Integer samplesInt = Integer.parseInt(replacedSamples);
+            result.setSamples(samplesInt);
             System.out.println(" \tResult samples value: " + result.getSamples());
         }
 
         return result;
     }
 
-    public Result assignNgPerMl(@NotNull MultipartFile file) {
+    public Result assignNgPerMl(@NotNull MultipartFile file, List<String> list) {
 
         Result result = new Result();
         List<Double> curve = new ArrayList<>();
@@ -154,13 +158,16 @@ public class ResultService {
 
         List<Double> countedList = new ArrayList<>();
         try {
-            for (int i = 26; i < 250; i++) {
+            for (int i = 26; i < list.size(); i++) {
                 result = resultRepository.findByFileName("row_" + i + "_" + setFileName(file));
                 double point = result.getCcpm();
                 double counted = countResultUtil.countResult(point);
-                int index = i;
-                System.out.println("nr: " + index + " counted: " + counted);
+                System.out.println("nr: " + i + " counted: " + counted);
                 countedList.add(counted);
+                if (Double.isNaN(counted)) {
+                    counted = 0.0;
+                }
+                result.setNg(counted);
             }
         } catch (Exception exception) {
             throw new CurveException("\nFile " + file.getOriginalFilename() + " doesn't have a proper size; \nIt must contain at least 24 line for curve and 2 line of results;\n" + exception.getCause());

@@ -230,7 +230,6 @@ public class CountResultUtil {
     * -$R$19)
     * /$R$20)
      */
-
     public Double countResult(Double CMP) {
         System.out.println("\n\nCount Result:" +
                 "\n======================================================");

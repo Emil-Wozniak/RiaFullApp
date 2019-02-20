@@ -3,25 +3,32 @@ import { Table } from "reactstrap";
 import Result from "../result/Result";
 
 class Backlog extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { results: [] };
+  }
+
   render() {
     const { results_prop } = this.props;
 
-    const results = results_prop.map(result => (
-      <Result key={result.id} result={result} />
-    ));
+    const results = results_prop.sort((a, b) => a.samples > b.samples).map((result, i) => 
+      <Result key={i} result={result} />
+    );
 
     return (
       <React.Fragment>
-        <Table striped>
+        <Table
+        striped>
           <thead>
             <tr>
-              <th></th>
-              <th>samples:</th>
+              <th>sample:</th>
               <th>position</th>
-              <th>CCMP:</th>
+              <th>CPM:</th>
+              <th>ng</th>
             </tr>
           </thead>
           {results}
+          
         </Table>
       </React.Fragment>
     );
