@@ -9,7 +9,6 @@ import Paper from "@material-ui/core/Paper";
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 import createPalette from "@material-ui/core/styles/createPalette";
 import * as color from "@material-ui/core/colors";
-
 import FileEntity from "./layout/fileEntity/FileEntity";
 
 var styles = theme => ({

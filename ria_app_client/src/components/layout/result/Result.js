@@ -16,10 +16,10 @@ const styles = theme => ({
   }
 });
 
-
 class Result extends Component {
   render() {
     const { result } = this.props;
+    const condition = result.ng === 0;
 
     return (
       <React.Fragment>
@@ -28,7 +28,9 @@ class Result extends Component {
             <td> {result.samples}</td>
             <td>{result.position}</td>
             <td>{result.ccpm}</td>
-            <td>{result.ng}</td>
+            <td className="mx-auto" style={{ backgroundColor: condition ? "#B00020" : "striped" }}>
+              {result.ng}
+            </td>
           </tr>
         </tbody>
       </React.Fragment>

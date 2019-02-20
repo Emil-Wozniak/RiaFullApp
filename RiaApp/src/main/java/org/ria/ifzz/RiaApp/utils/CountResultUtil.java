@@ -3,7 +3,6 @@ package org.ria.ifzz.RiaApp.utils;
 import org.apache.commons.math3.util.Precision;
 import org.springframework.stereotype.Service;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,6 +21,7 @@ public class CountResultUtil {
     private List<Double> logitRealZeroTable;
     private Double regressionParameterB;
     private Double regressionParameterA;
+
 
     ResultMath resultMath = new ResultMath();
 
@@ -78,7 +78,7 @@ public class CountResultUtil {
     public List<Double> setStandardsCMP(List<Double> controlCurve) {
         standardsCMP = new ArrayList<>();
         if (standardsCMP.size() < 8) {
-            for (int i = 8; i < controlCurve.size() - 2; i++) {
+            for (int i = 8; i < controlCurve.size() - 1; i++) {
                 double point = controlCurve.get(i);
                 standardsCMP.add(point);
             }

@@ -92,7 +92,7 @@ public class ResultService {
             List CCMP = customFileReader.getMatchingStrings(list, 3);
 
             int index = i + 1;
-            result = resultRepository.findByFileName("row_" + index+ "_" + setFileName(file));
+            result = resultRepository.findByFileName("row_" + index + "_" + setFileName(file));
 
             // convert String value of CCMP to Integer
             String ccmpString = CCMP.get(i).toString();
@@ -106,10 +106,38 @@ public class ResultService {
             List position = customFileReader.getMatchingStrings(list, 2);
 
             int index = i + 1;
-            result = resultRepository.findByFileName("row_" + index+ "_" + setFileName(file));
+            result = resultRepository.findByFileName("row_" + index + "_" + setFileName(file));
 
-            result.setPosition(position.get(i).toString());
-            System.out.println(" \tResult position value: " + result.getPosition());
+            if (i == 0 || i == 1) {
+                String preConvertedPosition = position.get(i).toString();
+                String converted = preConvertedPosition.replaceAll("A", "T");
+                String postConvert = converted.replaceAll("[0-9]","");
+                result.setPosition(postConvert);
+            } else if (i == 2 || i == 3 || i == 4){
+                String preConvertedPosition = position.get(i).toString();
+                String converted = preConvertedPosition.replaceAll("A", "O");
+                String postConvert = converted.replaceAll("[0-9]","");
+                result.setPosition(postConvert);
+            } else if (i == 5 || i == 6 || i == 7){
+                String preConvertedPosition = position.get(i).toString();
+                String converted = preConvertedPosition.replaceAll("[A-Z]", "N");
+                String postConvert = converted.replaceAll("[0-9]","");
+                result.setPosition(postConvert);
+            } else if (i > 7 && i< 20){
+                String preConvertedPosition = position.get(i).toString();
+                double point = CORTISOL_PATTERN[i-7];
+                String convert = preConvertedPosition.replaceAll("[0-9]","");
+                String postConvert = convert.replaceAll("[A-Z]", String.valueOf(point));
+                result.setPosition(postConvert);
+            } else if (i == 22 || i == 23){
+                String preConvertedPosition = position.get(i).toString();
+                String converted = preConvertedPosition.replaceAll("[A-Z]", "K");
+                String postConvert = converted.replaceAll("[0-9]","");
+                result.setPosition(postConvert);
+            }  else {
+                result.setPosition(position.get(i).toString());
+//                System.out.println(" \tResult position value: " + result.getPosition());
+            }
         }
 
         //Assign samples to Result
@@ -117,7 +145,7 @@ public class ResultService {
             List Samples = customFileReader.getMatchingStrings(list, 1);
 
             int index = i + 1;
-            result = resultRepository.findByFileName("row_" + index+ "_" + setFileName(file));
+            result = resultRepository.findByFileName("row_" + index + "_" + setFileName(file));
             result.setDataId(fileId);
 
             String cleanedSamples = Samples.get(i).toString();
@@ -140,7 +168,7 @@ public class ResultService {
 
         // get all results of control curve (Totals, ZEROs, NSBNs) + control points (t1 + t2)
         try {
-            for (int i = 1; i < 25; i++) {
+            for (int i = 1; i < 24; i++) {
                 result = resultRepository.findByFileName("row_" + i + "_" + setFileName(file));
                 double point = result.getCcpm();
                 curve.add(point);
@@ -158,7 +186,7 @@ public class ResultService {
 
         List<Double> countedList = new ArrayList<>();
         try {
-            for (int i = 26; i < list.size(); i++) {
+            for (int i = 25; i < list.size(); i++) {
                 result = resultRepository.findByFileName("row_" + i + "_" + setFileName(file));
                 double point = result.getCcpm();
                 double counted = countResultUtil.countResult(point);

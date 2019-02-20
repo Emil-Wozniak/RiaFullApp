@@ -19,4 +19,6 @@ public interface FileEntityRepository extends CrudRepository<FileEntity, Long> {
 
 
     FileEntity findByDataId(String dataId);
+
+    FileEntity findByFileName(String fileName);
 }

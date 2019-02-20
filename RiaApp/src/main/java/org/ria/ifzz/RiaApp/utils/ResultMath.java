@@ -154,7 +154,7 @@ public class ResultMath {
 
         Double product = 0.0;
         List<Double> multiplyTable = new ArrayList<>();
-        multiplyTable =multiply(multiplier,factor);
+        multiplyTable = multiply(multiplier,factor);
 
         product = sum(multiplyTable);
         System.out.println("sumProduct: " + product);

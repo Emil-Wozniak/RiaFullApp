@@ -1,6 +1,64 @@
 import React, { Component } from "react";
 import { Table } from "reactstrap";
 import Result from "../result/Result";
+import { withStyles } from "@material-ui/core/styles";
+import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
+import createPalette from "@material-ui/core/styles/createPalette";
+import * as color from "@material-ui/core/colors";
+import Paper from "@material-ui/core/Paper";
+
+var styles = theme => ({
+  root: {
+    flexGrow: 1
+  },
+  demo: {
+    height: 240
+  },
+  paper: {
+    padding: theme.spacing.unit * 2,
+    height: "100%",
+    color: theme.palette.text.secondary
+  },
+  control: {
+    padding: theme.spacing.unit * 2
+  }
+});
+
+const theme = styles = createMuiTheme({
+  palette: createPalette({
+    type: "light",
+    primary: color.purple,
+    secondary: color.green,
+    accent: color.grey,
+    error: color.red,
+    success: color.green,
+    inProgress: color.yellow
+  }),
+  typography: {
+    // Use the system font instead of the default Roboto font.
+    fontFamily: [
+      "-apple-system",
+      "BlinkMacSystemFont",
+      '"Segoe UI"',
+      "Roboto",
+      '"Helvetica Neue"',
+      "Arial",
+      "sans-serif",
+      '"Apple Color Emoji"',
+      '"Segoe UI Emoji"',
+      '"Segoe UI Symbol"'
+    ].join(",")
+  },
+  overrides: {
+    MuiButton: {
+      // Name of the component ⚛️ / style sheet
+      text: {
+        // Name of the rule
+        color: "white" // Some CSS
+      }
+    }
+  }
+});
 
 class Backlog extends Component {
   constructor(props) {
@@ -11,14 +69,14 @@ class Backlog extends Component {
   render() {
     const { results_prop } = this.props;
 
-    const results = results_prop.sort((a, b) => a.samples > b.samples).map((result, i) => 
-      <Result key={i} result={result} />
-    );
+    const results = results_prop
+      .sort((a, b) => a.samples > b.samples)
+      .map((result, i) => <Result key={i} result={result} />);
 
     return (
-      <React.Fragment>
-        <Table
-        striped>
+      <MuiThemeProvider theme={theme}>
+      <Paper classes={{ paper: "paper" }}>
+        <Table striped>
           <thead>
             <tr>
               <th>sample:</th>
@@ -28,11 +86,11 @@ class Backlog extends Component {
             </tr>
           </thead>
           {results}
-          
         </Table>
-      </React.Fragment>
+        </Paper>
+        </MuiThemeProvider>
     );
   }
 }
 
-export default Backlog;
+export default withStyles(styles)(Backlog);

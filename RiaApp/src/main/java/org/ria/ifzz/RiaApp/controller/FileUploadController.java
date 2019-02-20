@@ -120,11 +120,10 @@ public class FileUploadController {
         FileEntity fileEntity = new FileEntity(file.getOriginalFilename(), file.getContentType(),
                 file.getBytes());
 
-        //TODO handle to not accept duplicates
-        storageService.store(file);
+        storageService.store(file, redirectAttributes);
 
-        redirectAttributes.addFlashAttribute("message",
-                "You successfully uploaded " + file.getOriginalFilename() + "!");
+//        redirectAttributes.addFlashAttribute("message",
+//                "You successfully uploaded " + file.getOriginalFilename() + "!");
 
         fileEntityRepository.save(fileEntity);
         fileEntity.setDataId(fileEntity.getFileName() + "_" + fileEntity.getId());

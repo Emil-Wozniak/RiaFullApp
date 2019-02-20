@@ -11,6 +11,7 @@ import org.springframework.util.FileSystemUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -27,7 +28,6 @@ public class FileSystemStorageService implements StorageService {
     private final Path rootLocation;
     private final FileEntityRepository fileEntityRepository;
 
-
     @Autowired
     public FileSystemStorageService(StorageProperties properties, FileEntityRepository fileEntityRepository) {
         this.rootLocation = Paths.get(properties.getLocation());
@@ -35,9 +35,14 @@ public class FileSystemStorageService implements StorageService {
     }
 
     @Override
-    public void store(MultipartFile file) {
+    public void store(MultipartFile file, RedirectAttributes redirectAttributes) {
+
         String filename = StringUtils.cleanPath(file.getOriginalFilename());
         try {
+            if (fileEntityRepository.findByFileName(filename) != null){
+                throw new StorageException("File already uploaded: " + filename);
+
+            }
             if (file.isEmpty()) {
                 throw new StorageException("Failed to store empty file " + filename);
             }
@@ -50,11 +55,15 @@ public class FileSystemStorageService implements StorageService {
             try (InputStream inputStream = file.getInputStream()) {
                 Files.copy(inputStream, this.rootLocation.resolve(filename),
                     StandardCopyOption.REPLACE_EXISTING);
+                redirectAttributes.addFlashAttribute("message",
+                        "You successfully uploaded " + file.getOriginalFilename() + "!");
             }
         }
         catch (IOException e) {
             throw new StorageException("Failed to store file " + filename);
         }
+        redirectAttributes.addAttribute("message",
+                "File already uploaded: " + filename + "!");
     }
 
     @Override
