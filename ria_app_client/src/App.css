@@ -99,3 +99,7 @@ img {
   height:auto;
   display:inline-block;
 }
+
+.delete{
+  list-style: none;
+}

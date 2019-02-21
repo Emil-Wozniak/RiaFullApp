@@ -152,6 +152,12 @@ public class FileUploadController {
         return ResponseEntity.created(location).build();
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteFile(@PathVariable Long id){
+        storageService.delete(id);
+        return new ResponseEntity<>("File with ID: " + id + "was deleted", HttpStatus.OK);
+    }
+
 }
 
 

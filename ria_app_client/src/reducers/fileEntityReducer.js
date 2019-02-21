@@ -1,5 +1,5 @@
 import {
-  GET_FILE_ENTITIES, GET_ERRORS
+  GET_FILE_ENTITIES, GET_ERRORS, DELETE_FILE_ENTITY
 } from "../actions/types";
 
 const initialState = {
@@ -20,6 +20,13 @@ export default function(state = initialState, action) {
         ...state,
         errors: action.message
       }
+      case DELETE_FILE_ENTITY:
+      return {
+        ...state,
+        file_entities: state.file_entities.filter(
+          file_entity => file_entity.id !== action.payload
+        )
+      };
 
     default:
       return state;

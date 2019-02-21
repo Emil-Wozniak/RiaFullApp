@@ -26,4 +26,5 @@ public interface StorageService {
 
     FileEntity getByDataId(String dataId) throws FileNotFoundException;
 
+    void delete(Long id);
 }

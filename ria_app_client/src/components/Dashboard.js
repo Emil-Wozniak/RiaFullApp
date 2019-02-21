@@ -93,19 +93,19 @@ class Dashboard extends Component {
             <Col md={12}>
               <br />
               <Paper classes={{ paper: "paper" }}>
-                <h5 className="text-center">Files</h5>
+              <Col><p className="text-left">Files:</p></Col>
                 <Table striped>
                   <thead>
                     <tr>
-                      <th>#</th>
-                      <th />
+                      <th/>
+                      <th/>
                       <th>File Name</th>
                       <th>Content Type:</th>
                       <th>Uploaded</th>
-                      <th />
+                      <th/>
                     </tr>
                   </thead>
-                  {file_entities.map(file_entity => (
+                  {file_entities.sort((a, b) => a.id < b.id).map(file_entity => (
                     <FileEntity
                       key={file_entity.id}
                       file_entity={file_entity}

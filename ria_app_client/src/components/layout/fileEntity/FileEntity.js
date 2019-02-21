@@ -3,12 +3,16 @@ import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { deleteFileEntity } from "../../../actions/filesActions";
-import DownloadFile from "../../../requests/download/DownloadFile";
+import CustomDownloadFile from "../../../requests/download/CustomDownloadFile";
 import { withStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
 import Avatar from "@material-ui/core/Avatar";
 import FolderIcon from "@material-ui/icons/Folder";
-import { Button } from "reactstrap";
+import IconButton from "@material-ui/core/IconButton";
+import {
+  InsertDriveFileRounded,
+  DeleteForeverRounded
+} from "@material-ui/icons";
 
 const styles = theme => ({
   root: {
@@ -22,6 +26,10 @@ const styles = theme => ({
 });
 
 class FileEntity extends Component {
+  onDeleteClick = id => {
+    this.props.deleteFileEntity(id);
+  };
+
   render() {
     const { file_entity } = this.props;
 
@@ -39,13 +47,18 @@ class FileEntity extends Component {
             <td>{file_entity.contentType}</td>
             <td>{file_entity.created_date}</td>
             <td>
-              <DownloadFile />
-            </td>
-            <td>
-              {" "}
+              <CustomDownloadFile />
               <Link to={`/fileBoard/${file_entity.dataId}`}>
-                <Button className="btn fa fa-file"></Button>
+                <IconButton>
+                  <InsertDriveFileRounded />
+                </IconButton>
               </Link>
+
+              <IconButton
+                onClick={this.onDeleteClick.bind(this, file_entity.id)}
+              >
+                <DeleteForeverRounded />
+              </IconButton>
             </td>
           </tr>
         </tbody>
@@ -55,7 +68,7 @@ class FileEntity extends Component {
 }
 
 FileEntity.propTypes = {
-  classes: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired
 };
 
 export default compose(

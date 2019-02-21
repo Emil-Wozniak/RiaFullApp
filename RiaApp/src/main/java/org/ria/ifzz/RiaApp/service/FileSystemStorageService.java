@@ -109,6 +109,12 @@ public class FileSystemStorageService implements StorageService {
     }
 
     @Override
+    public void delete(Long id) {
+        FileEntity fileEntity = fileEntityRepository.getById(id);
+        fileEntityRepository.delete(fileEntity);
+    }
+
+    @Override
     public void init() {
 
         try {

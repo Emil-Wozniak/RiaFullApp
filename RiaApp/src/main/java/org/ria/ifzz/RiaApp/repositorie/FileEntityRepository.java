@@ -13,10 +13,9 @@ public interface FileEntityRepository extends CrudRepository<FileEntity, Long> {
     @Override
     Iterable<FileEntity> findAllById(Iterable<Long> longs);
 
-//    FileEntity getById(Long id);
+    FileEntity getById(Long id);
 
     FileEntity getByDataId(String dataId);
-
 
     FileEntity findByDataId(String dataId);
 

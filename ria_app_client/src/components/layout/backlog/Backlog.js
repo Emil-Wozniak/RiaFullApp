@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { Table } from "reactstrap";
 import Result from "../result/Result";
 import { withStyles } from "@material-ui/core/styles";
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
@@ -7,8 +6,9 @@ import createPalette from "@material-ui/core/styles/createPalette";
 import * as color from "@material-ui/core/colors";
 import Paper from "@material-ui/core/Paper";
 import ReactToExcel from "react-html-table-to-excel";
-import { CloudDownloadRounded } from "@material-ui/icons";
+import { Row, Container, Table } from "reactstrap";
 import IconButton from "@material-ui/core/IconButton";
+import {ArrowBack} from "@material-ui/icons"
 
 var styles = theme => ({
   root: {
@@ -67,17 +67,23 @@ class Backlog extends Component {
       .sort((a, b) => a.samples > b.samples)
       .map((result, i) => <Result key={i} result={result} />);
 
-    const { classes } = this.props;
-
     return (
       <MuiThemeProvider theme={theme}>
         <Paper classes={{ paper: "paper" }}>
-          <ReactToExcel
-            className="fa fa-download float-right"
-            table="file_data"
-            filename="file_data"
-            sheet="sheet 1"
-            buttonText=" DOWNLOAD"/>
+          <Container>
+            <Row>
+              <IconButton href="/dashboard">
+                <ArrowBack/>
+              </IconButton>
+              <ReactToExcel
+                className="fa fa-download fa-2x float-center"
+                table="file_data"
+                filename="file_data"
+                sheet="sheet 1"
+                buttonText=""
+              />
+            </Row>
+          </Container>
           <Table striped id="file_data">
             <thead>
               <tr>

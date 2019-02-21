@@ -5,7 +5,6 @@ import { connect } from "react-redux";
 import { Container } from "reactstrap";
 import { withStyles } from "@material-ui/core/styles";
 import { uploadFile } from "../../actions/uploadActions";
-import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
@@ -149,23 +148,25 @@ class AddFile extends Component {
       <Container>
         <br />
         <Paper classes={{ paper: "paper" }}>
-          <Grid container wrap="nowrap" spacing={16}>
-            <TabContainer dir={theme.direction}>
-              <h4 style={{ color: "red" }}>{this.state.error}</h4>
-              <h4 style={{ color: "green" }}>{this.state.msg}</h4>
-              <input onChange={this.onFileChange} type="file" />
-              <Button
-                variant="contained"
-                color="default"
-                classes={{ button: "button" }}
-                onClick={this.uploadFile}
-              >
-                {" "}
-                Upload
-                <CloudUploadIcon classes={{ rightIcon: "rightIcon" }} />
-              </Button>
-            </TabContainer>
-          </Grid>
+          <TabContainer dir={theme.direction}>
+            <input onChange={this.onFileChange} type="file" />
+            <Button
+              variant="contained"
+              color="default"
+              classes={{ button: "button" }}
+              onClick={this.uploadFile}
+            >
+              <CloudUploadIcon />
+            </Button>
+            <Container>
+              <p style={{ textAlign: "center", color: "red" }}>
+                {this.state.error}
+              </p>
+              <p style={{ textAlign: "center", color: "green" }}>
+                {this.state.msg}
+              </p>
+            </Container>
+          </TabContainer>
         </Paper>
       </Container>
     );
