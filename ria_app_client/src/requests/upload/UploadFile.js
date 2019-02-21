@@ -9,8 +9,6 @@ import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import green from "@material-ui/core/colors/green";
 
@@ -63,9 +61,19 @@ function TabContainer(props) {
 }
 
 class AddFile extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      fileName: "",
+      contentType: "",
+      data: "",
+      errors: {}
+    };
+    this.onSubmit = this.onSubmit.bind(this);
+  }
+
   state = {
     file: "",
-    error: "",
     msg: "",
     direction: "row",
     justify: "center",
@@ -77,6 +85,27 @@ class AddFile extends Component {
       [key]: value
     });
   };
+
+  onSubmit(event) {
+    event.preventDefault();
+    this.setState({ error: "", msg: "" });
+
+    if (!this.state.file) {
+      this.setState({ error: "Please upload a file." });
+      return;
+    }
+
+    if (this.state.file.size >= 2000000) {
+      this.setState({ error: "File size exceeds limit of 2MB." });
+      return;
+    }
+
+    let data = new FormData();
+    data.append("file", this.state.file);
+    data.append("name", this.state.file.name);
+
+    this.props.uploadFile();
+  }
 
   uploadFile = event => {
     event.preventDefault();
@@ -118,10 +147,8 @@ class AddFile extends Component {
     const { theme } = this.props;
     return (
       <Container>
+        <br />
         <Paper classes={{ paper: "paper" }}>
-          <Tabs textColor="primary" variant="fullWidth">
-            <Tab label="Upload a file" />
-          </Tabs>
           <Grid container wrap="nowrap" spacing={16}>
             <TabContainer dir={theme.direction}>
               <h4 style={{ color: "red" }}>{this.state.error}</h4>
@@ -146,11 +173,14 @@ class AddFile extends Component {
 }
 
 AddFile.propTypes = {
-  classes: PropTypes.object.isRequired,
-  theme: PropTypes.object.isRequire
+  uploadFile: PropTypes.func.isRequired,
+  classes: PropTypes.object.isRequired
 };
 
-export default compose(withStyles(styles, { withTheme: true }), connect(
-  null,
-  { uploadFile }
-))(AddFile);
+export default compose(
+  withStyles(styles, { withTheme: true }),
+  connect(
+    null,
+    { uploadFile }
+  )
+)(AddFile);

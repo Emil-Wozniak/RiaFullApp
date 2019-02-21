@@ -186,7 +186,7 @@ public class ResultService {
 
         List<Double> countedList = new ArrayList<>();
         try {
-            for (int i = 25; i < list.size(); i++) {
+            for (int i = 23; i < list.size(); i++) {
                 result = resultRepository.findByFileName("row_" + i + "_" + setFileName(file));
                 double point = result.getCcpm();
                 double counted = countResultUtil.countResult(point);

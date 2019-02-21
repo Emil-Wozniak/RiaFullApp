@@ -25,13 +25,17 @@ class Result extends Component {
       <React.Fragment>
         <tbody>
           <tr>
-            <td> {result.samples}</td>
+            <td>{result.samples}</td>
             <td>{result.position}</td>
             <td>{result.ccpm}</td>
-            <td className="mx-auto" style={{ backgroundColor: condition ? "#B00020" : "striped" }}>
+            <td
+              className="mx-auto"
+              style={{ backgroundColor: condition ? "#B00020" : "striped" }}
+            >
               {result.ng}
             </td>
           </tr>
+   
         </tbody>
       </React.Fragment>
     );

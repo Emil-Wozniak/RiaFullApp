@@ -8,7 +8,6 @@ import { Provider } from "react-redux";
 import { withStyles } from "@material-ui/core/styles";
 import FileBoard from "./components/FileBoard";
 import Dashboard from "./components/Dashboard";
-import UploadFile from "./requests/upload/UploadFile";
 import Navbar from "./components/layout/ui/Navbar";
 import Landing from "./components/layout/Landing"
 
@@ -44,7 +43,6 @@ class App extends Component {
         <Router>
           <div className="App">
             <Navbar />
-            <UploadFile />
             <Route exact path="/" component={Landing} />
             <Route exact path="/dashboard" component={Dashboard} />
             <Route exact path="/fileBoard/:dataId" component={FileBoard} />

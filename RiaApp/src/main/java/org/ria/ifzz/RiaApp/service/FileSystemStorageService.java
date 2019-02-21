@@ -41,7 +41,6 @@ public class FileSystemStorageService implements StorageService {
         try {
             if (fileEntityRepository.findByFileName(filename) != null){
                 throw new StorageException("File already uploaded: " + filename);
-
             }
             if (file.isEmpty()) {
                 throw new StorageException("Failed to store empty file " + filename);

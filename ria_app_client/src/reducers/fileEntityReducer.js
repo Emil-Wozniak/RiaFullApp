@@ -1,10 +1,11 @@
 import {
-  GET_FILE_ENTITIES
+  GET_FILE_ENTITIES, GET_ERRORS
 } from "../actions/types";
 
 const initialState = {
   file_entities: [],
-  file_entity:{}
+  file_entity:{},
+  errors: {}
 };
 
 export default function(state = initialState, action) {
@@ -14,6 +15,11 @@ export default function(state = initialState, action) {
         ...state,
         file_entities: action.payload
       };
+      case GET_ERRORS:
+      return {
+        ...state,
+        errors: action.message
+      }
 
     default:
       return state;

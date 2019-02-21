@@ -60,10 +60,6 @@ DownloadFile.propTypes = {
   getFiles: PropTypes.func.isRequired
 };
 
-const mapStateToProps = state => ({
-  file_entity: state.file_entity
-});
-
 export default connect(
   null,
   { getFiles }

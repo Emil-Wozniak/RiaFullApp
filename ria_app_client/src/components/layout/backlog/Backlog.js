@@ -6,6 +6,9 @@ import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 import createPalette from "@material-ui/core/styles/createPalette";
 import * as color from "@material-ui/core/colors";
 import Paper from "@material-ui/core/Paper";
+import ReactToExcel from "react-html-table-to-excel";
+import { CloudDownloadRounded } from "@material-ui/icons";
+import IconButton from "@material-ui/core/IconButton";
 
 var styles = theme => ({
   root: {
@@ -24,7 +27,7 @@ var styles = theme => ({
   }
 });
 
-const theme = styles = createMuiTheme({
+const theme = (styles = createMuiTheme({
   palette: createPalette({
     type: "light",
     primary: color.purple,
@@ -48,17 +51,8 @@ const theme = styles = createMuiTheme({
       '"Segoe UI Emoji"',
       '"Segoe UI Symbol"'
     ].join(",")
-  },
-  overrides: {
-    MuiButton: {
-      // Name of the component ⚛️ / style sheet
-      text: {
-        // Name of the rule
-        color: "white" // Some CSS
-      }
-    }
   }
-});
+}));
 
 class Backlog extends Component {
   constructor(props) {
@@ -73,22 +67,30 @@ class Backlog extends Component {
       .sort((a, b) => a.samples > b.samples)
       .map((result, i) => <Result key={i} result={result} />);
 
+    const { classes } = this.props;
+
     return (
       <MuiThemeProvider theme={theme}>
-      <Paper classes={{ paper: "paper" }}>
-        <Table striped>
-          <thead>
-            <tr>
-              <th>sample:</th>
-              <th>position</th>
-              <th>CPM:</th>
-              <th>ng</th>
-            </tr>
-          </thead>
-          {results}
-        </Table>
+        <Paper classes={{ paper: "paper" }}>
+          <ReactToExcel
+            className="fa fa-download float-right"
+            table="file_data"
+            filename="file_data"
+            sheet="sheet 1"
+            buttonText=" DOWNLOAD"/>
+          <Table striped id="file_data">
+            <thead>
+              <tr>
+                <th>sample:</th>
+                <th>position</th>
+                <th>CPM:</th>
+                <th>ng</th>
+              </tr>
+            </thead>
+            {results}
+          </Table>
         </Paper>
-        </MuiThemeProvider>
+      </MuiThemeProvider>
     );
   }
 }

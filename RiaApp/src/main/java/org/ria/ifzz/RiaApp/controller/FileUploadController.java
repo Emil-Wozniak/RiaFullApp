@@ -8,7 +8,6 @@ import org.ria.ifzz.RiaApp.repositorie.FileEntityRepository;
 import org.ria.ifzz.RiaApp.repositorie.ResultRepository;
 import org.ria.ifzz.RiaApp.service.ResultService;
 import org.ria.ifzz.RiaApp.service.StorageService;
-import org.ria.ifzz.RiaApp.utils.CustomFileReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;

@@ -10,6 +10,7 @@ import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 import createPalette from "@material-ui/core/styles/createPalette";
 import * as color from "@material-ui/core/colors";
 import FileEntity from "./layout/fileEntity/FileEntity";
+import UploadFile from "../requests/upload/UploadFile";
 
 var styles = theme => ({
   root: {
@@ -86,6 +87,7 @@ class Dashboard extends Component {
 
     return (
       <MuiThemeProvider theme={theme}>
+      <UploadFile />
         <Container>
           <Row>
             <Col md={12}>
