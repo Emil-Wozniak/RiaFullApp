@@ -37,26 +37,22 @@ class FileEntity extends Component {
       <React.Fragment>
         <tbody>
           <tr>
-            <th scope="row">{file_entity.id}</th>
             <td>
-              <Avatar>
-                <FolderIcon />
-              </Avatar>
+              <Link to={`/fileBoard/${file_entity.dataId}`}>
+                <IconButton>
+                  <Avatar>
+                    <FolderIcon />
+                  </Avatar>
+                </IconButton>
+              </Link>
             </td>
             <td> {file_entity.fileName}</td>
             <td>{file_entity.contentType}</td>
             <td>{file_entity.created_date}</td>
             <td>
               <CustomDownloadFile />
-              <Link to={`/fileBoard/${file_entity.dataId}`}>
-                <IconButton>
-                  <InsertDriveFileRounded />
-                </IconButton>
-              </Link>
-
               <IconButton
-                onClick={this.onDeleteClick.bind(this, file_entity.id)}
-              >
+                onClick={this.onDeleteClick.bind(this, file_entity.id)}>
                 <DeleteForeverRounded />
               </IconButton>
             </td>

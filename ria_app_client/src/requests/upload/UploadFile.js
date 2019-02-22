@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { Container } from "reactstrap";
 import { withStyles } from "@material-ui/core/styles";
-import { uploadFile } from "../../actions/uploadActions";
+import { getFiles } from "../../actions/filesActions";
 import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
@@ -71,39 +71,43 @@ class AddFile extends Component {
     alignItems: "center"
   };
 
+  componentDidMount() {
+    this.props.getFiles();
+  }
+
   handleChange = key => (event, value) => {
     this.setState({
       [key]: value,
-      image: false,
+      image: false
     });
   };
 
   uploadFile = event => {
     event.preventDefault();
-    this.setState({ error: "", msg: "", image: false });
+    this.setState({ error: "", msg: "" });
 
     if (!this.state.file) {
-      this.setState({ error: "Please upload a file.", image: false });
+      this.setState({ error: "Please upload a file." });
       return;
     }
 
     if (this.state.file.size >= 2000000) {
       this.setState({ error: "File size exceeds limit of 2MB." });
       return;
-    } else{
+    } else {
       this.setState({
-        image:true
-      })
+        image: true
+      });
     }
 
     let data = new FormData();
     data.append("file", this.state.file);
     data.append("name", this.state.file.name);
 
+    
     fetch("http://localhost:8080/api/files", {
       method: "POST",
-      body: data,
-      
+      body: data
     })
       .then(response => {
         this.setState({
@@ -111,6 +115,7 @@ class AddFile extends Component {
           msg: "Successfully uploaded file",
           image: false
         });
+        window.location.reload()
       })
       .catch(err => {
         this.setState({ error: err });
@@ -155,17 +160,19 @@ class AddFile extends Component {
   }
 }
 
-
-
 AddFile.propTypes = {
-  uploadFile: PropTypes.func.isRequired,
+  file_entity: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired
 };
+
+const mapStateToProps = state => ({
+  file_entity: state.file_entity
+});
 
 export default compose(
   withStyles(styles, { withTheme: true }),
   connect(
-    null,
-    { uploadFile }
+    mapStateToProps,
+    { getFiles }
   )
 )(AddFile);

@@ -97,7 +97,7 @@ class Dashboard extends Component {
                 <Table striped>
                   <thead>
                     <tr>
-                      <th/>
+
                       <th/>
                       <th>File Name</th>
                       <th>Content Type:</th>

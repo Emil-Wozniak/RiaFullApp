@@ -1,6 +1,7 @@
 package org.ria.ifzz.RiaApp.service;
 
 import org.ria.ifzz.RiaApp.domain.FileEntity;
+import org.ria.ifzz.RiaApp.exception.FileEntityNotFoundException;
 import org.ria.ifzz.RiaApp.exception.StorageException;
 import org.ria.ifzz.RiaApp.exception.StorageFileNotFoundException;
 import org.ria.ifzz.RiaApp.repositorie.FileEntityRepository;
@@ -99,11 +100,11 @@ public class FileSystemStorageService implements StorageService {
     }
 
     @Override
-    public FileEntity getByDataId(String dataId) throws FileNotFoundException {
+    public FileEntity getByDataId(String dataId) throws FileEntityNotFoundException {
         FileEntity fileEntity = fileEntityRepository.getByDataId(dataId);
         if (fileEntity == null) {
-            throw new FileNotFoundException(
-                    "File does not exist");
+            throw new FileEntityNotFoundException(
+                    "File does not exist" + dataId);
         }
         return fileEntity;
     }

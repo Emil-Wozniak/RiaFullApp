@@ -14,8 +14,19 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
 
     @ExceptionHandler
     public final ResponseEntity<Object> handleStorageNotFoundException(FileEntityNotFoundException fileExc, WebRequest webRequest) {
-        StorageFileNotFoundException exceptionResponse = new StorageFileNotFoundException(fileExc.getMessage());
+        FileEntityExceptionResponse exceptionResponse = new FileEntityExceptionResponse(fileExc.getMessage());
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler
+    public final ResponseEntity<Object> handleStorageException(StorageException storageExc, WebRequest webRequest) {
+        StorageExceptionResponse exceptionResponse = new StorageExceptionResponse(storageExc.getMessage());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<Object> handleException(ExceptionMessageHandler exception, WebRequest webRequest) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(exception.getMessage());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+    }
 }
