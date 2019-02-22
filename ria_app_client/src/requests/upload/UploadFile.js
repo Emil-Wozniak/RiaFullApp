@@ -10,6 +10,7 @@ import Button from "@material-ui/core/Button";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
 import Typography from "@material-ui/core/Typography";
 import green from "@material-ui/core/colors/green";
+import Loading from "../../components/layout/ui/Loading";
 
 const styles = theme => ({
   root: {
@@ -60,20 +61,11 @@ function TabContainer(props) {
 }
 
 class AddFile extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      fileName: "",
-      contentType: "",
-      data: "",
-      errors: {}
-    };
-    this.onSubmit = this.onSubmit.bind(this);
-  }
-
   state = {
     file: "",
     msg: "",
+    error: "",
+    image: false,
     direction: "row",
     justify: "center",
     alignItems: "center"
@@ -81,43 +73,27 @@ class AddFile extends Component {
 
   handleChange = key => (event, value) => {
     this.setState({
-      [key]: value
+      [key]: value,
+      image: false,
     });
   };
 
-  onSubmit(event) {
-    event.preventDefault();
-    this.setState({ error: "", msg: "" });
-
-    if (!this.state.file) {
-      this.setState({ error: "Please upload a file." });
-      return;
-    }
-
-    if (this.state.file.size >= 2000000) {
-      this.setState({ error: "File size exceeds limit of 2MB." });
-      return;
-    }
-
-    let data = new FormData();
-    data.append("file", this.state.file);
-    data.append("name", this.state.file.name);
-
-    this.props.uploadFile();
-  }
-
   uploadFile = event => {
     event.preventDefault();
-    this.setState({ error: "", msg: "" });
+    this.setState({ error: "", msg: "", image: false });
 
     if (!this.state.file) {
-      this.setState({ error: "Please upload a file." });
+      this.setState({ error: "Please upload a file.", image: false });
       return;
     }
 
     if (this.state.file.size >= 2000000) {
       this.setState({ error: "File size exceeds limit of 2MB." });
       return;
+    } else{
+      this.setState({
+        image:true
+      })
     }
 
     let data = new FormData();
@@ -126,10 +102,15 @@ class AddFile extends Component {
 
     fetch("http://localhost:8080/api/files", {
       method: "POST",
-      body: data
+      body: data,
+      
     })
       .then(response => {
-        this.setState({ error: "", msg: "Successfully uploaded file" });
+        this.setState({
+          error: "",
+          msg: "Successfully uploaded file",
+          image: false
+        });
       })
       .catch(err => {
         this.setState({ error: err });
@@ -165,6 +146,7 @@ class AddFile extends Component {
               <p style={{ textAlign: "center", color: "green" }}>
                 {this.state.msg}
               </p>
+              {this.state.image ? <Loading /> : null}
             </Container>
           </TabContainer>
         </Paper>
@@ -172,6 +154,8 @@ class AddFile extends Component {
     );
   }
 }
+
+
 
 AddFile.propTypes = {
   uploadFile: PropTypes.func.isRequired,

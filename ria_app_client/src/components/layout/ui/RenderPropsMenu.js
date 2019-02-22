@@ -25,7 +25,7 @@ function RenderPropsMenu() {
                 updateAnchorEl(event.currentTarget);
               }}
             >
-              Open Menu
+              User
             </Button>
             <Menu id="render-props-menu" anchorEl={anchorEl} open={open} onClose={handleClose}>
               <MenuItem onClick={handleClose}>Profile</MenuItem>

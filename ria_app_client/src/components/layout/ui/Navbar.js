@@ -5,8 +5,7 @@ import Grid from "@material-ui/core/Grid";
 import RenderPropsMenu from "./RenderPropsMenu";
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 import createPalette from "@material-ui/core/styles/createPalette";
-import {grey, red, green, yellow, purple} from "@material-ui/core/colors/";
-import {Polymer} from "@material-ui/icons";
+import { grey, red, green, yellow, purple } from "@material-ui/core/colors/";
 
 const theme = createMuiTheme({
   palette: createPalette({
@@ -30,7 +29,7 @@ const theme = createMuiTheme({
       '"Segoe UI Emoji"',
       '"Segoe UI Symbol"'
     ].join(",")
-  },
+  }
 });
 
 const NavBar = () => {
@@ -38,12 +37,10 @@ const NavBar = () => {
     <MuiThemeProvider theme={theme}>
       <AppBar position="static" color="theme">
         <Toolbar>
-          <Grid
-            justify="space-between"
-            container
-            spacing={24}
-          >
-            <h4><Polymer/>{" "}RiaApp</h4>
+          <Grid justify="space-between" container spacing={24}>
+            <h4>
+            <img src={require('../images/analysis.png')} style={{width: '50px', height: '50px'}} alt="RiaApp"/> RiaApp
+            </h4>
             <RenderPropsMenu />
           </Grid>
         </Toolbar>

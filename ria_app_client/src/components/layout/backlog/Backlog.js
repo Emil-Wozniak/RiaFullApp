@@ -8,7 +8,7 @@ import Paper from "@material-ui/core/Paper";
 import ReactToExcel from "react-html-table-to-excel";
 import { Row, Container, Table } from "reactstrap";
 import IconButton from "@material-ui/core/IconButton";
-import {ArrowBack} from "@material-ui/icons"
+import { ArrowBack } from "@material-ui/icons";
 
 var styles = theme => ({
   root: {
@@ -73,7 +73,7 @@ class Backlog extends Component {
           <Container>
             <Row>
               <IconButton href="/dashboard">
-                <ArrowBack/>
+                <ArrowBack />
               </IconButton>
               <ReactToExcel
                 className="fa fa-download fa-2x float-center"

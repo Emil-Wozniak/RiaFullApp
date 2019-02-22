@@ -103,3 +103,4 @@ img {
 .delete{
   list-style: none;
 }
+.hidden { display:none; }
