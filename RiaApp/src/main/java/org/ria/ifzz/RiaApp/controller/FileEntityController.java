@@ -1,12 +1,14 @@
 package org.ria.ifzz.RiaApp.controller;
 
 import org.ria.ifzz.RiaApp.domain.Backlog;
+import org.ria.ifzz.RiaApp.domain.ControlCurve;
 import org.ria.ifzz.RiaApp.domain.FileEntity;
 import org.ria.ifzz.RiaApp.domain.Result;
 import org.ria.ifzz.RiaApp.repositorie.BacklogRepository;
+import org.ria.ifzz.RiaApp.repositorie.ControlCurveRepository;
 import org.ria.ifzz.RiaApp.repositorie.FileEntityRepository;
 import org.ria.ifzz.RiaApp.repositorie.ResultRepository;
-import org.ria.ifzz.RiaApp.service.MapValidationErrorService;
+import org.ria.ifzz.RiaApp.service.ControlCurveService;
 import org.ria.ifzz.RiaApp.service.ResultService;
 import org.ria.ifzz.RiaApp.service.StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,13 +17,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -39,21 +39,23 @@ public class FileEntityController {
     private final ResultService resultService;
     private final BacklogRepository backlogRepository;
     private final ResultRepository resultRepository;
-    private final MapValidationErrorService errorService;
+    private final ControlCurveService controlCurveService;
+    private final ControlCurveRepository controlCurveRepository;
 
     @Autowired
     public FileEntityController(StorageService storageService,
                                 FileEntityRepository fileEntityRepository,
                                 ResultService resultService,
                                 BacklogRepository backlogRepository,
-                                ResultRepository resultRepository, MapValidationErrorService errorService) {
+                                ResultRepository resultRepository, ControlCurveService controlCurveService, ControlCurveRepository controlCurveRepository) {
 
         this.storageService = storageService;
         this.fileEntityRepository = fileEntityRepository;
         this.resultService = resultService;
         this.backlogRepository = backlogRepository;
         this.resultRepository = resultRepository;
-        this.errorService = errorService;
+        this.controlCurveService = controlCurveService;
+        this.controlCurveRepository = controlCurveRepository;
     }
 
     @GetMapping("/download")
@@ -122,18 +124,17 @@ public class FileEntityController {
                                               RedirectAttributes redirectAttributes) throws IOException {
 
 
+        // File Entity
         FileEntity fileEntity = new FileEntity(file.getOriginalFilename(), file.getContentType(),
                 file.getBytes());
 
         storageService.store(file, redirectAttributes);
 
-//        redirectAttributes.addFlashAttribute("message",
-//                "You successfully uploaded " + file.getOriginalFilename() + "!");
-
         fileEntityRepository.save(fileEntity);
         fileEntity.setDataId(fileEntity.getFileName() + "_" + fileEntity.getId());
         fileEntityRepository.save(fileEntity);
 
+        // Backlog
         Backlog backlog = new Backlog();
         backlog.setFileEntity(fileEntity);
         backlog.setFileName(fileEntity.getFileName());
@@ -147,12 +148,17 @@ public class FileEntityController {
 
         List<String> cleanedList = resultService.getFileData(file);
 
+        // Result
         resultService.setResultFromColumnsLength(cleanedList, file, backlog);
         Result result = resultService.assignDataToResult(cleanedList, file, fileEntity);
         resultRepository.save(result);
-
         result = resultService.assignNgPerMl(file, cleanedList);
         resultRepository.save(result);
+
+        // Control Curve
+        controlCurveService.setControlCurveFromColumnsLength(cleanedList,file,backlog);
+        ControlCurve controlCurve = controlCurveService.setDataToControlCurve(cleanedList,file,fileEntity);
+        controlCurveRepository.save(controlCurve);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
 //        return ResponseEntity.created(location).build();

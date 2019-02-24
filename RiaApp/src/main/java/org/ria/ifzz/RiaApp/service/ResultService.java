@@ -86,7 +86,6 @@ public class ResultService {
     public Result assignDataToResult(List<String> list, @NotNull MultipartFile file, FileEntity fileEntity) {
 
         Result result = null;
-        ControlCurve controlCurve = new ControlCurve();
         String fileId = fileEntity.getDataId();
 
         //Assign CCMP to Result
@@ -115,6 +114,7 @@ public class ResultService {
                 String converted = preConvertedPosition.replaceAll("A", "T");
                 String postConvert = converted.replaceAll("[0-9]","");
                 result.setPosition(postConvert);
+
             } else if (i == 2 || i == 3 || i == 4){
                 String preConvertedPosition = position.get(i).toString();
                 String converted = preConvertedPosition.replaceAll("A", "O");
@@ -136,10 +136,8 @@ public class ResultService {
                 String converted = preConvertedPosition.replaceAll("[A-Z]", "K");
                 String postConvert = converted.replaceAll("[0-9]","");
                 result.setPosition(postConvert);
-                controlCurve.setPosition(postConvert);
             }  else {
                 result.setPosition(position.get(i).toString());
-//                System.out.println(" \tResult position value: " + result.getPosition());
             }
         }
 
