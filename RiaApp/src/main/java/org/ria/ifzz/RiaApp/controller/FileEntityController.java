@@ -6,6 +6,7 @@ import org.ria.ifzz.RiaApp.domain.Result;
 import org.ria.ifzz.RiaApp.repositorie.BacklogRepository;
 import org.ria.ifzz.RiaApp.repositorie.FileEntityRepository;
 import org.ria.ifzz.RiaApp.repositorie.ResultRepository;
+import org.ria.ifzz.RiaApp.service.MapValidationErrorService;
 import org.ria.ifzz.RiaApp.service.ResultService;
 import org.ria.ifzz.RiaApp.service.StorageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +15,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -29,26 +32,28 @@ import java.util.concurrent.ThreadLocalRandom;
 @RestController
 @RequestMapping("/api/files")
 @CrossOrigin(origins = "http://localhost:3000")
-public class FileUploadController {
+public class FileEntityController {
 
     private final StorageService storageService;
     private final FileEntityRepository fileEntityRepository;
     private final ResultService resultService;
     private final BacklogRepository backlogRepository;
     private final ResultRepository resultRepository;
+    private final MapValidationErrorService errorService;
 
     @Autowired
-    public FileUploadController(StorageService storageService,
+    public FileEntityController(StorageService storageService,
                                 FileEntityRepository fileEntityRepository,
                                 ResultService resultService,
                                 BacklogRepository backlogRepository,
-                                ResultRepository resultRepository) {
+                                ResultRepository resultRepository, MapValidationErrorService errorService) {
 
         this.storageService = storageService;
         this.fileEntityRepository = fileEntityRepository;
         this.resultService = resultService;
         this.backlogRepository = backlogRepository;
         this.resultRepository = resultRepository;
+        this.errorService = errorService;
     }
 
     @GetMapping("/download")
@@ -113,8 +118,9 @@ public class FileUploadController {
      * @throws IOException
      */
     @PostMapping
-    public ResponseEntity<Void> handleFileUpload(@NotNull @RequestParam("file") MultipartFile file,
-                                                 RedirectAttributes redirectAttributes) throws IOException {
+    public ResponseEntity<?> handleFileUpload(@NotNull @RequestParam("file") MultipartFile file,
+                                              RedirectAttributes redirectAttributes) throws IOException {
+
 
         FileEntity fileEntity = new FileEntity(file.getOriginalFilename(), file.getContentType(),
                 file.getBytes());
@@ -149,7 +155,8 @@ public class FileUploadController {
         resultRepository.save(result);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
-        return ResponseEntity.created(location).build();
+//        return ResponseEntity.created(location).build();
+        return new ResponseEntity<>(fileEntity,HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")

@@ -3,10 +3,10 @@ import * as types from "./types";
 
 export const getBacklog = dataId => async dispatch => {
   try {
-    const res = await axios.get(`http://localhost:8080/api/backlog/${dataId}`);
+    const {data} = await axios.get(`http://localhost:8080/api/backlog/${dataId}`);
     dispatch({
       type: types.GET_BACKLOG,
-      payload: res.data
+      payload: data
     });
   } catch (err) {
     dispatch({

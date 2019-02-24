@@ -1,6 +1,7 @@
 package org.ria.ifzz.RiaApp.service;
 
 import org.ria.ifzz.RiaApp.domain.Backlog;
+import org.ria.ifzz.RiaApp.domain.ControlCurve;
 import org.ria.ifzz.RiaApp.domain.FileEntity;
 import org.ria.ifzz.RiaApp.domain.Result;
 import org.ria.ifzz.RiaApp.exception.CurveException;
@@ -85,6 +86,7 @@ public class ResultService {
     public Result assignDataToResult(List<String> list, @NotNull MultipartFile file, FileEntity fileEntity) {
 
         Result result = null;
+        ControlCurve controlCurve = new ControlCurve();
         String fileId = fileEntity.getDataId();
 
         //Assign CCMP to Result
@@ -134,6 +136,7 @@ public class ResultService {
                 String converted = preConvertedPosition.replaceAll("[A-Z]", "K");
                 String postConvert = converted.replaceAll("[0-9]","");
                 result.setPosition(postConvert);
+                controlCurve.setPosition(postConvert);
             }  else {
                 result.setPosition(position.get(i).toString());
 //                System.out.println(" \tResult position value: " + result.getPosition());

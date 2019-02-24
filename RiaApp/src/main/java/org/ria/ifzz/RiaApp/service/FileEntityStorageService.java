@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -24,13 +23,13 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 @RestController
-public class FileSystemStorageService implements StorageService {
+public class FileEntityStorageService implements StorageService {
 
     private final Path rootLocation;
     private final FileEntityRepository fileEntityRepository;
 
     @Autowired
-    public FileSystemStorageService(StorageProperties properties, FileEntityRepository fileEntityRepository) {
+    public FileEntityStorageService(StorageProperties properties, FileEntityRepository fileEntityRepository) {
         this.rootLocation = Paths.get(properties.getLocation());
         this.fileEntityRepository = fileEntityRepository;
     }

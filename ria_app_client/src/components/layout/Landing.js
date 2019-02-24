@@ -1,10 +1,13 @@
 import React, { Component } from "react";
-import { Subject } from "@material-ui/icons";
+import { TextFieldsTwoTone } from "@material-ui/icons";
 import IconButton from "@material-ui/core/IconButton";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 
 const styles = theme => ({
+  typography: {
+    useNextVariants: true,
+  },
   root: {
     display: "flex",
     justifyContent: "center",
@@ -29,10 +32,9 @@ class Landing extends Component {
           <IconButton
             variant="contained"
             color="default"
-            classes={{ button: "button" }}
             href="/dashboard"
           >
-            <Subject className={classes.iconHover} style={{ fontSize: 120 }} />
+            <TextFieldsTwoTone className={classes.iconHover} style={{ fontSize: 120 }} alt="txt" />
           </IconButton>
         </div>
       </div>

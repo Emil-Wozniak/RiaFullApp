@@ -4,38 +4,22 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Grid from "@material-ui/core/Grid";
 import RenderPropsMenu from "./RenderPropsMenu";
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
-import createPalette from "@material-ui/core/styles/createPalette";
-import { grey, red, green, yellow, purple } from "@material-ui/core/colors/";
 
 const theme = createMuiTheme({
-  palette: createPalette({
-    primary: purple,
-    secondary: green,
-    accent: grey,
-    error: red,
-    success: green,
-    inProgress: yellow
-  }),
   typography: {
-    fontFamily: [
-      "-apple-system",
-      "BlinkMacSystemFont",
-      '"Segoe UI"',
-      "Roboto",
-      '"Helvetica Neue"',
-      "Arial",
-      "sans-serif",
-      '"Apple Color Emoji"',
-      '"Segoe UI Emoji"',
-      '"Segoe UI Symbol"'
-    ].join(",")
+    useNextVariants: true,
+  },
+  palette:{
+    primary: {
+      main: '#fafafa',
+    }
   }
 });
 
 const NavBar = () => {
   return (
     <MuiThemeProvider theme={theme}>
-      <AppBar position="static" color="theme">
+      <AppBar position="static" color="primary">
         <Toolbar>
           <Grid justify="space-between" container spacing={24}>
             <h4>

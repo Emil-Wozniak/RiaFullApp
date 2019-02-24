@@ -34,6 +34,6 @@ public class BacklogController {
     public ResponseEntity<?> getResult(@PathVariable String dataId, @PathVariable String fileName) throws FileNotFoundException {
 
         Result result = backlogService.findResultByDataId(dataId, fileName);
-        return new ResponseEntity<Result>(result, HttpStatus.OK);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

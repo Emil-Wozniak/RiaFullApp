@@ -7,62 +7,19 @@ import { Col, Row, Container, Table } from "reactstrap";
 import { withStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
-import createPalette from "@material-ui/core/styles/createPalette";
-import * as color from "@material-ui/core/colors";
 import FileEntity from "./layout/fileEntity/FileEntity";
 import UploadFile from "../requests/upload/UploadFile";
 
-var styles = theme => ({
-  root: {
-    flexGrow: 1
-  },
-  demo: {
-    height: 240
-  },
-  paper: {
-    padding: theme.spacing.unit * 2,
-    height: "100%",
-    color: theme.palette.text.secondary
-  },
-  control: {
-    padding: theme.spacing.unit * 2
-  }
-});
 
-const theme = styles = createMuiTheme({
-  palette: createPalette({
-    type: "light",
-    primary: color.purple,
-    secondary: color.green,
-    accent: color.grey,
-    error: color.red,
-    success: color.green,
-    inProgress: color.yellow
-  }),
-  typography: {
-    // Use the system font instead of the default Roboto font.
-    fontFamily: [
-      "-apple-system",
-      "BlinkMacSystemFont",
-      '"Segoe UI"',
-      "Roboto",
-      '"Helvetica Neue"',
-      "Arial",
-      "sans-serif",
-      '"Apple Color Emoji"',
-      '"Segoe UI Emoji"',
-      '"Segoe UI Symbol"'
-    ].join(",")
-  },
-  overrides: {
-    MuiButton: {
-      // Name of the component ⚛️ / style sheet
-      text: {
-        // Name of the rule
-        color: "white" // Some CSS
+const theme = createMuiTheme({
+    typography: {
+      useNextVariants: true,
+    },
+    palette:{
+      primary: {
+        main: '#fafafa',
       }
     }
-  }
 });
 
 class Dashboard extends Component {
@@ -92,12 +49,11 @@ class Dashboard extends Component {
           <Row>
             <Col md={12}>
               <br />
-              <Paper classes={{ paper: "paper" }}>
+              <Paper >
               <Col><p className="text-left">Files:</p></Col>
                 <Table striped>
                   <thead>
                     <tr>
-
                       <th/>
                       <th>File Name</th>
                       <th>Content Type:</th>
@@ -132,7 +88,7 @@ const mapStateToProps = state => ({
 });
 
 export default compose(
-  withStyles(styles),
+  withStyles(theme),
   connect(
     mapStateToProps,
     { getFiles }

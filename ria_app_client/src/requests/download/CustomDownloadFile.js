@@ -58,7 +58,6 @@ class CustomDownloadFile extends Component {
 }
 
 CustomDownloadFile.propTypes = {
-  file_entity: PropTypes.object.isRequired,
   getFiles: PropTypes.func.isRequired
 };
 

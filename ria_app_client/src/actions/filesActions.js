@@ -2,10 +2,10 @@ import axios from "axios";
 import * as types from "./types";
 
 export const getFiles = () => async dispatch => {
-  const res = await axios.get("http://localhost:8080/api/files/all");
+  const {data} = await axios.get("http://localhost:8080/api/files/all");
   dispatch({
     type: types.GET_FILE_ENTITIES,
-    payload: res.data
+    payload: data
   });
 };
 
