@@ -18,7 +18,7 @@ public class CountResultUtil {
     private List<Double> standardsCMP;
     private List<Double> logDoseList;
     private List<Double> bindingPercent;
-    private List<Double> logitRealZeroTable;
+    private List<Double> logarithmRealZeroTable;
     private Double regressionParameterB;
     private Double regressionParameterA;
 
@@ -139,8 +139,8 @@ public class CountResultUtil {
         List<Double> logTable = resultMath.logarithmTable(divideTable);
         List<Double> rounded = resultMath.roundAvoid(logTable);
         rounded.forEach(System.out::println);
-        logitRealZeroTable = rounded;
-        return logitRealZeroTable;
+        logarithmRealZeroTable = rounded;
+        return logarithmRealZeroTable;
     }
 
     /*
@@ -156,7 +156,7 @@ public class CountResultUtil {
     public Double countRegressionParameterA() {
         System.out.println("\n\ncountRegressionParameterA:" +
                 "\n======================================================");
-        Double sumLogRealZero = resultMath.sum(logitRealZeroTable);
+        Double sumLogRealZero = resultMath.sum(logarithmRealZeroTable);
         Double countLogDose = resultMath.count(logDoseList);
         Double sumLogDose = resultMath.sum(logDoseList);
 
@@ -193,11 +193,11 @@ public class CountResultUtil {
         System.out.println("\nFirst factor");
 
         Double logDoseCount = resultMath.count(logDoseList);
-        Double sum = resultMath.sumProduct(logDoseList, logitRealZeroTable);
-        Double precision = Precision.round(sum,0);
+        Double sum = resultMath.sumProduct(logDoseList, logarithmRealZeroTable);
+        Double precision = Precision.round(sum, 0);
         System.out.println(precision);
         Double sumLogDose = resultMath.sum(logDoseList);
-        Double sumLogRealZero = resultMath.sum(logitRealZeroTable);
+        Double sumLogRealZero = resultMath.sum(logarithmRealZeroTable);
 
         firstFactor = logDoseCount * precision - sumLogDose * sumLogRealZero;
         System.out.println("First " + firstFactor);
@@ -205,40 +205,40 @@ public class CountResultUtil {
         System.out.println("\nSecond factor");
         Double sumsqSecondFactor = resultMath.sumsq(logDoseList);
         Double sqr = resultMath.sum(logDoseList);
-        sqr = Math.pow(sqr,2);
+        sqr = Math.pow(sqr, 2);
         System.out.println("Sum logit floor:" + sqr);
 
-        secondFactor = logDoseCount * sumsqSecondFactor -sqr;
+        secondFactor = logDoseCount * sumsqSecondFactor - sqr;
         System.out.println("Second " + secondFactor + "\n");
 
-        Double resultSum =  firstFactor / secondFactor;
+        Double resultSum = firstFactor / secondFactor;
         regressionParameterB = resultSum;
         System.out.println("regressionParameterB result: " + regressionParameterB);
         return regressionParameterB;
     }
 
     /*
-    * = 10^
-    * ((
-    * LOG((B44-$I$16)
-    * *100
-    * /$J$18
-    * /
-    * (100-(B44-$I$16)
-    * *100
-    * /$J$18))
-    * -$R$19)
-    * /$R$20)
+     * = 10^
+     * ((
+     * LOG((B44-$I$16)
+     * *100
+     * /$J$18
+     * /
+     * (100-(B44-$I$16)
+     * *100
+     * /$J$18))
+     * -$R$19)
+     * /$R$20)
      */
     public Double countResult(Double CMP) {
         System.out.println("\n\nCount Result:" +
                 "\n======================================================");
-        System.out.println("CMP: "+CMP);
-        Double firstPart = ((Math.log10((CMP - zero) * 100 / binding / (100 - (CMP - zero) * 100 / binding)) - regressionParameterA)/ regressionParameterB);
-        System.out.println("First part: "+ firstPart);
-        Double power = Math.pow(10,firstPart );
+        System.out.println("CMP: " + CMP);
+        Double firstPart = ((Math.log10((CMP - zero) * 100 / binding / (100 - (CMP - zero) * 100 / binding)) - regressionParameterA) / regressionParameterB);
+        System.out.println("First part: " + firstPart);
+        Double power = Math.pow(10, firstPart);
         System.out.println(power);
-        power = Precision.round(power,2);
+        power = Precision.round(power, 2);
         return power;
     }
 

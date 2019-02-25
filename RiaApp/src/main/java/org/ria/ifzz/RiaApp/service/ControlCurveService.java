@@ -20,25 +20,24 @@ public class ControlCurveService {
 
     private final CustomFileReader customFileReader;
     private final ControlCurveRepository controlCurveRepository;
-    private final CountResultUtil countResultUtil;
     private final ResultService resultService;
 
-    public ControlCurveService(CustomFileReader customFileReader, ControlCurveRepository controlCurveRepository, CountResultUtil countResultUtil, ResultService resultService) {
+    public ControlCurveService(CustomFileReader customFileReader, ControlCurveRepository controlCurveRepository, ResultService resultService) {
         this.customFileReader = customFileReader;
         this.controlCurveRepository = controlCurveRepository;
-        this.countResultUtil = countResultUtil;
         this.resultService = resultService;
     }
 
     public ControlCurve setControlCurveFromColumnsLength(List<String> list, @NotNull MultipartFile file, Backlog backlog) {
         ControlCurve controlCurve = null;
 
-        for (String line : list) {
+        for (int i = 0; i <25; i++){
+            String line = list.get(i);
             if (line.startsWith(" \tUnk")) {
                 controlCurve = new ControlCurve();
 
                 //set fileName followed by '_lineIndex'
-                controlCurve.setFileName("row_" + list.indexOf(line) + "_" + resultService.setFileName(file));
+                controlCurve.setFileName("row_" + i+ "_" + resultService.setFileName(file));
                 controlCurve.setBacklog(backlog);
                 controlCurveRepository.save(controlCurve);
                 System.out.println("Control Curve " + controlCurve.getFileName() + " saved");
@@ -53,7 +52,7 @@ public class ControlCurveService {
         String fileId = fileEntity.getDataId();
 
         //Assign position to Result
-        for (int i = 0; i < list.size() - 1; i++) {
+        for (int i = 0; i < 25- 1; i++) {
             List position = customFileReader.getMatchingStrings(list, 2);
 
             int index = i + 1;
@@ -90,7 +89,7 @@ public class ControlCurveService {
         }
 
         //Assign samples to Result
-        for (int i = 0; i < list.size() - 1; i++) {
+        for (int i = 0; i < 25 - 1; i++) {
             List Samples = customFileReader.getMatchingStrings(list, 1);
 
             int index = i + 1;

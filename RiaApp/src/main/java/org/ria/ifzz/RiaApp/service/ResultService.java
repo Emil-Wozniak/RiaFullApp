@@ -108,37 +108,7 @@ public class ResultService {
 
             int index = i + 1;
             result = resultRepository.findByFileName("row_" + index + "_" + setFileName(file));
-
-            if (i == 0 || i == 1) {
-                String preConvertedPosition = position.get(i).toString();
-                String converted = preConvertedPosition.replaceAll("A", "T");
-                String postConvert = converted.replaceAll("[0-9]","");
-                result.setPosition(postConvert);
-
-            } else if (i == 2 || i == 3 || i == 4){
-                String preConvertedPosition = position.get(i).toString();
-                String converted = preConvertedPosition.replaceAll("A", "O");
-                String postConvert = converted.replaceAll("[0-9]","");
-                result.setPosition(postConvert);
-            } else if (i == 5 || i == 6 || i == 7){
-                String preConvertedPosition = position.get(i).toString();
-                String converted = preConvertedPosition.replaceAll("[A-Z]", "N");
-                String postConvert = converted.replaceAll("[0-9]","");
-                result.setPosition(postConvert);
-            } else if (i > 7 && i< 20){
-                String preConvertedPosition = position.get(i).toString();
-                double point = CORTISOL_PATTERN[i-7];
-                String convert = preConvertedPosition.replaceAll("[0-9]","");
-                String postConvert = convert.replaceAll("[A-Z]", String.valueOf(point));
-                result.setPosition(postConvert);
-            } else if (i == 22 || i == 23){
-                String preConvertedPosition = position.get(i).toString();
-                String converted = preConvertedPosition.replaceAll("[A-Z]", "K");
-                String postConvert = converted.replaceAll("[0-9]","");
-                result.setPosition(postConvert);
-            }  else {
-                result.setPosition(position.get(i).toString());
-            }
+            result.setPosition(position.get(i).toString());
         }
 
         //Assign samples to Result
