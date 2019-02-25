@@ -1,105 +1,90 @@
 import React, { Component } from "react";
-import compose from "recompose/compose";
-import PropTypes from "prop-types";
 import { Container } from "reactstrap";
 import { withStyles } from "@material-ui/core/styles";
-import Grid from "@material-ui/core/Grid";
+import { createMuiTheme } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
-import Typography from "@material-ui/core/Typography";
-import green from "@material-ui/core/colors/green";
+import Loading from "../../components/layout/ui/Loading";
 
-const styles = theme => ({
+const styles = theme => createMuiTheme({
+   typography: {
+      useNextVariants: true,
+    },
   root: {
     flexGrow: 1,
     display: "flex",
     justifyContent: "center",
     alignItems: "flex-end"
   },
-  paper: {
-    padding: theme.spacing.unit * 2,
-    margin: "auto",
-    maxWidth: 500
-  },
-  button: {
-    margin: theme.spacing.unit
-  },
-  leftIcon: {
-    marginRight: theme.spacing.unit
-  },
-  rightIcon: {
-    marginLeft: theme.spacing.unit
-  },
-  iconSmall: {
-    fontSize: 20
-  },
-  fab: {
-    position: "absolute",
-    bottom: theme.spacing.unit * 2,
-    right: theme.spacing.unit * 2
-  },
-  fabGreen: {
-    color: theme.palette.common.white,
-    backgroundColor: green[500],
-    "&:hover": {
-      backgroundColor: green[600]
-    }
-  }
 });
 
 function TabContainer(props) {
-  const { children, dir } = props;
+  const { children } = props;
 
   return (
-    <Typography component="div" dir={dir} style={{ padding: 8 * 3 }}>
+    <div>
+      <br />
       {children}
-    </Typography>
+      <br />
+    </div>
   );
 }
 
 class AddFile extends Component {
-  state = {
-    file: "",
-    error: "",
-    msg: "",
-    direction: "row",
-    justify: "center",
-    alignItems: "center"
-  };
+  constructor() {
+    super();
+    this.state = {
+      file: "",
+      msg: "",
+      error: "",
+      filename: false,
+      image: false,
+      errors: {}
+    };
+  }
+
 
   handleChange = key => (event, value) => {
     this.setState({
-      [key]: value
+      [key]: value,
+      image: false
     });
   };
 
   uploadFile = event => {
     event.preventDefault();
+
     this.setState({ error: "", msg: "" });
 
     if (!this.state.file) {
       this.setState({ error: "Please upload a file." });
       return;
     }
-
     if (this.state.file.size >= 2000000) {
       this.setState({ error: "File size exceeds limit of 2MB." });
       return;
+    } else {
+      this.setState({
+        image: true
+      });
     }
 
     let data = new FormData();
     data.append("file", this.state.file);
     data.append("name", this.state.file.name);
-
+    console.log(data);
     fetch("http://localhost:8080/api/files", {
       method: "POST",
       body: data
     })
       .then(response => {
-        this.setState({ error: "", msg: "Successfully uploaded file" });
+        this.setState({
+          error: "",
+          msg: "Successfully uploaded file",
+          image: false
+        });
+        window.location.reload();
       })
       .catch(err => {
         this.setState({ error: err });
@@ -114,38 +99,36 @@ class AddFile extends Component {
 
   render() {
     const { theme } = this.props;
+
     return (
       <Container>
-        <Paper classes={{ paper: "paper" }}>
-          <Tabs textColor="primary" variant="fullWidth">
-            <Tab label="Upload a file" />
-          </Tabs>
-          <Grid container wrap="nowrap" spacing={16}>
-            <TabContainer dir={theme.direction}>
-              <h4 style={{ color: "red" }}>{this.state.error}</h4>
-              <h4 style={{ color: "green" }}>{this.state.msg}</h4>
-              <input onChange={this.onFileChange} type="file" />
-              <Button
-                variant="contained"
-                color="default"
-                classes={{ button: "button" }}
-                onClick={this.uploadFile}
-              >
-                {" "}
-                Upload
-                <CloudUploadIcon classes={{ rightIcon: "rightIcon" }} />
-              </Button>
-            </TabContainer>
-          </Grid>
+        <br />
+        <Paper>
+          <TabContainer dir={theme.direction}>
+            <input onChange={this.onFileChange} type="file" />
+            <Button
+              variant="contained"
+              color="default"
+              onClick={this.uploadFile}
+            >
+              <CloudUploadIcon />
+            </Button>
+            <Container>
+              <p style={{ textAlign: "center", color: "red" }}>
+                {this.state.error}
+              </p>
+              <p style={{ textAlign: "center", color: "green" }}>
+                {this.state.msg}
+              </p>
+              {this.state.image ? <Loading /> : null}
+            </Container>
+          </TabContainer>
         </Paper>
       </Container>
     );
   }
 }
 
-AddFile.propTypes = {
-  classes: PropTypes.object.isRequired,
-  theme: PropTypes.object.isRequire
-};
 
-export default compose(withStyles(styles, { withTheme: true }))(AddFile);
+export default
+  withStyles(styles, { withTheme: true })(AddFile);

@@ -9,18 +9,19 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@NoArgsConstructor
 @Data
+@NoArgsConstructor
 public class Result {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    public String samples;
-    public String position;
-    public String ccpm;
-
-    public String fileName;
+    private Integer samples;
+    private String position;
+    private Double ccpm;
+    private String fileName;
+    private String dataId;
+    private Double ng;
 
     @JsonFormat(pattern = "yyyy-MM-dd' 'HH:mm:ss")
     @Column(updatable = false)
@@ -29,9 +30,9 @@ public class Result {
     private Date update_at;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="file_data_id", updatable = false, nullable = false)
+    @JoinColumn(name="backlog_id", updatable = false, nullable = false)
     @JsonIgnore
-    private FileData fileData;
+    private Backlog backlog;
 
     @PrePersist
     protected void onCreate(){

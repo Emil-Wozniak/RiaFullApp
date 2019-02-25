@@ -3,11 +3,7 @@ import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { deleteFileEntity } from "../../../actions/filesActions";
-import DownloadFile from "../Download/DownloadFile";
 import { withStyles } from "@material-ui/core/styles";
-
-import Avatar from "@material-ui/core/Avatar";
-import FolderIcon from "@material-ui/icons/Folder";
 
 const styles = theme => ({
   root: {
@@ -22,25 +18,24 @@ const styles = theme => ({
 
 class Result extends Component {
   render() {
-    const { file_entity } = this.props;
+    const { result } = this.props;
+    const condition = result.ng === 0;
 
     return (
       <React.Fragment>
         <tbody>
           <tr>
-            <th scope="row">{file_entity.id}</th>
-            <td>
-              <Avatar>
-                <FolderIcon />
-              </Avatar>
-            </td>
-            <td> {file_entity.fileName}</td>
-            <td>{file_entity.contentType}</td>
-            <td>{file_entity.created_date}</td>
-            <td>
-              <DownloadFile />
+            <td>{result.samples}</td>
+            <td>{result.position}</td>
+            <td>{result.ccpm}</td>
+            <td
+              className="mx-auto"
+              style={{ backgroundColor: condition ? "#B00020" : "striped" }}
+            >
+              {result.ng}
             </td>
           </tr>
+   
         </tbody>
       </React.Fragment>
     );
@@ -49,7 +44,7 @@ class Result extends Component {
 
 Result.propTypes = {
   classes: PropTypes.object.isRequired,
-  file_entity: PropTypes.object.isRequired,
+  result: PropTypes.object.isRequired,
   deleteFileEntity: PropTypes.func.isRequired
 };
 

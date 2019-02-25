@@ -7,27 +7,36 @@
     "@material-ui/docs": "^3.0.0-alpha.9",
     "@material-ui/icons": "^3.0.2",
     "@material-ui/styles": "^3.0.0-alpha.10",
+    "@material/button": "^0.44.0",
     "axios": "^0.18.0",
     "bootstrap": "^4.2.1",
+    "browser-history": "^1.0.1",
     "compose": "^0.1.2",
     "cors": "^2.8.5",
     "file-saver": "^2.0.0",
-    "js-file-download": "^0.4.4",
-    "material-design-for-react": "0.0.109",
+    "fixed-data-table-2": "^0.8.19",
+    "glyphicons": "^0.2.0",
     "prop-types": "^15.6.2",
     "react": "^16.7.0",
-    "react-bootstrap-table": "^4.3.1",
+    "react-bootstrap": "^1.0.0-beta.5",
+    "react-data-export": "^0.5.0",
     "react-dom": "^16.7.0",
+    "react-html-table-to-excel": "^2.0.0",
     "react-redux": "^6.0.0",
-    "react-refetch": "^2.0.3",
     "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1",
     "react-scripts": "^2.1.5",
+<<<<<<< HEAD
+=======
+    "react-table": "^6.9.2",
+>>>>>>> dev
     "react-thunk": "^1.0.0",
     "react-upload-file": "^2.0.0-beta.6",
+    "reactable": "^1.1.0",
     "reactstrap": "^7.1.0",
     "redux": "^4.0.1",
-    "redux-thunk": "^2.3.0"
+    "redux-thunk": "^2.3.0",
+    "routes": "^2.1.0"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -43,5 +52,8 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "devDependencies": {
+    "redux-devtools-extension": "^2.13.8"
+  }
 }

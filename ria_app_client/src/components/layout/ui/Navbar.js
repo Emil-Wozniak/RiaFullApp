@@ -2,69 +2,33 @@ import React from "react";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
-import LongMenu from "./LongMenu";
 import RenderPropsMenu from "./RenderPropsMenu";
-import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
-import createPalette from '@material-ui/core/styles/createPalette';
-import grey from '@material-ui/core/colors/green';
-import red from '@material-ui/core/colors/red';
-import green from '@material-ui/core/colors/green';
-import yellow from '@material-ui/core/colors/yellow';
-import purple from '@material-ui/core/colors/purple';
+import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 
 const theme = createMuiTheme({
-  palette: createPalette({
-    type: 'dark',
-    primary: purple,
-    secondary: green,
-    accent: grey,
-    error: red,
-    success: green,
-    inProgress: yellow
-  }),
   typography: {
-    // Use the system font instead of the default Roboto font.
-    fontFamily: [
-      '-apple-system',
-      'BlinkMacSystemFont',
-      '"Segoe UI"',
-      'Roboto',
-      '"Helvetica Neue"',
-      'Arial',
-      'sans-serif',
-      '"Apple Color Emoji"',
-      '"Segoe UI Emoji"',
-      '"Segoe UI Symbol"',
-    ].join(','),
+    useNextVariants: true,
   },
-  overrides: {
-    MuiButton: { // Name of the component ⚛️ / style sheet
-      text: { // Name of the rule
-        color: 'white', // Some CSS
-      },
-    },
-  },
-})
+  palette:{
+    primary: {
+      main: '#fafafa',
+    }
+  }
+});
 
 const NavBar = () => {
   return (
     <MuiThemeProvider theme={theme}>
-    <AppBar position="static" color="theme">
-      <Toolbar>
-        <Grid
-          justify="space-between" // Add it here :)
-          container
-          spacing={24}
-        >
-          <LongMenu />
-          <Typography variant="title" color="inherit">
-            RiaApp
-          </Typography>
-          <RenderPropsMenu />
-        </Grid>
-      </Toolbar>
-    </AppBar>
+      <AppBar position="static" color="primary">
+        <Toolbar>
+          <Grid justify="space-between" container spacing={24}>
+            <h4>
+            <img src={require('../images/analysis.png')} style={{width: '50px', height: '50px'}} alt="RiaApp"/> RiaApp
+            </h4>
+            <RenderPropsMenu />
+          </Grid>
+        </Toolbar>
+      </AppBar>
     </MuiThemeProvider>
   );
 };

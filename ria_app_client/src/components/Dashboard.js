@@ -6,66 +6,21 @@ import PropTypes from "prop-types";
 import { Col, Row, Container, Table } from "reactstrap";
 import { withStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
-import { createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
-import createPalette from '@material-ui/core/styles/createPalette';
-import grey from '@material-ui/core/colors/green';
-import red from '@material-ui/core/colors/red';
-import green from '@material-ui/core/colors/green';
-import yellow from '@material-ui/core/colors/yellow';
-import purple from '@material-ui/core/colors/purple';
-
+import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 import FileEntity from "./layout/fileEntity/FileEntity";
+import UploadFile from "../requests/upload/UploadFile";
 
-const styles = theme => ({
-  root: {
-    flexGrow: 1
-  },
-  demo: {
-    height: 240
-  },
-  paper: {
-    padding: theme.spacing.unit * 2,
-    height: "100%",
-    color: theme.palette.text.secondary
-  },
-  control: {
-    padding: theme.spacing.unit * 2
-  }
-});
 
 const theme = createMuiTheme({
-  palette: createPalette({
-    type: 'light',
-    primary: purple,
-    secondary: green,
-    accent: grey,
-    error: red,
-    success: green,
-    inProgress: yellow
-  }),
-  typography: {
-    // Use the system font instead of the default Roboto font.
-    fontFamily: [
-      '-apple-system',
-      'BlinkMacSystemFont',
-      '"Segoe UI"',
-      'Roboto',
-      '"Helvetica Neue"',
-      'Arial',
-      'sans-serif',
-      '"Apple Color Emoji"',
-      '"Segoe UI Emoji"',
-      '"Segoe UI Symbol"',
-    ].join(','),
-  },
-  overrides: {
-    MuiButton: { // Name of the component ⚛️ / style sheet
-      text: { // Name of the rule
-        color: 'white', // Some CSS
-      },
+    typography: {
+      useNextVariants: true,
     },
-  },
-})
+    palette:{
+      primary: {
+        main: '#fafafa',
+      }
+    }
+});
 
 class Dashboard extends Component {
   state = {
@@ -74,7 +29,7 @@ class Dashboard extends Component {
     alignItems: "center"
   };
 
-  handleChange = key => (event, value) => {
+  handleChange = key => (value) => {
     this.setState({
       [key]: value
     });
@@ -89,31 +44,34 @@ class Dashboard extends Component {
 
     return (
       <MuiThemeProvider theme={theme}>
-      <Container>
-        <Row>
-          <Col md={12}>
-            <br />
-            <Paper classes={{paper:"paper"}}>
-            <h5 className="text-center">Files</h5>
-            <Table striped>
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th />
-                  <th>File Name</th>
-                  <th>Content Type:</th>
-                  <th>Uploaded</th>
-                  <th/>
-                </tr>
-              </thead>
-              {file_entities.map(file_entity => (
-                <FileEntity key={file_entity.id} file_entity={file_entity} />
-              ))}
-            </Table>
-            </Paper>
-          </Col>
-        </Row>
-      </Container>
+      <UploadFile />
+        <Container>
+          <Row>
+            <Col md={12}>
+              <br />
+              <Paper >
+              <Col><p className="text-left">Files:</p></Col>
+                <Table striped>
+                  <thead>
+                    <tr>
+                      <th/>
+                      <th>File Name</th>
+                      <th>Content Type:</th>
+                      <th>Uploaded</th>
+                      <th/>
+                    </tr>
+                  </thead>
+                  {file_entities.sort((a, b) => a.id < b.id).map(file_entity => (
+                    <FileEntity
+                      key={file_entity.id}
+                      file_entity={file_entity}
+                    />
+                  ))}
+                </Table>
+              </Paper>
+            </Col>
+          </Row>
+        </Container>
       </MuiThemeProvider>
     );
   }
@@ -130,7 +88,7 @@ const mapStateToProps = state => ({
 });
 
 export default compose(
-  withStyles(styles),
+  withStyles(theme),
   connect(
     mapStateToProps,
     { getFiles }

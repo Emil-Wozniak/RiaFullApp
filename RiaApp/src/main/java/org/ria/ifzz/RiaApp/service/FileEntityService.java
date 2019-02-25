@@ -13,15 +13,11 @@ public class FileEntityService {
     @Autowired
     private FileEntityRepository fileEntityRepository;
 
-    public Iterable<FileEntity> loadAll() {
-        return fileEntityRepository.findAll();
-    }
-
-    public FileEntity getById(Long id) throws FileNotFoundException {
-        FileEntity fileEntity = fileEntityRepository.getById(id);
+    public FileEntity findFileEntityByDataId(String dataId) throws FileNotFoundException {
+        FileEntity fileEntity = fileEntityRepository.findByDataId(dataId);
         if (fileEntity == null) {
             throw new FileNotFoundException(
-                    "Project does not exist");
+                    "File does not exist");
         }
         return fileEntity;
     }

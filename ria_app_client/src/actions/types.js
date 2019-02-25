@@ -1,4 +1,12 @@
+//types for FILE ENTITY ACTIONS
 export const GET_FILE_ENTITY = "GET_FILE_ENTITY";
-export const GET_FILE_ENTITIES = "GET_FILE_ENTITIES"
+export const GET_FILE_ENTITIES = "GET_FILE_ENTITIES";
 export const DELETE_FILE_ENTITY = "DELETE_FILE_ENTITY";
+
+//types for FILE DATA ACTIONS
+export const GET_BACKLOG = "GET_BACKLOG";
+
+//types for RESULT ACTIONS
+export const GET_RESULT = "GET_RESULT";
+
 export const GET_ERRORS = "GET_ERRORS";
