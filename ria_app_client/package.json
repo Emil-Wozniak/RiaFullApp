@@ -26,10 +26,7 @@
     "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1",
     "react-scripts": "^2.1.5",
-<<<<<<< HEAD
-=======
     "react-table": "^6.9.2",
->>>>>>> dev
     "react-thunk": "^1.0.0",
     "react-upload-file": "^2.0.0-beta.6",
     "reactable": "^1.1.0",
