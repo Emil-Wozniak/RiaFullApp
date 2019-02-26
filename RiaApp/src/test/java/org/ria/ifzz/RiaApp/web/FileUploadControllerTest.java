@@ -1,4 +1,4 @@
-package org.ria.ifzz.RiaApp.controller;
+package org.ria.ifzz.RiaApp.web;
 
 public class FileUploadControllerTest {
 

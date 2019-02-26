@@ -5,9 +5,11 @@ import org.ria.ifzz.RiaApp.domain.ControlCurve;
 import org.ria.ifzz.RiaApp.domain.FileEntity;
 import org.ria.ifzz.RiaApp.domain.Result;
 import org.ria.ifzz.RiaApp.exception.CurveException;
+import org.ria.ifzz.RiaApp.repositorie.ControlCurveRepository;
 import org.ria.ifzz.RiaApp.repositorie.ResultRepository;
 import org.ria.ifzz.RiaApp.utils.CountResultUtil;
 import org.ria.ifzz.RiaApp.utils.CustomFileReader;
+import org.ria.ifzz.RiaApp.utils.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,11 +30,15 @@ public class ResultService {
     private final CustomFileReader customFileReader;
     private final ResultRepository resultRepository;
     private final CountResultUtil countResultUtil;
+    private final FileUtils fileUtils;
+    private final ControlCurveRepository controlCurveRepository;
 
-    public ResultService(CustomFileReader customFileReader, ResultRepository resultRepository, CountResultUtil countResultUtil) {
+    public ResultService(CustomFileReader customFileReader, ResultRepository resultRepository, CountResultUtil countResultUtil, FileUtils fileUtils, ControlCurveRepository controlCurveRepository) {
         this.customFileReader = customFileReader;
         this.resultRepository = resultRepository;
         this.countResultUtil = countResultUtil;
+        this.fileUtils = fileUtils;
+        this.controlCurveRepository = controlCurveRepository;
     }
 
     /**
@@ -66,7 +72,7 @@ public class ResultService {
                 result = new Result();
 
                 //set fileName followed by '_lineIndex'
-                result.setFileName("row_" + list.indexOf(line) + "_" + setFileName(file));
+                result.setFileName("row_" + list.indexOf(line) + "_" + fileUtils.setFileName(file));
                 result.setBacklog(backlog);
 
                 resultRepository.save(result);
@@ -89,11 +95,11 @@ public class ResultService {
         String fileId = fileEntity.getDataId();
 
         //Assign CCMP to Result
-        for (int i = 0; i < list.size() - 1; i++) {
+        for (int i = 22; i < list.size() - 1; i++) {
             List CCMP = customFileReader.getMatchingStrings(list, 3);
 
             int index = i + 1;
-            result = resultRepository.findByFileName("row_" + index + "_" + setFileName(file));
+            result = resultRepository.findByFileName("row_" + index + "_" + fileUtils.setFileName(file));
 
             // convert String value of CCMP to Integer
             String ccmpString = CCMP.get(i).toString();
@@ -103,20 +109,20 @@ public class ResultService {
         }
 
         //Assign position to Result
-        for (int i = 0; i < list.size() - 1; i++) {
+        for (int i = 22; i < list.size() - 1; i++) {
             List position = customFileReader.getMatchingStrings(list, 2);
 
             int index = i + 1;
-            result = resultRepository.findByFileName("row_" + index + "_" + setFileName(file));
+            result = resultRepository.findByFileName("row_" + index + "_" + fileUtils.setFileName(file));
             result.setPosition(position.get(i).toString());
         }
 
         //Assign samples to Result
-        for (int i = 0; i < list.size() - 1; i++) {
+        for (int i = 22; i < list.size() - 1; i++) {
             List Samples = customFileReader.getMatchingStrings(list, 1);
 
             int index = i + 1;
-            result = resultRepository.findByFileName("row_" + index + "_" + setFileName(file));
+            result = resultRepository.findByFileName("row_" + index + "_" + fileUtils.setFileName(file));
             result.setDataId(fileId);
 
             String cleanedSamples = Samples.get(i).toString();
@@ -125,7 +131,6 @@ public class ResultService {
             result.setSamples(samplesInt);
             System.out.println(" \tResult samples value: " + result.getSamples());
         }
-
         return result;
     }
 
@@ -133,20 +138,35 @@ public class ResultService {
 
         Result result = new Result();
         List<Double> curve = new ArrayList<>();
+        ControlCurve controlCurve;
 
         // get standard pattern
-        countResultUtil.doseLog(CORTISOL_PATTERN);
+        countResultUtil.logDose(CORTISOL_PATTERN);
 
-        // get all results of control curve (Totals, ZEROs, NSBNs) + control points (t1 + t2)
+//         get all results of control curve (Totals, ZEROs, NSBNs) + control points (t1 + t2)
+//        try {
+//            for (int i = 1; i < 24; i++) {
+//                result = resultRepository.findByFileName("row_" + i + "_" + fileUtils.setFileName(file));
+//                double point = result.getCcpm();
+//                curve.add(point);
+//            }
+//        } catch (Exception exception) {
+//            throw new CurveException("\nFile " + file.getOriginalFilename() + " doesn't have a proper size; \nIt must contain at least 24 line for curve and 2 line of results;\n" + exception.getCause());
+//        }
         try {
-            for (int i = 1; i < 24; i++) {
-                result = resultRepository.findByFileName("row_" + i + "_" + setFileName(file));
-                double point = result.getCcpm();
+            for (int i = 0; i < 24; i++) {
+                int index = i + 1;
+                String parseInteger = String.valueOf(index);
+                Long parseLong = Long.parseLong(parseInteger);
+                controlCurve = controlCurveRepository.getById(parseLong);
+                double point = controlCurve.getCcpm();
+                System.out.println(point);
                 curve.add(point);
             }
         } catch (Exception exception) {
-            throw new CurveException("\nFile " + file.getOriginalFilename() + " doesn't have a proper size; \nIt must contain at least 24 line for curve and 2 line of results;\n" + exception.getCause());
+            throw new CurveException("\nFile " + curve.toString() + " doesn't have a proper size; \nIt must contain at least 24 line for curve and 2 line of results;\n" + exception.getCause());
         }
+        System.out.println("=======> Curve size: " + curve.size());
 
         countResultUtil.setControlCurveCMP(curve);
         countResultUtil.setStandardsCMP(curve);
@@ -156,9 +176,9 @@ public class ResultService {
         countResultUtil.countRegressionParameterA();
 
         List<Double> countedList = new ArrayList<>();
-        try {
+//        try {
             for (int i = 23; i < list.size(); i++) {
-                result = resultRepository.findByFileName("row_" + i + "_" + setFileName(file));
+                result = resultRepository.findByFileName("row_" + i + "_" + fileUtils.setFileName(file));
                 double point = result.getCcpm();
                 double counted = countResultUtil.countResult(point);
                 System.out.println("nr: " + i + " counted: " + counted);
@@ -168,17 +188,11 @@ public class ResultService {
                 }
                 result.setNg(counted);
             }
-        } catch (Exception exception) {
-            throw new CurveException("\nFile " + file.getOriginalFilename() + " doesn't have a proper size; \nIt must contain at least 24 line for curve and 2 line of results;\n" + exception.getCause());
-        }
+//        } catch (Exception exception) {
+//            throw new CurveException("\nFile " + file.getOriginalFilename() + " doesn't have a proper size; \nIt must contain at least 24 line for curve and 2 line of results;\n" + exception.getCause());
+//        }
 
         return result;
-    }
-
-
-    public String setFileName(MultipartFile file) {
-        String fileName = file.getOriginalFilename();
-        return fileName;
     }
 }
 

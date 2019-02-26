@@ -74,7 +74,7 @@ class AddFile extends Component {
     data.append("file", this.state.file);
     data.append("name", this.state.file.name);
     console.log(data);
-    fetch("http://localhost:8080/api/files", {
+    fetch("http://localhost:8080/api/files/", {
       method: "POST",
       body: data
     })

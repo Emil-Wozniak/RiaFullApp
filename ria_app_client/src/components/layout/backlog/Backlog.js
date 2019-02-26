@@ -36,7 +36,7 @@ const theme = (styles = createMuiTheme({
     error: color.red,
     success: color.green,
     inProgress: color.yellow
-  }),
+  })
 }));
 
 class Backlog extends Component {

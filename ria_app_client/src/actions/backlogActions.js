@@ -3,7 +3,7 @@ import * as types from "./types";
 
 export const getBacklog = dataId => async dispatch => {
   try {
-    const {data} = await axios.get(`http://localhost:8080/api/backlog/${dataId}`);
+    const {data} = await axios.get(`/api/backlog//${dataId}`);
     dispatch({
       type: types.GET_BACKLOG,
       payload: data
@@ -19,7 +19,7 @@ export const getBacklog = dataId => async dispatch => {
 export const getResult = (dataId, fileName, history) => async dispatch => {
   try {
     const { data } = await axios.get(
-      `http://localhost:8080/api/backlog/${dataId}/${fileName}`
+      `/api/backlog/${dataId}/curve/${fileName}`
     );
     dispatch({
       type: types.GET_RESULT,

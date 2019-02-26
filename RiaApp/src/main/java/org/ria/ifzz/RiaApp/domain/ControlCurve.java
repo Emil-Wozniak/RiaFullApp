@@ -21,7 +21,6 @@ public class ControlCurve {
     private Double ccpm;
     private String fileName;
     private String dataId;
-    private Double ng;
 
     @JsonFormat(pattern = "yyyy-MM-dd' 'HH:mm:ss")
     @Column(updatable = false)

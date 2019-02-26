@@ -1,5 +1,6 @@
 package org.ria.ifzz.RiaApp.utils;
 
+import lombok.Getter;
 import org.apache.commons.math3.util.Precision;
 import org.springframework.stereotype.Service;
 
@@ -14,14 +15,17 @@ public class CountResultUtil {
     private Double zero;
     private Double nonSpecificBinding;
     private Double binding;
+    @Getter
     private List<Double> curve;
+    @Getter
     private List<Double> standardsCMP;
+    @Getter
     private List<Double> logDoseList;
     private List<Double> bindingPercent;
+    @Getter
     private List<Double> logarithmRealZeroTable;
     private Double regressionParameterB;
     private Double regressionParameterA;
-
 
     ResultMath resultMath = new ResultMath();
 
@@ -70,7 +74,6 @@ public class CountResultUtil {
 
 
     //tableC && tableG -> Control Curve CCMP
-
     /**
      * @param controlCurve array of CMP of hormone standardized pattern e.g CORTISOL_PATTERN
      * @return array of CMP of hormone standardized pattern e.g CORTISOL_PATTERN
@@ -78,7 +81,7 @@ public class CountResultUtil {
     public List<Double> setStandardsCMP(List<Double> controlCurve) {
         standardsCMP = new ArrayList<>();
         if (standardsCMP.size() < 8) {
-            for (int i = 8; i < controlCurve.size() - 1; i++) {
+            for (int i = 8; i < controlCurve.size()-2; i++) {
                 double point = controlCurve.get(i);
                 standardsCMP.add(point);
             }
@@ -89,7 +92,6 @@ public class CountResultUtil {
     }
 
     //table M == table I
-
     /**
      * take double array which contains standardized pattern and
      * performs a logarithmic function for each elements of the array
@@ -97,7 +99,7 @@ public class CountResultUtil {
      * @param result array of hormone standardized pattern e.g CORTISOL_PATTERN
      * @return Double List
      */
-    public List<Double> doseLog(double[] result) {
+    public List<Double> logDose(double[] result) {
         List<Double> standardPattern = new ArrayList<>();
         System.out.println("\n\nStandard points:" + "\n======================================================");
         for (double point : result) {
@@ -111,7 +113,7 @@ public class CountResultUtil {
     // =(G23-$I$16)*100/$J$18
 
     /**
-     * subtracts each value from standards CMP List by each value result from doseLog(),
+     * subtracts each value from standards CMP List by each value result from logDose(),
      * then multiply each result by 100, divides those by binding
      *
      * @return
@@ -147,11 +149,7 @@ public class CountResultUtil {
     R19 == N20
     var M25:M40 => logDose
     var N25:N40 => logarithmRealZero
-    * = sum(N25:N40)
-    * / count(M25:M40)
-    * - N19 => regressionParameterB
-    * * sum(M25:M40)
-    * / count(M25:M40)
+    * = sum(N25:N40)/ count(M25:M40)- N19 => regressionParameterB* sum(M25:M40) / count(M25:M40)
     */
     public Double countRegressionParameterA() {
         System.out.println("\n\ncountRegressionParameterA:" +
@@ -166,22 +164,12 @@ public class CountResultUtil {
         return regressionParameterA;
     }
 
-    /*
+    /* Excel version:
     N19
     var M25:M40 => logDose
     var N25:N40 => logarithmRealZero
     *
-    * =(
-    * COUNT(M25:M40)
-    * *SUMPRODUCT(M25:M40;N25:N40)
-    * -SUM(M25:M40)
-    * *SUM(N25:N40)
-    * )
-    * /(
-    * COUNT(M25:M40)
-    * *SUMSQ(M25:M40)
-    * -(SUM(M25:M40)
-    * )^2)
+    * =(COUNT(M25:M40) *SUMPRODUCT(M25:M40;N25:N40) -SUM(M25:M40)*SUM(N25:N40))/(COUNT(M25:M40)*SUMSQ(M25:M40)-(SUM(M25:M40))^2)
      */
     public Double countRegressionParameterB() {
         System.out.println("\n\nregressionParameterB:" +
@@ -217,27 +205,21 @@ public class CountResultUtil {
         return regressionParameterB;
     }
 
-    /*
-     * = 10^
-     * ((
-     * LOG((B44-$I$16)
-     * *100
-     * /$J$18
-     * /
-     * (100-(B44-$I$16)
-     * *100
-     * /$J$18))
-     * -$R$19)
-     * /$R$20)
+    /* Excel version:
+     * = 10^ * (( LOG((B44-$I$16) *100 /$J$18 / (100-(B44-$I$16) *100 /$J$18)) -$R$19) /$R$20)
+     */
+    /**
+     * calculates the value of hormone nanograms by formula:
+     * { 10^(( LOG((cmp-zero) *100 / binding / (100-(cmp-zero) *100 / binding)) - regressionParameterA) / regressionParameterB)}
+     * @param CMP ccmp value from file
+     * @return the value of hormone nanograms in the sample
      */
     public Double countResult(Double CMP) {
         System.out.println("\n\nCount Result:" +
                 "\n======================================================");
         System.out.println("CMP: " + CMP);
         Double firstPart = ((Math.log10((CMP - zero) * 100 / binding / (100 - (CMP - zero) * 100 / binding)) - regressionParameterA) / regressionParameterB);
-        System.out.println("First part: " + firstPart);
         Double power = Math.pow(10, firstPart);
-        System.out.println(power);
         power = Precision.round(power, 2);
         return power;
     }

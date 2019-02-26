@@ -1,4 +1,4 @@
-package org.ria.ifzz.RiaApp.controller;
+package org.ria.ifzz.RiaApp.web;
 
 import org.ria.ifzz.RiaApp.domain.Backlog;
 import org.ria.ifzz.RiaApp.domain.ControlCurve;
@@ -20,12 +20,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.constraints.NotNull;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URI;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -152,16 +150,15 @@ public class FileEntityController {
         resultService.setResultFromColumnsLength(cleanedList, file, backlog);
         Result result = resultService.assignDataToResult(cleanedList, file, fileEntity);
         resultRepository.save(result);
-        result = resultService.assignNgPerMl(file, cleanedList);
-        resultRepository.save(result);
 
         // Control Curve
         controlCurveService.setControlCurveFromColumnsLength(cleanedList,file,backlog);
         ControlCurve controlCurve = controlCurveService.setDataToControlCurve(cleanedList,file,fileEntity);
         controlCurveRepository.save(controlCurve);
 
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
-//        return ResponseEntity.created(location).build();
+        result = resultService.assignNgPerMl(file, cleanedList);
+        resultRepository.save(result);
+
         return new ResponseEntity<>(fileEntity,HttpStatus.CREATED);
     }
 

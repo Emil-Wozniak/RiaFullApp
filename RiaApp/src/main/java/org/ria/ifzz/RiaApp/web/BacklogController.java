@@ -1,7 +1,9 @@
-package org.ria.ifzz.RiaApp.controller;
+package org.ria.ifzz.RiaApp.web;
 
+import org.ria.ifzz.RiaApp.domain.ControlCurve;
 import org.ria.ifzz.RiaApp.domain.Result;
 import org.ria.ifzz.RiaApp.service.BacklogService;
+import org.ria.ifzz.RiaApp.service.ControlCurveService;
 import org.ria.ifzz.RiaApp.service.MapValidationErrorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,10 +21,12 @@ public class BacklogController {
     MapValidationErrorService errorService;
 
     private final BacklogService backlogService;
+    private final ControlCurveService controlCurveService;
 
     @Autowired
-    public BacklogController(BacklogService backlogService) {
+    public BacklogController(BacklogService backlogService, ControlCurveService controlCurveService) {
         this.backlogService = backlogService;
+        this.controlCurveService = controlCurveService;
     }
 
     @GetMapping("/{dataId}")
@@ -31,6 +35,13 @@ public class BacklogController {
     }
 
     @GetMapping("/{dataId}/{fileName}")
+    public ResponseEntity<?> getCurve(@PathVariable String dataId, @PathVariable String fileName) throws FileNotFoundException {
+
+        ControlCurve controlCurve = controlCurveService.findResultByDataId(dataId, fileName);
+        return new ResponseEntity<>(controlCurve, HttpStatus.OK);
+    }
+
+    @GetMapping("/{dataId}/curve/{fileName}")
     public ResponseEntity<?> getResult(@PathVariable String dataId, @PathVariable String fileName) throws FileNotFoundException {
 
         Result result = backlogService.findResultByDataId(dataId, fileName);
