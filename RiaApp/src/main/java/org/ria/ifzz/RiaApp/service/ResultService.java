@@ -5,8 +5,8 @@ import org.ria.ifzz.RiaApp.domain.ControlCurve;
 import org.ria.ifzz.RiaApp.domain.FileEntity;
 import org.ria.ifzz.RiaApp.domain.Result;
 import org.ria.ifzz.RiaApp.exception.CurveException;
-import org.ria.ifzz.RiaApp.repositorie.ControlCurveRepository;
-import org.ria.ifzz.RiaApp.repositorie.ResultRepository;
+import org.ria.ifzz.RiaApp.repository.ControlCurveRepository;
+import org.ria.ifzz.RiaApp.repository.ResultRepository;
 import org.ria.ifzz.RiaApp.utils.CountResultUtil;
 import org.ria.ifzz.RiaApp.utils.CustomFileReader;
 import org.ria.ifzz.RiaApp.utils.FileUtils;
@@ -143,16 +143,6 @@ public class ResultService {
         // get standard pattern
         countResultUtil.logDose(CORTISOL_PATTERN);
 
-//         get all results of control curve (Totals, ZEROs, NSBNs) + control points (t1 + t2)
-//        try {
-//            for (int i = 1; i < 24; i++) {
-//                result = resultRepository.findByFileName("row_" + i + "_" + fileUtils.setFileName(file));
-//                double point = result.getCcpm();
-//                curve.add(point);
-//            }
-//        } catch (Exception exception) {
-//            throw new CurveException("\nFile " + file.getOriginalFilename() + " doesn't have a proper size; \nIt must contain at least 24 line for curve and 2 line of results;\n" + exception.getCause());
-//        }
         try {
             for (int i = 0; i < 24; i++) {
                 int index = i + 1;
@@ -176,21 +166,17 @@ public class ResultService {
         countResultUtil.countRegressionParameterA();
 
         List<Double> countedList = new ArrayList<>();
-//        try {
-            for (int i = 23; i < list.size(); i++) {
-                result = resultRepository.findByFileName("row_" + i + "_" + fileUtils.setFileName(file));
-                double point = result.getCcpm();
-                double counted = countResultUtil.countResult(point);
-                System.out.println("nr: " + i + " counted: " + counted);
-                countedList.add(counted);
-                if (Double.isNaN(counted)) {
-                    counted = 0.0;
-                }
-                result.setNg(counted);
+        for (int i = 23; i < list.size(); i++) {
+            result = resultRepository.findByFileName("row_" + i + "_" + fileUtils.setFileName(file));
+            double point = result.getCcpm();
+            double counted = countResultUtil.countResult(point);
+            System.out.println("nr: " + i + " counted: " + counted);
+            countedList.add(counted);
+            if (Double.isNaN(counted)) {
+                counted = 0.0;
             }
-//        } catch (Exception exception) {
-//            throw new CurveException("\nFile " + file.getOriginalFilename() + " doesn't have a proper size; \nIt must contain at least 24 line for curve and 2 line of results;\n" + exception.getCause());
-//        }
+            result.setNg(counted);
+        }
 
         return result;
     }

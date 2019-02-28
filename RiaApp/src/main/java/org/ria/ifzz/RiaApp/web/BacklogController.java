@@ -41,6 +41,11 @@ public class BacklogController {
         return new ResponseEntity<>(controlCurve, HttpStatus.OK);
     }
 
+    @GetMapping("/{dataId}/curve")
+    public Iterable<ControlCurve> getFileEntityBacklogCC(@PathVariable String dataId) throws FileNotFoundException {
+        return controlCurveService.findCCBacklogByDataId(dataId);
+    }
+
     @GetMapping("/{dataId}/curve/{fileName}")
     public ResponseEntity<?> getResult(@PathVariable String dataId, @PathVariable String fileName) throws FileNotFoundException {
 

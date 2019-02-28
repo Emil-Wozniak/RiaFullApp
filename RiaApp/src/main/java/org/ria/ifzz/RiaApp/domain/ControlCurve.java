@@ -11,16 +11,16 @@ import java.util.Date;
 @Entity
 @Data
 @NoArgsConstructor
-public class ControlCurve {
+public class ControlCurve  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private Integer samples;
-    private String position;
-    private Double ccpm;
-    private String fileName;
-    private String dataId;
+    Long id = null;
+    Integer samples = null;
+    String position = "";
+    Double ccpm = null;
+    String fileName = "";
+    String dataId = "";
 
     @JsonFormat(pattern = "yyyy-MM-dd' 'HH:mm:ss")
     @Column(updatable = false)

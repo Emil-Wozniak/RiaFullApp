@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import Backlog from "./layout/backlog/Backlog";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { getBacklog } from "../actions/backlogActions";
+import { getBacklog, getBacklogWithCC } from "../actions/backlogActions";
 
 class FileBoard extends Component {
   //constructor to handle errors
@@ -16,6 +16,7 @@ class FileBoard extends Component {
   componentDidMount() {
     const { dataId } = this.props.match.params;
     this.props.getBacklog(dataId);
+    this.props.getBacklogWithCC(dataId)
   }
 
   componentWillReceiveProps(nextProps) {
@@ -25,12 +26,12 @@ class FileBoard extends Component {
   }
 
   render() {
-    const { results } = this.props.backlog;
+    const { results, control_curves } = this.props.backlog;
     const { errors } = this.state;
 
     let BoardContent;
 
-    const boardAlgorithm = (errors, results) => {
+    const boardAlgorithm = (errors, results, control_curves) => {
       if (results.length < 1) {
         if (errors.fileNotFound) {
           return (
@@ -46,11 +47,16 @@ class FileBoard extends Component {
           );
         }
       } else {
-        return <Backlog results_prop={results} />;
+        return (
+          <Backlog
+            results_prop={results}
+            control_curves_prop={control_curves}
+          />
+        );
       }
     };
 
-    BoardContent = boardAlgorithm(errors, results);
+    BoardContent = boardAlgorithm(errors, results, control_curves);
 
     return (
       <div className="container">
@@ -64,6 +70,7 @@ class FileBoard extends Component {
 FileBoard.propTypes = {
   backlog: PropTypes.object.isRequired,
   getBacklog: PropTypes.func.isRequired,
+  getBacklogWithCC: PropTypes.func.isRequired,
   errors: PropTypes.object.isRequired
 };
 
@@ -74,5 +81,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { getBacklog }
+  { getBacklog, getBacklogWithCC }
 )(FileBoard);

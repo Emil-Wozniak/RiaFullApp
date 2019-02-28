@@ -9,6 +9,7 @@ import ReactToExcel from "react-html-table-to-excel";
 import { Row, Container, Table } from "reactstrap";
 import IconButton from "@material-ui/core/IconButton";
 import { ArrowBack } from "@material-ui/icons";
+import ControlCurve from "../controlCurve/ControlCurve";
 
 var styles = theme => ({
   root: {
@@ -46,7 +47,10 @@ class Backlog extends Component {
   }
 
   render() {
+    const { control_curves_prop } = this.props;
     const { results_prop } = this.props;
+
+    const control_curves = control_curves_prop.sort((a, b) => a.samples > b.samples).map((control_curve) => <ControlCurve key={control_curve} control_curve={control_curve} />)
 
     const results = results_prop
       .sort((a, b) => a.samples > b.samples)
@@ -69,7 +73,19 @@ class Backlog extends Component {
               />
             </Row>
           </Container>
+          <div><h4>Control Curve:</h4></div>
           <Table striped id="file_data">
+            <thead>
+              <tr>
+                <th>sample:</th>
+                <th>position</th>
+                <th>CPM:</th>
+                <th/>
+              </tr>
+            </thead>
+            {control_curves}
+            <br/>
+            <div><h5>Results:</h5></div>
             <thead>
               <tr>
                 <th>sample:</th>

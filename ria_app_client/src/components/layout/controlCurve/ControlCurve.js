@@ -16,24 +16,18 @@ const styles = theme => ({
   }
 });
 
-class Result extends Component {
+class ControlCurve extends Component {
   render() {
-    const { result } = this.props;
-    const condition = result.ng === 0;
+    const { control_curve } = this.props;
 
     return (
       <React.Fragment>
         <tbody>
           <tr>
-            <td>{result.samples}</td>
-            <td>{result.position}</td>
-            <td>{result.ccpm}</td>
-            <td
-              className="mx-auto"
-              style={{ backgroundColor: condition ? "#B00020" : "striped" }}
-            >
-              {result.ng}
-            </td>
+            <td>{control_curve.samples}</td>
+            <td>{control_curve.position}</td>
+            <td>{control_curve.ccpm}</td>
+            <td/>
           </tr>
         </tbody>
       </React.Fragment>
@@ -41,9 +35,9 @@ class Result extends Component {
   }
 }
 
-Result.propTypes = {
+ControlCurve.propTypes = {
   classes: PropTypes.object.isRequired,
-  result: PropTypes.object.isRequired,
+  control_curve: PropTypes.object.isRequired,
   deleteFileEntity: PropTypes.func.isRequired
 };
 
@@ -53,4 +47,4 @@ export default compose(
     null,
     { deleteFileEntity }
   )
-)(Result);
+)(ControlCurve);

@@ -5,7 +5,7 @@ import org.ria.ifzz.RiaApp.domain.ControlCurve;
 import org.ria.ifzz.RiaApp.domain.FileEntity;
 import org.ria.ifzz.RiaApp.domain.Result;
 import org.ria.ifzz.RiaApp.exception.FileEntityNotFoundException;
-import org.ria.ifzz.RiaApp.repositorie.ControlCurveRepository;
+import org.ria.ifzz.RiaApp.repository.ControlCurveRepository;
 import org.ria.ifzz.RiaApp.utils.CustomFileReader;
 import org.ria.ifzz.RiaApp.utils.FileUtils;
 import org.springframework.stereotype.Service;
@@ -117,6 +117,11 @@ public class ControlCurveService {
         }
 
         return controlCurve;
+    }
+
+    public Iterable<ControlCurve> findCCBacklogByDataId(String dataId) throws FileNotFoundException {
+        fileEntityService.findFileEntityByDataId(dataId);
+        return controlCurveRepository.findByDataIdOrderByFileName(dataId);
     }
 
     public ControlCurve findResultByDataId(String dataId, String fileName) throws FileNotFoundException {

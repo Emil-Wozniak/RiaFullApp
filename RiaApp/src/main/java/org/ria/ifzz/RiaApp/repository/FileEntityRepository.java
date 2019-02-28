@@ -1,4 +1,4 @@
-package org.ria.ifzz.RiaApp.repositorie;
+package org.ria.ifzz.RiaApp.repository;
 
 import org.ria.ifzz.RiaApp.domain.FileEntity;
 import org.springframework.data.repository.CrudRepository;
