@@ -39,14 +39,16 @@ public class FileEntityController {
     private final ControlCurveService controlCurveService;
     private final ControlCurveRepository controlCurveRepository;
     private final GraphCurveService graphCurveService;
-    private final CountResultUtil countResultUtil;
 
     @Autowired
     public FileEntityController(StorageService storageService,
                                 FileEntityRepository fileEntityRepository,
                                 ResultService resultService,
                                 BacklogRepository backlogRepository,
-                                ResultRepository resultRepository, ControlCurveService controlCurveService, ControlCurveRepository controlCurveRepository, GraphCurveService graphCurveService, CountResultUtil countResultUtil) {
+                                ResultRepository resultRepository,
+                                ControlCurveService controlCurveService,
+                                ControlCurveRepository controlCurveRepository,
+                                GraphCurveService graphCurveService) {
 
         this.storageService = storageService;
         this.fileEntityRepository = fileEntityRepository;
@@ -56,7 +58,6 @@ public class FileEntityController {
         this.controlCurveService = controlCurveService;
         this.controlCurveRepository = controlCurveRepository;
         this.graphCurveService = graphCurveService;
-        this.countResultUtil = countResultUtil;
     }
 
     @GetMapping("/download")
@@ -160,8 +161,7 @@ public class FileEntityController {
 
         result = resultService.assignNgPerMl(file, cleanedList);
         resultRepository.save(result);
-
-        graphCurveService.setCoordinates(countResultUtil.getLogDoseList(),countResultUtil.getLogarithmRealZeroTable());
+        graphCurveService.setGraphCurveFileName(file);
 
         return new ResponseEntity<>(fileEntity,HttpStatus.CREATED);
     }

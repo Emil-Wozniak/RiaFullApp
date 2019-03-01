@@ -14,6 +14,7 @@ public class GraphCurve {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    double x;
-    double y;
+    private double x;
+    private double y;
+    private String fileName;
 }
