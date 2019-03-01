@@ -95,7 +95,7 @@ public class ResultService {
         String fileId = fileEntity.getDataId();
 
         //Assign CCMP to Result
-        for (int i = 22; i < list.size() - 1; i++) {
+        for (int i = 24; i < list.size() - 1; i++) {
             List CCMP = customFileReader.getMatchingStrings(list, 3);
 
             int index = i + 1;
@@ -109,7 +109,7 @@ public class ResultService {
         }
 
         //Assign position to Result
-        for (int i = 22; i < list.size() - 1; i++) {
+        for (int i = 24; i < list.size() - 1; i++) {
             List position = customFileReader.getMatchingStrings(list, 2);
 
             int index = i + 1;
@@ -118,7 +118,7 @@ public class ResultService {
         }
 
         //Assign samples to Result
-        for (int i = 22; i < list.size() - 1; i++) {
+        for (int i = 24; i < list.size() - 1; i++) {
             List Samples = customFileReader.getMatchingStrings(list, 1);
 
             int index = i + 1;
@@ -166,7 +166,7 @@ public class ResultService {
         countResultUtil.countRegressionParameterA();
 
         List<Double> countedList = new ArrayList<>();
-        for (int i = 23; i < list.size(); i++) {
+        for (int i = 25; i < list.size(); i++) {
             result = resultRepository.findByFileName("row_" + i + "_" + fileUtils.setFileName(file));
             double point = result.getCcpm();
             double counted = countResultUtil.countResult(point);

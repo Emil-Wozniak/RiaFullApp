@@ -16,6 +16,8 @@ const styles = theme => ({
   }
 });
 
+
+
 class ControlCurve extends Component {
   render() {
     const { control_curve } = this.props;

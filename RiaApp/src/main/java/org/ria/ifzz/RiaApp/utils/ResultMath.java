@@ -1,9 +1,9 @@
 package org.ria.ifzz.RiaApp.utils;
 
+import org.apache.commons.math3.util.Pair;
 import org.apache.commons.math3.util.Precision;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,7 +40,7 @@ public class ResultMath {
         return result;
     }
 
-    public List<Double> subtractTablesElement(List<Double> subtrahend,  double value) {
+    public List<Double> subtractTablesElement(List<Double> subtrahend, double value) {
         Double sub;
         Double result;
         List<Double> results = new ArrayList<>();
@@ -53,46 +53,40 @@ public class ResultMath {
         return results;
     }
 
-    public List<Double> divideTableElements(double factor, List<Double> values) {
+    public List<Double> divideTableCeilElements(double factor, List<Double> values) {
 
         double product;
         List<Double> productTable = new ArrayList<>();
         for (int i = 0; i < values.size(); i++) {
 
             product = values.get(i) / factor;
+            product = Math.ceil(product);
             productTable.add(product);
         }
-        System.out.println("\ndivideTableElements:");
+        System.out.println("\nDivide Table Ceil Elements:");
         productTable.forEach(System.out::println);
         return productTable;
     }
 
-    public List<Double> logarithmTable(List<Double> logarithmTable) {
-        List<Double> resultTable = new ArrayList<>();
-        resultTable = logarithmTable.stream().map(Math::log10).collect(Collectors.toList());
+    public List<Double> logarithmTable2(List<Double> logarithmTable) {
+        List<Double> resultTable;
+        resultTable = logarithmTable.stream().map(Math::log10).map(element -> Precision.round(element, 2)).collect(Collectors.toList());
         System.out.println("\nLogarithm Table:");
         resultTable.forEach(System.out::println);
         return resultTable;
     }
 
-    public List<Double> logarithmTables(List<Double> divisionTable, List<Double> subtractTable) {
-
-        List<Double> productTable = new ArrayList<>();
-        List<Double> subtractNumbers = new ArrayList<>();
-        List<Double> logarithmicNumbers = new ArrayList<>();
-
-        for (int i = 1; i < divisionTable.size(); i++) {
-            logarithmicNumbers = divisionTable(divisionTable, subtractNumbers);
-        }
-
-        for (int i = 0; i < logarithmicNumbers.size(); i++) {
-            Double getLoc = logarithmicNumbers.get(i);
-            Double logLoc = Math.log(getLoc);
-            productTable.add(logLoc);
-        }
-
-        return productTable;
+    public List<Double> logarithmTable3(List<Double> logarithmTable) {
+        List<Double> resultTable;
+        resultTable = logarithmTable.stream()
+                .map(Math::log10)
+                .map(element -> Precision.round(element, 3))
+                .collect(Collectors.toList());
+        System.out.println("\nLogarithm Table precision 3:");
+        resultTable.forEach(System.out::println);
+        return resultTable;
     }
+
 
     public List<Double> divisionTable(List<Double> factor, List<Double> values) {
 
@@ -101,6 +95,7 @@ public class ResultMath {
         for (int i = 0; i < factor.size(); i++) {
 
             product = factor.get(i) / values.get(i);
+            product = Precision.round(product, 2);
             productTable.add(product);
         }
         System.out.println("\nDivision Table:");
@@ -108,22 +103,9 @@ public class ResultMath {
         return productTable;
     }
 
-    public List<Double> multiply(List<Double>  multiplier, List<Double> values) {
-        List<Double>  result = new ArrayList<>();
-        Double first = 0.0;
-        Double second = 0.0;
-        for (int i = 0; i < values.size(); i++) {
-            first = values.get(i);
-            second = multiplier.get(i);
-            Double sum = first * second;
-            result.add(sum);
-        }
-        return result;
-    }
-
     public List<Double> multiplyList(Double multiplier, List<Double> values) {
         System.out.println("\nMultiply List:");
-        Double number = 0.0;
+        Double number;
         List<Double> newList = new ArrayList<>();
         for (int i = 0; i < values.size(); i++) {
             number = values.get(i);
@@ -138,31 +120,38 @@ public class ResultMath {
 
 
     public double sum(List<Double> values) {
-        double result = 0.0;
-
-        double[] target = new double[values.size()];
-        for (int i = 0; i < values.size(); i++) {
-            target[i] = values.get(i);
-        }
-
-        result = DoubleStream.of(target).sum();
-        System.out.println("Sum result: " + result);
-        return result;
+        Double product = values.stream().mapToDouble(value -> Precision.round(value, 2)).sum();
+        product = Precision.round(product, 2);
+        System.out.println("Sum result: " + product);
+        return product;
+    }
+    public double sum4(List<Double> values) {
+        Double product = values.stream()
+                .mapToDouble(value -> value)
+                .sum();
+        product = Precision.round(product, 3);
+        System.out.println("Sum4 result: " + product);
+        return product;
     }
 
     public Double sumProduct(List<Double> factor, List<Double> multiplier) {
 
-        Double product = 0.0;
-        List<Double> multiplyTable = new ArrayList<>();
-        multiplyTable = multiply(multiplier,factor);
+        double product;
+        List<Pair<Double, Double>> pairs = new ArrayList<>();
+        for (int i = 0; i < multiplier.size(); i++) {
+            pairs.add(new Pair<>(factor.get(i), multiplier.get(i)));
+        }
+        product = pairs.parallelStream()
+                .mapToDouble(p -> p.getFirst() * p.getSecond())
+                .map(element -> Precision.round(element, 1)).sum();
+        product = Precision.round(product, 3);
 
-        product = sum(multiplyTable);
         System.out.println("sumProduct: " + product);
         return product;
     }
 
     public Double sumsq(List<Double> values) {
-        double result = 0.0;
+        double result;
         List<Double> powerValues = new ArrayList<>();
 
         for (double value : values) {
@@ -176,12 +165,14 @@ public class ResultMath {
     }
 
     public List<Double> roundAvoid(List<Double> values) {
-        List<Double> rounded = new ArrayList<>();
-        for (double value: values) {
-            Double converted = Precision.round(value, 2);
-            rounded.add(converted);
-        }
-        return rounded;
+        List<Double> result;
+        result = values.stream()
+                .map(element -> element * 10)
+                .map(Double::longValue)
+                .map(element -> element / 10D)
+                .map(element -> Precision.round(element, 2))
+                .collect(Collectors.toList());
+        return result;
     }
 }
 

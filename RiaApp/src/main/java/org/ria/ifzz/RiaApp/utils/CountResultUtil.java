@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class CountResultUtil {
@@ -24,6 +23,7 @@ public class CountResultUtil {
     private List<Double> bindingPercent;
     @Getter
     private List<Double> logarithmRealZeroTable;
+    private List<Double> logarithmRealZeroTableNotLong;
     private Double regressionParameterB;
     private Double regressionParameterA;
 
@@ -105,7 +105,7 @@ public class CountResultUtil {
         for (double point : result) {
             standardPattern.add(point);
         }
-        logDoseList = resultMath.logarithmTable(standardPattern);
+        logDoseList = resultMath.logarithmTable2(standardPattern);
         return logDoseList;
     }
 
@@ -122,11 +122,10 @@ public class CountResultUtil {
         System.out.println("\n\nbinding percent" + "\n======================================================");
         List<Double> subtraction = resultMath.subtractTablesElement(standardsCMP, zero);
         List<Double> multiplication = resultMath.multiplyList(100.0, subtraction);
-        List<Double> result = resultMath.divideTableElements(binding, multiplication); // %Bo-Bg
-        List<Double> ceilTable = result.stream().map(element -> Math.ceil(element)).collect(Collectors.toList());
+        List<Double> result = resultMath.divideTableCeilElements(binding, multiplication); // %Bo-Bg
         System.out.println("\nBinding percent:");
-        ceilTable.forEach(System.out::println);
-        bindingPercent = ceilTable;
+        result.forEach(System.out::println);
+        bindingPercent = result;
         return bindingPercent;
     }
 
@@ -135,11 +134,13 @@ public class CountResultUtil {
     =LOG(H23/(100-H23))
      */
     public List<Double> logarithmRealZero() {
-        System.out.println("\n\nLogit Real Zero:" + "\n======================================================");
+        System.out.println("\n\nLogarithm Real Zero:" + "\n======================================================");
         List<Double> subtractPercentNO = resultMath.subtractTableElements(100.0, bindingPercent);
         List<Double> divideTable = resultMath.divisionTable(bindingPercent, subtractPercentNO);
-        List<Double> logTable = resultMath.logarithmTable(divideTable);
+        List<Double> logTable = resultMath.logarithmTable2(divideTable);
+        logarithmRealZeroTableNotLong = resultMath.logarithmTable3(divideTable);
         List<Double> rounded = resultMath.roundAvoid(logTable);
+        System.out.println("\n");
         rounded.forEach(System.out::println);
         logarithmRealZeroTable = rounded;
         return logarithmRealZeroTable;
@@ -182,25 +183,26 @@ public class CountResultUtil {
 
         Double logDoseCount = resultMath.count(logDoseList);
         Double sum = resultMath.sumProduct(logDoseList, logarithmRealZeroTable);
-        Double precision = Precision.round(sum, 0);
-        System.out.println(precision);
         Double sumLogDose = resultMath.sum(logDoseList);
-        Double sumLogRealZero = resultMath.sum(logarithmRealZeroTable);
+        Double sumLogRealZero = resultMath.sum4(logarithmRealZeroTableNotLong);
 
-        firstFactor = logDoseCount * precision - sumLogDose * sumLogRealZero;
-        System.out.println("First " + firstFactor);
+        firstFactor = (logDoseCount * sum) - (sumLogDose * sumLogRealZero);
+        Double firstFactorCeil = Math.ceil(firstFactor);
+        System.out.println("First " + firstFactorCeil);
 
         System.out.println("\nSecond factor");
+        Double countSecond = resultMath.count(logDoseList);
         Double sumsqSecondFactor = resultMath.sumsq(logDoseList);
         Double sqr = resultMath.sum(logDoseList);
         sqr = Math.pow(sqr, 2);
         System.out.println("Sum logit floor:" + sqr);
 
-        secondFactor = logDoseCount * sumsqSecondFactor - sqr;
+        secondFactor = countSecond * sumsqSecondFactor - sqr;
         System.out.println("Second " + secondFactor + "\n");
 
         Double resultSum = firstFactor / secondFactor;
-        regressionParameterB = resultSum;
+        Double roundResult = Precision.round(resultSum, 4);
+        regressionParameterB = roundResult;
         System.out.println("regressionParameterB result: " + regressionParameterB);
         return regressionParameterB;
     }
