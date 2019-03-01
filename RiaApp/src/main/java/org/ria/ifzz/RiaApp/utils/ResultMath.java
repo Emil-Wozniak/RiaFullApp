@@ -7,7 +7,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.DoubleStream;
 
 public class ResultMath {
 
@@ -93,7 +92,6 @@ public class ResultMath {
         double product;
         List<Double> productTable = new ArrayList<>();
         for (int i = 0; i < factor.size(); i++) {
-
             product = factor.get(i) / values.get(i);
             product = Precision.round(product, 2);
             productTable.add(product);

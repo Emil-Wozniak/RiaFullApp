@@ -187,8 +187,8 @@ public class CountResultUtil {
         Double sumLogRealZero = resultMath.sum4(logarithmRealZeroTableNotLong);
 
         firstFactor = (logDoseCount * sum) - (sumLogDose * sumLogRealZero);
-        Double firstFactorCeil = Math.ceil(firstFactor);
-        System.out.println("First " + firstFactorCeil);
+        Double firstFactor2 = Precision.round(firstFactor,2);
+        System.out.println("First " + firstFactor2);
 
         System.out.println("\nSecond factor");
         Double countSecond = resultMath.count(logDoseList);
