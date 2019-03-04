@@ -16,18 +16,20 @@ const styles = theme => ({
   }
 });
 
-class ControlCurve extends Component {
+class GraphCurves extends Component {
   render() {
-    const { control_curve } = this.props;
+    const { graph_curve } = this.props;
 
     return (
       <React.Fragment>
         <tbody>
           <tr>
-            <td>{control_curve.samples}</td>
-            <td>{control_curve.position}</td>
-            <td>{control_curve.ccpm}</td>
-            <td />
+            
+            <td
+              className="mx-auto"
+            >
+   
+            </td>
           </tr>
         </tbody>
       </React.Fragment>
@@ -35,9 +37,9 @@ class ControlCurve extends Component {
   }
 }
 
-ControlCurve.propTypes = {
+GraphCurves.propTypes = {
   classes: PropTypes.object.isRequired,
-  control_curve: PropTypes.object.isRequired,
+  graph_curve: PropTypes.object.isRequired,
   deleteFileEntity: PropTypes.func.isRequired
 };
 
@@ -47,4 +49,4 @@ export default compose(
     null,
     { deleteFileEntity }
   )
-)(ControlCurve);
+)(GraphCurves);

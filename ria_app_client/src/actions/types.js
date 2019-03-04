@@ -6,6 +6,7 @@ export const DELETE_FILE_ENTITY = "DELETE_FILE_ENTITY";
 //types for FILE DATA ACTIONS
 export const GET_BACKLOG = "GET_BACKLOG";
 export const GET_BACKLOG_CC = "GET_BACKLOG_CC";
+export const GET_GRAPH_CURVE = "GET_GRAPH_CURVE";
 
 //types for RESULT ACTIONS
 export const GET_RESULT = "GET_RESULT";
