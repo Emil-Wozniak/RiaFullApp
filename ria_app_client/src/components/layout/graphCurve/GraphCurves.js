@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 import compose from "recompose/compose";
 import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import { deleteFileEntity } from "../../../actions/filesActions";
 import { withStyles } from "@material-ui/core/styles";
 
 const styles = theme => ({
@@ -24,12 +22,8 @@ class GraphCurves extends Component {
       <React.Fragment>
         <tbody>
           <tr>
-            
-            <td
-              className="mx-auto"
-            >
-   
-            </td>
+            <td>{graph_curve.x}</td>
+            <td>{graph_curve.y}</td>
           </tr>
         </tbody>
       </React.Fragment>
@@ -39,14 +33,9 @@ class GraphCurves extends Component {
 
 GraphCurves.propTypes = {
   classes: PropTypes.object.isRequired,
-  graph_curve: PropTypes.object.isRequired,
-  deleteFileEntity: PropTypes.func.isRequired
+  graph_curve: PropTypes.object.isRequired
 };
 
 export default compose(
-  withStyles(styles),
-  connect(
-    null,
-    { deleteFileEntity }
-  )
+  withStyles(styles)
 )(GraphCurves);

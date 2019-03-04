@@ -46,14 +46,18 @@ class Backlog extends Component {
     super(props);
   }
 
+  componentDidMount(dataId){
+
+  }
+
   render() {
     const { graph_curves_prop } = this.props;
     const { control_curves_prop } = this.props;
     const { results_prop } = this.props;
 
-    // const graph_curves = graph_curves_prop
-    //   .sort((a, b) => a.samples > b.samples)
-    //   .map((graph_curve, i) => <GraphCurves key={i} graph_curve={graph_curve} />);
+    const graph_curves = graph_curves_prop
+      .sort((a, b) => a.id > b.id)
+      .map((graph_curve, i) => <GraphCurves key={i} graph_curve={graph_curve} />);
 
     const control_curves = control_curves_prop
       .sort((a, b) => a.samples > b.samples)
@@ -82,10 +86,17 @@ class Backlog extends Component {
               />
             </Row>
           </Container>
-          <div>
-            <h4>Control Curve:</h4>
-          </div>
           <Table striped id="file_data">
+          <thead>
+              <tr>
+                <th>X:</th>
+                <th>Y:</th>
+                <th/>
+                <th/>
+              </tr>
+            </thead>
+          {graph_curves}
+          <h4>Control Curve:</h4>
             <thead>
               <tr>
                 <th>sample:</th>
@@ -96,9 +107,7 @@ class Backlog extends Component {
             </thead>
             {control_curves}
             <br />
-            <div>
               <h5>Results:</h5>
-            </div>
             <thead>
               <tr>
                 <th>sample:</th>

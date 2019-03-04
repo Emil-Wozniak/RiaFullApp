@@ -30,7 +30,7 @@ export default function(state = initialState, action) {
     case types.GET_CONTROL_CURVE:
       return {
         ...state,
-        result: action.payload
+        control_curve: action.payload
       };
 
     default:

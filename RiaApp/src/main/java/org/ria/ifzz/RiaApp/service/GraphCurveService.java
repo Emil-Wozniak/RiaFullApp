@@ -2,6 +2,7 @@ package org.ria.ifzz.RiaApp.service;
 
 import org.ria.ifzz.RiaApp.domain.FileEntity;
 import org.ria.ifzz.RiaApp.domain.GraphCurve;
+import org.ria.ifzz.RiaApp.exception.FileEntityNotFoundException;
 import org.ria.ifzz.RiaApp.repository.GraphCurveRepository;
 import org.ria.ifzz.RiaApp.utils.CountResultUtil;
 import org.ria.ifzz.RiaApp.utils.FileUtils;
@@ -70,5 +71,18 @@ public class GraphCurveService {
     public Iterable<GraphCurve> findBacklogByDataId(String dataId) throws FileNotFoundException {
         fileEntityService.findFileEntityByDataId(dataId);
         return graphCurveRepository.findByDataIdOrderByFileName(dataId);
+    }
+
+    public GraphCurve findResultByDataId(String dataId, String fileName) throws FileNotFoundException {
+        fileEntityService.findFileEntityByDataId(dataId);
+
+        GraphCurve graphCurve = graphCurveRepository.findByFileName(fileName);
+        if (graphCurve == null) {
+            throw new FileEntityNotFoundException("File with ID: '" + fileName + "' not found");
+        }
+        if (!graphCurve.getDataId().equals(dataId)) {
+            throw new FileEntityNotFoundException("Graph '" + fileName + "' does not exist: '" + dataId);
+        }
+        return graphCurve;
     }
 }

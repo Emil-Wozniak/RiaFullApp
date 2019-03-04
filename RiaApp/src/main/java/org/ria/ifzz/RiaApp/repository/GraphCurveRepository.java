@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 public interface GraphCurveRepository extends CrudRepository<GraphCurve, Long> {
 
     Iterable<GraphCurve> findByDataIdOrderByFileName(String dataId);
+
+    GraphCurve findByFileName(String fileName);
 }

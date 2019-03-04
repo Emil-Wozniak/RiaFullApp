@@ -29,7 +29,7 @@ class FileBoard extends Component {
 
   render() {
     const { results, control_curves } = this.props.backlog;
-    const { graph_curves } = this.props;
+    const { graph_curves } = this.props.graph_curve;
     const { errors } = this.state;
 
     let BoardContent;
@@ -78,6 +78,7 @@ class FileBoard extends Component {
 
 FileBoard.propTypes = {
   backlog: PropTypes.object.isRequired,
+  graph_curve: PropTypes.object.isRequired,
   getBacklog: PropTypes.func.isRequired,
   getBacklogWithCC: PropTypes.func.isRequired,
   getGraphCurve: PropTypes.func.isRequired,
@@ -86,6 +87,7 @@ FileBoard.propTypes = {
 
 const mapStateToProps = state => ({
   backlog: state.backlog,
+  graph_curve: state.graph_curve,
   errors: state.errors
 });
 

@@ -15,3 +15,17 @@ export const getGraphCurve = dataId => async dispatch => {
       });
     }
   };
+
+  export const getGraphCurvePoint = (dataId, fileName, history) => async dispatch => {
+    try {
+      const { data } = await axios.get(
+        `/api/graph/${dataId}/${fileName}`
+      );
+      dispatch({
+        type: types.GET_GRAPH_CURVE_POINT,
+        payload: data
+      });
+    } catch (err) {
+      history.push("/dashboard");
+    }
+  };
