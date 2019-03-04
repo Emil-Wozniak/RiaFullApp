@@ -1,5 +1,6 @@
 package org.ria.ifzz.RiaApp.service;
 
+import org.ria.ifzz.RiaApp.domain.FileEntity;
 import org.ria.ifzz.RiaApp.domain.GraphCurve;
 import org.ria.ifzz.RiaApp.repository.GraphCurveRepository;
 import org.ria.ifzz.RiaApp.utils.CountResultUtil;
@@ -51,13 +52,15 @@ public class GraphCurveService {
      * @param file upload file
      * @return list of point for graphical curve, each point has set id(fileName) and set points x, y
      */
-    public List<GraphCurve> setGraphCurveFileName(MultipartFile file) {
+    public List<GraphCurve> setGraphCurveFileName(MultipartFile file, FileEntity fileEntity) {
+        String fileId = fileEntity.getDataId();
         List<GraphCurve> graphCurvesNamed = new ArrayList<>();
         GraphCurve graphCurve;
         setCoordinates(countResultUtil.getLogDoseList(), countResultUtil.getLogarithmRealZeroTable());
         for (int i = 0; i < graphCurves.size(); i++) {
             graphCurve = graphCurves.get(i);
             graphCurve.setFileName(fileUtils.setFileName(file) + "_" + i);
+            graphCurve.setDataId(fileId);
             graphCurvesNamed.add(graphCurve);
         }
         graphCurveRepository.saveAll(graphCurvesNamed);
@@ -66,6 +69,6 @@ public class GraphCurveService {
 
     public Iterable<GraphCurve> findBacklogByDataId(String dataId) throws FileNotFoundException {
         fileEntityService.findFileEntityByDataId(dataId);
-        return null;
+        return graphCurveRepository.findByDataIdOrderByFileName(dataId);
     }
 }

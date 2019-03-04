@@ -17,4 +17,5 @@ public class GraphCurve {
     private double x;
     private double y;
     private String fileName;
+    private String dataId;
 }

@@ -20,7 +20,7 @@ public class GraphCurveController {
     }
 
     @GetMapping("/{dataId}")
-    public Iterable<GraphCurve> getFileEntityBacklog(@PathVariable String dataId) throws FileNotFoundException {
+    public Iterable<GraphCurve> getFileEntityBacklogGC(@PathVariable String dataId) throws FileNotFoundException {
         return graphCurveService.findBacklogByDataId(dataId);
     }
 }

@@ -15,12 +15,12 @@ public class ControlCurve  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id = null;
-    Integer samples = null;
-    String position = "";
-    Double ccpm = null;
-    String fileName = "";
-    String dataId = "";
+    private Long id = null;
+    private Integer samples = null;
+    private String position = "";
+    private Double ccpm = null;
+    private String fileName = "";
+    private String dataId = "";
 
     @JsonFormat(pattern = "yyyy-MM-dd' 'HH:mm:ss")
     @Column(updatable = false)

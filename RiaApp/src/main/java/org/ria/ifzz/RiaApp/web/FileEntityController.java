@@ -155,19 +155,19 @@ public class FileEntityController {
         resultRepository.save(result);
 
         // Control Curve
-        controlCurveService.setControlCurveFromColumnsLength(cleanedList,file,backlog);
-        ControlCurve controlCurve = controlCurveService.setDataToControlCurve(cleanedList,file,fileEntity);
+        controlCurveService.setControlCurveFromColumnsLength(cleanedList, file, backlog);
+        ControlCurve controlCurve = controlCurveService.setDataToControlCurve(cleanedList, file, fileEntity);
         controlCurveRepository.save(controlCurve);
 
         result = resultService.assignNgPerMl(file, cleanedList);
         resultRepository.save(result);
-        graphCurveService.setGraphCurveFileName(file);
+        graphCurveService.setGraphCurveFileName(file, fileEntity);
 
-        return new ResponseEntity<>(fileEntity,HttpStatus.CREATED);
+        return new ResponseEntity<>(fileEntity, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteFile(@PathVariable Long id){
+    public ResponseEntity<?> deleteFile(@PathVariable Long id) {
         storageService.delete(id);
         return new ResponseEntity<>("File with ID: " + id + "was deleted", HttpStatus.OK);
     }

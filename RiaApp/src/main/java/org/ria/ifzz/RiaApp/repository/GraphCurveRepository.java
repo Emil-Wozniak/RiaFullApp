@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface GraphCurveRepository extends CrudRepository<GraphCurve, Long> {
+
+    Iterable<GraphCurve> findByDataIdOrderByFileName(String dataId);
 }
