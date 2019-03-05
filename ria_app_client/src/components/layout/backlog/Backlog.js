@@ -42,13 +42,6 @@ const theme = (styles = createMuiTheme({
 }));
 
 class Backlog extends Component {
-  constructor(props) {
-    super(props);
-  }
-
-  componentDidMount(dataId){
-
-  }
 
   render() {
     const { graph_curves_prop } = this.props;
@@ -69,6 +62,11 @@ class Backlog extends Component {
       .sort((a, b) => a.samples > b.samples)
       .map((result, i) => <Result key={i} result={result} />);
 
+      var data = {
+        labels: [graph_curves.x],
+        series: [[graph_curves.y]]
+      };
+
     return (
       <MuiThemeProvider theme={theme}>
         <Paper classes={{ paper: "paper" }}>
@@ -86,16 +84,9 @@ class Backlog extends Component {
               />
             </Row>
           </Container>
-          <Table striped id="file_data">
-          <thead>
-              <tr>
-                <th>X:</th>
-                <th>Y:</th>
-                <th/>
-                <th/>
-              </tr>
-            </thead>
           {graph_curves}
+          <Table striped id="file_data">
+          
           <h4>Control Curve:</h4>
             <thead>
               <tr>
