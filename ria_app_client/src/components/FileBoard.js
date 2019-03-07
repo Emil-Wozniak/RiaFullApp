@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { getBacklog, getBacklogWithCC } from "../actions/backlogActions";
 import { getGraphCurve } from "../actions/graphCurveActions";
+import GraphCurvesContainer from "./layout/graphCurve/GraphCurvesContainer";
 
 class FileBoard extends Component {
   //constructor to handle errors
@@ -18,7 +19,7 @@ class FileBoard extends Component {
     const { dataId } = this.props.match.params;
     this.props.getBacklog(dataId);
     this.props.getBacklogWithCC(dataId);
-    this.props.getGraphCurve(dataId)
+    this.props.getGraphCurve(dataId);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -51,11 +52,13 @@ class FileBoard extends Component {
         }
       } else {
         return (
-          <Backlog
-            results_prop={results}
-            control_curves_prop={control_curves}
-            graph_curves_prop={graph_curves}
-          />
+          <React.Fragment>
+            <GraphCurvesContainer graph_curves_prop={graph_curves} />
+            <Backlog
+              results_prop={results}
+              control_curves_prop={control_curves}
+            />
+          </React.Fragment>
         );
       }
     };

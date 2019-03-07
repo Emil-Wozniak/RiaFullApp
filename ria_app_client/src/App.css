@@ -94,13 +94,44 @@ img {
   color: #bbb !important;
 }
 
-.divider{
-  width:5px;
-  height:auto;
-  display:inline-block;
+.divider {
+  width: 5px;
+  height: auto;
+  display: inline-block;
 }
 
-.delete{
+.delete {
   list-style: none;
 }
-.hidden { display:none; }
+.hidden {
+  display: none;
+}
+
+.ct-legend {
+  position: relative;
+  z-index: 10;
+}
+
+.ct-legend li {
+  position: relative;
+  padding-left: 23px;
+  margin-bottom: 3px;
+}
+
+li:before {
+  width: 12px;
+  height: 12px;
+  position: absolute;
+  left: 0;
+  content: "";
+  border: 3px solid transparent;
+  border-radius: 2px;
+}
+
+li.inactive:before {
+  background: transparent;
+}
+
+.ct-chart {
+  border: 1px solid gray;
+}

@@ -1,25 +1,13 @@
 import React, { Component } from "react";
-import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { deleteFileEntity } from "../../../actions/filesActions";
 import CustomDownloadFile from "../../../requests/download/CustomDownloadFile";
-import { withStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
 import Avatar from "@material-ui/core/Avatar";
 import FolderIcon from "@material-ui/icons/Folder";
 import IconButton from "@material-ui/core/IconButton";
 import { DeleteForeverRounded } from "@material-ui/icons";
-
-const styles = theme => ({
-  root: {
-    flexGrow: 1
-  },
-  paper: {
-    padding: theme.spacing.unit * 2,
-    textAlign: "center"
-  }
-});
 
 class FileEntity extends Component {
   onDeleteClick = id => {
@@ -68,10 +56,7 @@ FileEntity.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default compose(
-  withStyles(styles),
-  connect(
-    null,
-    { deleteFileEntity }
-  )
+export default connect(
+  null,
+  { deleteFileEntity }
 )(FileEntity);

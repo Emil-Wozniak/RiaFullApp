@@ -10,16 +10,15 @@ import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 import FileEntity from "./layout/fileEntity/FileEntity";
 import UploadFile from "../requests/upload/UploadFile";
 
-
 const theme = createMuiTheme({
-    typography: {
-      useNextVariants: true,
-    },
-    palette:{
-      primary: {
-        main: '#fafafa',
-      }
+  typography: {
+    useNextVariants: true
+  },
+  palette: {
+    primary: {
+      main: "#fafafa"
     }
+  }
 });
 
 class Dashboard extends Component {
@@ -29,7 +28,7 @@ class Dashboard extends Component {
     alignItems: "center"
   };
 
-  handleChange = key => (value) => {
+  handleChange = key => value => {
     this.setState({
       [key]: value
     });
@@ -44,34 +43,40 @@ class Dashboard extends Component {
 
     return (
       <MuiThemeProvider theme={theme}>
-      <UploadFile />
-        <Container>
-          <Row>
-            <Col md={12}>
-              <br />
-              <Paper >
-              <Col><p className="text-left">Files:</p></Col>
-                <Table striped>
-                  <thead>
-                    <tr>
-                      <th/>
-                      <th>File Name</th>
-                      <th>Content Type:</th>
-                      <th>Uploaded</th>
-                      <th/>
-                    </tr>
-                  </thead>
-                  {file_entities.sort((a, b) => a.id < b.id).map(file_entity => (
-                    <FileEntity
-                      key={file_entity.id}
-                      file_entity={file_entity}
-                    />
-                  ))}
-                </Table>
-              </Paper>
-            </Col>
-          </Row>
-        </Container>
+        <React.Fragment>
+          <UploadFile />
+          <Container>
+            <Row>
+              <Col md={12}>
+                <br />
+                <Paper>
+                  <Col>
+                    <p className="text-left">Files:</p>
+                  </Col>
+                  <Table striped>
+                    <thead>
+                      <tr>
+                        <th />
+                        <th>File Name</th>
+                        <th>Content Type:</th>
+                        <th>Uploaded</th>
+                        <th />
+                      </tr>
+                    </thead>
+                    {file_entities
+                      .sort((a, b) => a.id < b.id)
+                      .map(file_entity => (
+                        <FileEntity
+                          key={file_entity.id}
+                          file_entity={file_entity}
+                        />
+                      ))}
+                  </Table>
+                </Paper>
+              </Col>
+            </Row>
+          </Container>
+        </React.Fragment>
       </MuiThemeProvider>
     );
   }
