@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import GraphCurves from "./GraphCurves";
 import ChartistGraph from "react-chartist";
+import Chartist from "chartist";
 
 class GraphCurvesContainer extends Component {
   render() {
@@ -21,12 +21,7 @@ class GraphCurvesContainer extends Component {
 
     const { graph_curves_prop } = this.props;
 
-    const graph_curves = graph_curves_prop
-      .sort((a, b) => a.id > b.id)
-      .map((graph_curve, i) => (
-        <GraphCurves key={i} graph_curve={graph_curve} />
-      ));
-
+    var r = [];
     let varX = [];
     let varY = [];
     for (let i = 0; i < graph_curves_prop.length; i++) {
@@ -38,15 +33,21 @@ class GraphCurvesContainer extends Component {
 
     for (let i = 0; i < graph_curves_prop.length; i++) {
       graph_curves_prop.sortAttr("id");
-      if (graph_curves_prop[i].id%2) {
+      if (graph_curves_prop[i].id % 2) {
+        r.push(graph_curves_prop[i].r);
+      }
+    }
+    for (let i = 0; i < graph_curves_prop.length; i++) {
+      graph_curves_prop.sortAttr("id");
+      if (graph_curves_prop[i].id % 2) {
         varY.push(graph_curves_prop[i].y);
       }
     }
     let varControl = [];
-    if (graph_curves_prop.length >0) {
+    if (graph_curves_prop.length > 0) {
       graph_curves_prop.sortAttr("id");
-        varControl.push(graph_curves_prop[0].y);
-        varControl.push(graph_curves_prop[13].y)
+      varControl.push(graph_curves_prop[0].y);
+      varControl.push(graph_curves_prop[13].y);
     }
 
     var lineChartData = {
@@ -55,31 +56,36 @@ class GraphCurvesContainer extends Component {
     };
 
     var lineChartOptions = {
+      type:"Bar",
       high: 2,
       low: -2,
-      fullWidth: true,
+      fullWidth: false,
       showPoint: true,
       showGrid: true,
-      showArea: false,
-      showLabel: false,
- 
+      showArea: true,
+
       axisX: {
         showGrid: true,
-        showLabel: true,
-     
+        showLabel: true
       },
       axisY: {
         showGrid: true,
-        showLabel: true,
+        showLabel: true
       },
-      chartPadding: 0
+      chartPadding: {
+        right: 50,
+        left: 0,
+        top: 20
+      },
+      lineSmooth: Chartist.Interpolation.cardinal({
+        fillHoles: true,
+      }),
     };
+
     return (
       <React.Fragment>
-        Var control: {varControl +" , "}
-        <br/>
-        var Y: {varY + " , "}
-          <br />
+      <div>R: {r[1]}</div>
+     
           <ChartistGraph
             data={lineChartData}
             options={lineChartOptions}

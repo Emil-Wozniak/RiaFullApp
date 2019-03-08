@@ -63,6 +63,7 @@ public class GraphCurveService {
             graphCurve.setFileName(fileUtils.setFileName(file) + "_" + i);
             graphCurve.setDataId(fileId);
             graphCurvesNamed.add(graphCurve);
+            graphCurve.setR(countResultUtil.setCorrelation());
         }
         graphCurveRepository.saveAll(graphCurvesNamed);
         return graphCurvesNamed;

@@ -1,6 +1,7 @@
 package org.ria.ifzz.RiaApp.utils;
 
 import lombok.Getter;
+import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 import org.apache.commons.math3.util.Precision;
 import org.springframework.stereotype.Service;
 
@@ -20,10 +21,12 @@ public class CountResultUtil {
     private List<Double> standardsCMP;
     @Getter
     private List<Double> logDoseList;
+    private double[] logDoseListArray;
     private List<Double> bindingPercent;
     @Getter
     private List<Double> logarithmRealZeroTable;
     private List<Double> logarithmRealZeroTableNotLong;
+    private double[] logarithmRealZeroArray;
     private Double regressionParameterB;
     private Double regressionParameterA;
 
@@ -228,6 +231,20 @@ public class CountResultUtil {
 
     public double averageCountedResult(double countResult1, double countResult2) {
         return (countResult1 + countResult2) / 2;
+    }
+
+    public double setCorrelation() {
+        Double correlation;
+        logDoseListArray = new double[logDoseList.size()];
+        for (int i = 0; i<logDoseList.size(); i++)logDoseListArray[i] = logDoseList.get(i);
+        logarithmRealZeroArray = new double[logarithmRealZeroTable.size()];
+        for (int i = 0; i<logarithmRealZeroTable.size(); i++)logarithmRealZeroArray[i] = logarithmRealZeroTable.get(i);
+                PearsonsCorrelation pearsonsCorrelation = new PearsonsCorrelation();
+                correlation= pearsonsCorrelation.correlation(logDoseListArray, logarithmRealZeroArray);
+                correlation = Precision.round(correlation,4);
+                Double correlationPow = Math.pow(correlation,2);
+        System.out.println("Correlation: " +correlationPow);
+        return correlationPow;
     }
 }
 
