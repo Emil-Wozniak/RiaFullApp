@@ -2,7 +2,7 @@ package org.ria.ifzz.RiaApp.service;
 
 import org.ria.ifzz.RiaApp.domain.Result;
 import org.ria.ifzz.RiaApp.exception.FileEntityNotFoundException;
-import org.ria.ifzz.RiaApp.repositorie.ResultRepository;
+import org.ria.ifzz.RiaApp.repository.ResultRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

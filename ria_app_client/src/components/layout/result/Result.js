@@ -35,7 +35,6 @@ class Result extends Component {
               {result.ng}
             </td>
           </tr>
-   
         </tbody>
       </React.Fragment>
     );

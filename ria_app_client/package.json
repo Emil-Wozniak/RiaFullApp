@@ -8,17 +8,24 @@
     "@material-ui/icons": "^3.0.2",
     "@material-ui/styles": "^3.0.0-alpha.10",
     "@material/button": "^0.44.0",
+    "@vx/axis": "0.0.184",
+    "@vx/glyph": "0.0.183",
+    "@vx/scale": "0.0.182",
+    "@vx/shape": "0.0.184",
     "axios": "^0.18.0",
     "bootstrap": "^4.2.1",
     "browser-history": "^1.0.1",
+    "chartist": "^0.11.0",
     "compose": "^0.1.2",
     "cors": "^2.8.5",
     "file-saver": "^2.0.0",
     "fixed-data-table-2": "^0.8.19",
     "glyphicons": "^0.2.0",
+    "moment": "^2.24.0",
     "prop-types": "^15.6.2",
     "react": "^16.7.0",
     "react-bootstrap": "^1.0.0-beta.5",
+    "react-chartist": "^0.13.3",
     "react-data-export": "^0.5.0",
     "react-dom": "^16.7.0",
     "react-html-table-to-excel": "^2.0.0",
@@ -52,10 +59,5 @@
   ],
   "devDependencies": {
     "redux-devtools-extension": "^2.13.8"
-  },
-  "proxy": {
-    "/api/*": {
-      "target": "http://[::1]:8080"
-    }
   }
 }

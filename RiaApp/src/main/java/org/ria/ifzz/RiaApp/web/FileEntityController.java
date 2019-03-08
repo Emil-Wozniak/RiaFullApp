@@ -4,13 +4,12 @@ import org.ria.ifzz.RiaApp.domain.Backlog;
 import org.ria.ifzz.RiaApp.domain.ControlCurve;
 import org.ria.ifzz.RiaApp.domain.FileEntity;
 import org.ria.ifzz.RiaApp.domain.Result;
-import org.ria.ifzz.RiaApp.repositorie.BacklogRepository;
-import org.ria.ifzz.RiaApp.repositorie.ControlCurveRepository;
-import org.ria.ifzz.RiaApp.repositorie.FileEntityRepository;
-import org.ria.ifzz.RiaApp.repositorie.ResultRepository;
+import org.ria.ifzz.RiaApp.repository.*;
 import org.ria.ifzz.RiaApp.service.ControlCurveService;
+import org.ria.ifzz.RiaApp.service.GraphCurveService;
 import org.ria.ifzz.RiaApp.service.ResultService;
 import org.ria.ifzz.RiaApp.service.StorageService;
+import org.ria.ifzz.RiaApp.utils.CountResultUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -39,13 +38,17 @@ public class FileEntityController {
     private final ResultRepository resultRepository;
     private final ControlCurveService controlCurveService;
     private final ControlCurveRepository controlCurveRepository;
+    private final GraphCurveService graphCurveService;
 
     @Autowired
     public FileEntityController(StorageService storageService,
                                 FileEntityRepository fileEntityRepository,
                                 ResultService resultService,
                                 BacklogRepository backlogRepository,
-                                ResultRepository resultRepository, ControlCurveService controlCurveService, ControlCurveRepository controlCurveRepository) {
+                                ResultRepository resultRepository,
+                                ControlCurveService controlCurveService,
+                                ControlCurveRepository controlCurveRepository,
+                                GraphCurveService graphCurveService) {
 
         this.storageService = storageService;
         this.fileEntityRepository = fileEntityRepository;
@@ -54,6 +57,7 @@ public class FileEntityController {
         this.resultRepository = resultRepository;
         this.controlCurveService = controlCurveService;
         this.controlCurveRepository = controlCurveRepository;
+        this.graphCurveService = graphCurveService;
     }
 
     @GetMapping("/download")
@@ -121,7 +125,6 @@ public class FileEntityController {
     public ResponseEntity<?> handleFileUpload(@NotNull @RequestParam("file") MultipartFile file,
                                               RedirectAttributes redirectAttributes) throws IOException {
 
-
         // File Entity
         FileEntity fileEntity = new FileEntity(file.getOriginalFilename(), file.getContentType(),
                 file.getBytes());
@@ -152,18 +155,19 @@ public class FileEntityController {
         resultRepository.save(result);
 
         // Control Curve
-        controlCurveService.setControlCurveFromColumnsLength(cleanedList,file,backlog);
-        ControlCurve controlCurve = controlCurveService.setDataToControlCurve(cleanedList,file,fileEntity);
+        controlCurveService.setControlCurveFromColumnsLength(cleanedList, file, backlog);
+        ControlCurve controlCurve = controlCurveService.setDataToControlCurve(cleanedList, file, fileEntity);
         controlCurveRepository.save(controlCurve);
 
         result = resultService.assignNgPerMl(file, cleanedList);
         resultRepository.save(result);
+        graphCurveService.setGraphCurveFileName(file, fileEntity);
 
-        return new ResponseEntity<>(fileEntity,HttpStatus.CREATED);
+        return new ResponseEntity<>(fileEntity, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteFile(@PathVariable Long id){
+    public ResponseEntity<?> deleteFile(@PathVariable Long id) {
         storageService.delete(id);
         return new ResponseEntity<>("File with ID: " + id + "was deleted", HttpStatus.OK);
     }

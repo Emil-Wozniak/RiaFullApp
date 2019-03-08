@@ -9,6 +9,7 @@ import ReactToExcel from "react-html-table-to-excel";
 import { Row, Container, Table } from "reactstrap";
 import IconButton from "@material-ui/core/IconButton";
 import { ArrowBack } from "@material-ui/icons";
+import ControlCurve from "../controlCurve/ControlCurve";
 
 var styles = theme => ({
   root: {
@@ -40,19 +41,21 @@ const theme = (styles = createMuiTheme({
 }));
 
 class Backlog extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { results: [] };
-  }
-
   render() {
+    const { control_curves_prop } = this.props;
     const { results_prop } = this.props;
+    const control_curves = control_curves_prop
+      .sort((a, b) => a.samples > b.samples)
+      .map(control_curve => (
+        <ControlCurve key={control_curve} control_curve={control_curve} />
+      ));
 
     const results = results_prop
       .sort((a, b) => a.samples > b.samples)
       .map((result, i) => <Result key={i} result={result} />);
 
     return (
+      
       <MuiThemeProvider theme={theme}>
         <Paper classes={{ paper: "paper" }}>
           <Container>
@@ -70,6 +73,18 @@ class Backlog extends Component {
             </Row>
           </Container>
           <Table striped id="file_data">
+            <h4>Control Curve:</h4>
+            <thead>
+              <tr>
+                <th>sample:</th>
+                <th>position</th>
+                <th>CPM:</th>
+                <th />
+              </tr>
+            </thead>
+            {control_curves}
+            <br />
+            <h5>Results:</h5>
             <thead>
               <tr>
                 <th>sample:</th>
@@ -82,6 +97,7 @@ class Backlog extends Component {
           </Table>
         </Paper>
       </MuiThemeProvider>
+     
     );
   }
 }

@@ -4,7 +4,7 @@ import org.ria.ifzz.RiaApp.domain.FileEntity;
 import org.ria.ifzz.RiaApp.exception.FileEntityNotFoundException;
 import org.ria.ifzz.RiaApp.exception.StorageException;
 import org.ria.ifzz.RiaApp.exception.StorageFileNotFoundException;
-import org.ria.ifzz.RiaApp.repositorie.FileEntityRepository;
+import org.ria.ifzz.RiaApp.repository.FileEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
