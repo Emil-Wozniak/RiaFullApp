@@ -131,7 +131,6 @@ public class FileEntityController {
 
         storageService.store(file, redirectAttributes);
 
-        fileEntityRepository.save(fileEntity);
         fileEntity.setDataId(fileEntity.getFileName() + "_" + fileEntity.getId());
         fileEntityRepository.save(fileEntity);
 
@@ -148,19 +147,8 @@ public class FileEntityController {
         fileEntityRepository.save(fileEntity);
 
         List<String> cleanedList = resultService.getFileData(file);
-
-        // Result
-        resultService.setResultFromColumnsLength(cleanedList, file, backlog);
-        Result result = resultService.assignDataToResult(cleanedList, file, fileEntity);
-        resultRepository.save(result);
-
-        // Control Curve
-        controlCurveService.setControlCurveFromColumnsLength(cleanedList, file, backlog);
-        ControlCurve controlCurve = controlCurveService.setDataToControlCurve(cleanedList, file, fileEntity);
-        controlCurveRepository.save(controlCurve);
-
-        result = resultService.assignNgPerMl(file, cleanedList);
-        resultRepository.save(result);
+        List<Result> results = resultService.setDataToResult(file,cleanedList,backlog,fileEntity);
+        resultRepository.saveAll(results);
         graphCurveService.setGraphCurveFileName(file, fileEntity);
 
         return new ResponseEntity<>(fileEntity, HttpStatus.CREATED);

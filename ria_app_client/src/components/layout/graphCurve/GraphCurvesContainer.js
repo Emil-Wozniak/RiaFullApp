@@ -37,12 +37,14 @@ class GraphCurvesContainer extends Component {
         r.push(graph_curves_prop[i].r);
       }
     }
+
     for (let i = 0; i < graph_curves_prop.length; i++) {
       graph_curves_prop.sortAttr("id");
       if (graph_curves_prop[i].id % 2) {
         varY.push(graph_curves_prop[i].y);
       }
     }
+    
     let varControl = [];
     if (graph_curves_prop.length > 0) {
       graph_curves_prop.sortAttr("id");
@@ -82,10 +84,10 @@ class GraphCurvesContainer extends Component {
       }),
     };
 
+
     return (
       <React.Fragment>
       <div>R: {r[1]}</div>
-     
           <ChartistGraph
             data={lineChartData}
             options={lineChartOptions}

@@ -23,9 +23,9 @@ class ControlCurve extends Component {
       <React.Fragment>
         <tbody>
           <tr>
-            <td>{control_curve.samples}</td>
             <td>{control_curve.position}</td>
             <td>{control_curve.ccpm}</td>
+            <td/>
             <td />
           </tr>
         </tbody>

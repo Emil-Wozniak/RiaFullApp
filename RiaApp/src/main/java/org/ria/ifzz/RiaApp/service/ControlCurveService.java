@@ -3,7 +3,6 @@ package org.ria.ifzz.RiaApp.service;
 import org.ria.ifzz.RiaApp.domain.Backlog;
 import org.ria.ifzz.RiaApp.domain.ControlCurve;
 import org.ria.ifzz.RiaApp.domain.FileEntity;
-import org.ria.ifzz.RiaApp.domain.Result;
 import org.ria.ifzz.RiaApp.exception.FileEntityNotFoundException;
 import org.ria.ifzz.RiaApp.repository.ControlCurveRepository;
 import org.ria.ifzz.RiaApp.utils.CustomFileReader;
@@ -13,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.ria.ifzz.RiaApp.domain.HormonesPattern.CORTISOL_PATTERN;
@@ -25,98 +25,104 @@ public class ControlCurveService {
     private final FileUtils fileUtils;
     private final FileEntityService fileEntityService;
 
-    public ControlCurveService(CustomFileReader customFileReader, ControlCurveRepository controlCurveRepository, ResultService resultService, FileUtils fileUtils, FileEntityService fileEntityService) {
+    public ControlCurveService(CustomFileReader customFileReader, ControlCurveRepository controlCurveRepository, FileUtils fileUtils, FileEntityService fileEntityService) {
         this.customFileReader = customFileReader;
         this.controlCurveRepository = controlCurveRepository;
         this.fileUtils = fileUtils;
         this.fileEntityService = fileEntityService;
     }
 
-    public ControlCurve setControlCurveFromColumnsLength(List<String> list, @NotNull MultipartFile file, Backlog backlog) {
-        ControlCurve controlCurve = null;
+    public List<ControlCurve> setControlCurveFromColumnsLength(List<String> list, @NotNull MultipartFile file, Backlog backlog) {
+        List<ControlCurve> controlCurveList = new ArrayList<>();
 
-        for (int i = 0; i <25; i++){
+        for (int i = 0; i < 25; i++) {
             String line = list.get(i);
             if (line.startsWith(" \tUnk")) {
-                controlCurve = new ControlCurve();
-
-                //set fileName followed by '_lineIndex'
-                controlCurve.setFileName("row_" + i+ "_" + fileUtils.setFileName(file));
-                controlCurve.setBacklog(backlog);
-                controlCurveRepository.save(controlCurve);
-                System.out.println("Control Curve " + controlCurve.getFileName() + " saved");
+                ControlCurve controlCurvePoint = new ControlCurve();
+                controlCurvePoint.setFileName("row_" + i + "_" + fileUtils.setFileName(file));
+                controlCurvePoint.setBacklog(backlog);
+                System.out.println("Control Curve " + controlCurvePoint.getFileName() + " saved");
+                controlCurveList.add(controlCurvePoint);
             }
         }
-        return controlCurve;
+        return controlCurveList;
     }
 
-    public ControlCurve setDataToControlCurve(List<String> list, @NotNull MultipartFile file, FileEntity fileEntity) {
+    public List<ControlCurve> setDataToControlCurve(List<String> list, @NotNull MultipartFile file, FileEntity fileEntity, List<ControlCurve> controlCurves) {
 
-        ControlCurve controlCurve = null;
+        List<ControlCurve> controlCurveList = new ArrayList<>();
         String fileId = fileEntity.getDataId();
+        int index = 0;
 
+        ControlCurve controlCurve;
         //Assign CCMP to Result
         for (int i = 0; i < 24; i++) {
             List CCMP = customFileReader.getMatchingStrings(list, 3);
 
-            int index = i + 1;
-            controlCurve = controlCurveRepository.findByFileName("row_" + index + "_" + fileUtils.setFileName(file));
+            index = i;
+            controlCurve = controlCurves.get(index);
 
             // convert String value of CCMP to Integer
             String ccmpString = CCMP.get(i).toString();
             Double ccmpInteger = Double.parseDouble(ccmpString);
             controlCurve.setCcpm(ccmpInteger);
             System.out.println(" \tControl Curve CCMP value: " + controlCurve.getCcpm());
+            controlCurveList.add(controlCurve);
         }
 
         //Assign position to Result
         for (int i = 0; i < 24; i++) {
             List position = customFileReader.getMatchingStrings(list, 2);
 
-            int index = i + 1;
-            controlCurve = controlCurveRepository.findByFileName("row_" + index + "_" + fileUtils.setFileName(file));
+            index = i;
+            controlCurve = controlCurves.get(index);
 
             if (i == 0 || i == 1) {
                 String preConvertedPosition = position.get(i).toString();
                 String converted = preConvertedPosition.replaceAll("A", "T");
                 String postConvert = converted.replaceAll("[0-9]", "");
                 controlCurve.setPosition(postConvert);
+                controlCurveList.add(controlCurve);
 
             } else if (i == 2 || i == 3 || i == 4) {
                 String preConvertedPosition = position.get(i).toString();
                 String converted = preConvertedPosition.replaceAll("A", "O");
                 String postConvert = converted.replaceAll("[0-9]", "");
                 controlCurve.setPosition(postConvert);
+                controlCurveList.add(controlCurve);
             } else if (i == 5 || i == 6 || i == 7) {
                 String preConvertedPosition = position.get(i).toString();
                 String converted = preConvertedPosition.replaceAll("[A-Z]", "N");
                 String postConvert = converted.replaceAll("[0-9]", "");
                 controlCurve.setPosition(postConvert);
+                controlCurveList.add(controlCurve);
             } else if (i < 20) {
                 String preConvertedPosition = position.get(i).toString();
                 double point = CORTISOL_PATTERN[i - 7];
                 String convert = preConvertedPosition.replaceAll("[0-9]", "");
                 String postConvert = convert.replaceAll("[A-Z]", String.valueOf(point));
                 controlCurve.setPosition(postConvert);
+                controlCurveList.add(controlCurve);
             } else if (i == 22 || i == 23) {
                 String preConvertedPosition = position.get(i).toString();
                 String converted = preConvertedPosition.replaceAll("[A-Z]", "K");
                 String postConvert = converted.replaceAll("[0-9]", "");
                 controlCurve.setPosition(postConvert);
+                controlCurveList.add(controlCurve);
             }
         }
 
         //Assign samples to Result
         for (int i = 0; i < 25 - 1; i++) {
-
-            int index = i + 1;
-            controlCurve = controlCurveRepository.findByFileName("row_" + index + "_" + fileUtils.setFileName(file));
+            index = i;
+            controlCurve = controlCurves.get(index);
             controlCurve.setDataId(fileId);
             controlCurve.setSamples(i);
             System.out.println(" \tResult samples value: " + controlCurve.getSamples());
+            controlCurveList.add(controlCurve);
         }
 
-        return controlCurve;
+        return controlCurveList;
     }
 
     public Iterable<ControlCurve> findCCBacklogByDataId(String dataId) throws FileNotFoundException {

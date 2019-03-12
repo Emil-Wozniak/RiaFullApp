@@ -55,7 +55,6 @@ class Backlog extends Component {
       .map((result, i) => <Result key={i} result={result} />);
 
     return (
-      
       <MuiThemeProvider theme={theme}>
         <Paper classes={{ paper: "paper" }}>
           <Container>
@@ -76,9 +75,9 @@ class Backlog extends Component {
             <h4>Control Curve:</h4>
             <thead>
               <tr>
-                <th>sample:</th>
                 <th>position</th>
                 <th>CPM:</th>
+                <th />
                 <th />
               </tr>
             </thead>
@@ -97,7 +96,6 @@ class Backlog extends Component {
           </Table>
         </Paper>
       </MuiThemeProvider>
-     
     );
   }
 }
