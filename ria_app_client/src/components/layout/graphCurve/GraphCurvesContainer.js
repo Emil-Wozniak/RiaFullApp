@@ -23,7 +23,10 @@ class GraphCurvesContainer extends Component {
 
     var r = [];
     let varX = [];
-    let varY = [];
+    let varY1 = [];
+    let varY2 = [];
+    let varAverage = [];
+
     for (let i = 0; i < graph_curves_prop.length; i++) {
       graph_curves_prop.sortAttr("id");
       if (graph_curves_prop[i].id % 2) {
@@ -41,10 +44,22 @@ class GraphCurvesContainer extends Component {
     for (let i = 0; i < graph_curves_prop.length; i++) {
       graph_curves_prop.sortAttr("id");
       if (graph_curves_prop[i].id % 2) {
-        varY.push(graph_curves_prop[i].y);
+        varY1.push(graph_curves_prop[i].y);
       }
     }
-    
+    for (let i = 0; i < graph_curves_prop.length; i++) {
+      graph_curves_prop.sortAttr("id");
+      if (!(graph_curves_prop[i].id % 2)) {
+        varY2.push(graph_curves_prop[i].y);
+      }
+    }
+    for (let i = 0; i < varY1.length; i++) {
+      let middle = varY2[i] + varY1[i];
+      middle = middle / 2;
+        varAverage.push(middle);
+      
+    }
+
     let varControl = [];
     if (graph_curves_prop.length > 0) {
       graph_curves_prop.sortAttr("id");
@@ -54,45 +69,44 @@ class GraphCurvesContainer extends Component {
 
     var lineChartData = {
       labels: varX,
-      series: [varY]
+      series: [varY1, varY2, {
+        name: 'series-3',
+        data: varAverage
+      }]
     };
 
     var lineChartOptions = {
-      type:"Bar",
       high: 2,
       low: -2,
+      showLine: false,
       fullWidth: false,
       showPoint: true,
       showGrid: true,
-      showArea: true,
-
-      axisX: {
-        showGrid: true,
-        showLabel: true
-      },
-      axisY: {
-        showGrid: true,
-        showLabel: true
-      },
+      showArea: false,
       chartPadding: {
-        right: 50,
+        right: 30,
         left: 0,
         top: 20
       },
       lineSmooth: Chartist.Interpolation.cardinal({
-        fillHoles: true,
+        fillHoles: true
       }),
+      series:{
+        'series-3':{
+          showLine: true,
+          showPoint: false
+        }
+      }
     };
-
 
     return (
       <React.Fragment>
-      <div>R: {r[1]}</div>
-          <ChartistGraph
-            data={lineChartData}
-            options={lineChartOptions}
-            type={"Line"}
-          />
+        <div>Correlation: {r[1]}</div>
+        <ChartistGraph
+          data={lineChartData}
+          options={lineChartOptions}
+          type={"Line"}
+        />
       </React.Fragment>
     );
   }
