@@ -90,15 +90,18 @@ public class ControlCurveService {
                 String postConvert = converted.replaceAll("[0-9]", "");
                 controlCurve.setPosition(postConvert);
                 controlCurveList.add(controlCurve);
+
             } else if (i == 5 || i == 6 || i == 7) {
                 String preConvertedPosition = position.get(i).toString();
                 String converted = preConvertedPosition.replaceAll("[A-Z]", "N");
                 String postConvert = converted.replaceAll("[0-9]", "");
                 controlCurve.setPosition(postConvert);
                 controlCurveList.add(controlCurve);
-            } else if (i < 20) {
+
+            } else if (i < 22) {
                 String preConvertedPosition = position.get(i).toString();
-                double point = CORTISOL_PATTERN[i - 7];
+                double point = CORTISOL_PATTERN[i - 8];
+                System.out.println("POINT: "+point);
                 String convert = preConvertedPosition.replaceAll("[0-9]", "");
                 String postConvert = convert.replaceAll("[A-Z]", String.valueOf(point));
                 controlCurve.setPosition(postConvert);
