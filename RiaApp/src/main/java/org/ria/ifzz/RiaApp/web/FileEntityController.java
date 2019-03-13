@@ -1,15 +1,12 @@
 package org.ria.ifzz.RiaApp.web;
 
 import org.ria.ifzz.RiaApp.domain.Backlog;
-import org.ria.ifzz.RiaApp.domain.ControlCurve;
 import org.ria.ifzz.RiaApp.domain.FileEntity;
 import org.ria.ifzz.RiaApp.domain.Result;
-import org.ria.ifzz.RiaApp.repository.*;
-import org.ria.ifzz.RiaApp.service.ControlCurveService;
-import org.ria.ifzz.RiaApp.service.GraphCurveService;
-import org.ria.ifzz.RiaApp.service.ResultService;
-import org.ria.ifzz.RiaApp.service.StorageService;
-import org.ria.ifzz.RiaApp.utils.CountResultUtil;
+import org.ria.ifzz.RiaApp.repository.BacklogRepository;
+import org.ria.ifzz.RiaApp.repository.FileEntityRepository;
+import org.ria.ifzz.RiaApp.repository.ResultRepository;
+import org.ria.ifzz.RiaApp.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -36,9 +33,8 @@ public class FileEntityController {
     private final ResultService resultService;
     private final BacklogRepository backlogRepository;
     private final ResultRepository resultRepository;
-    private final ControlCurveService controlCurveService;
-    private final ControlCurveRepository controlCurveRepository;
     private final GraphCurveService graphCurveService;
+    private final BacklogService backlogService;
 
     @Autowired
     public FileEntityController(StorageService storageService,
@@ -46,18 +42,15 @@ public class FileEntityController {
                                 ResultService resultService,
                                 BacklogRepository backlogRepository,
                                 ResultRepository resultRepository,
-                                ControlCurveService controlCurveService,
-                                ControlCurveRepository controlCurveRepository,
-                                GraphCurveService graphCurveService) {
+                                GraphCurveService graphCurveService, BacklogService backlogService) {
 
         this.storageService = storageService;
         this.fileEntityRepository = fileEntityRepository;
         this.resultService = resultService;
         this.backlogRepository = backlogRepository;
         this.resultRepository = resultRepository;
-        this.controlCurveService = controlCurveService;
-        this.controlCurveRepository = controlCurveRepository;
         this.graphCurveService = graphCurveService;
+        this.backlogService = backlogService;
     }
 
     @GetMapping("/download")
@@ -130,24 +123,20 @@ public class FileEntityController {
                 file.getBytes());
 
         storageService.store(file, redirectAttributes);
-
+        fileEntityRepository.save(fileEntity);
         fileEntity.setDataId(fileEntity.getFileName() + "_" + fileEntity.getId());
         fileEntityRepository.save(fileEntity);
 
         // Backlog
-        Backlog backlog = new Backlog();
-        backlog.setFileEntity(fileEntity);
-        backlog.setFileName(fileEntity.getFileName());
-        backlog.setDataId(fileEntity.getDataId());
-        backlog.setContentType(fileEntity.getContentType());
-
+        Backlog backlog = backlogService.setBacklog(fileEntity);
         backlogRepository.save(backlog);
 
         fileEntity.setBacklog(backlog);
         fileEntityRepository.save(fileEntity);
 
+        // Result && Graph Curve
         List<String> cleanedList = resultService.getFileData(file);
-        List<Result> results = resultService.setDataToResult(file,cleanedList,backlog,fileEntity);
+        List<Result> results = resultService.setDataToResult(file, cleanedList, backlog, fileEntity);
         resultRepository.saveAll(results);
         graphCurveService.setGraphCurveFileName(file, fileEntity);
 
@@ -161,6 +150,3 @@ public class FileEntityController {
     }
 
 }
-
-
-

@@ -40,12 +40,32 @@ const theme = (styles = createMuiTheme({
   })
 }));
 
+Array.prototype.sortAttr = function(attr, reverse) {
+  var sorter = function(a, b) {
+    var aa = a[attr];
+    var bb = b[attr];
+    if (aa + 0 === aa && bb + 0 === bb) return aa - bb;
+    // numbers
+    else return aa.localeCompare(bb); // strings
+  };
+  this.sort(function(a, b) {
+    var result = sorter(a, b);
+    if (reverse) result *= -1;
+    return result;
+  });
+};
+
 class Backlog extends Component {
+
   render() {
     const { control_curves_prop } = this.props;
     const { results_prop } = this.props;
+
+    control_curves_prop.sortAttr("id");
+    results_prop.sortAttr("id");
+    
     const control_curves = control_curves_prop
-      .sort((a, b) => a.samples > b.samples)
+      // .sort((a, b) => a.samples > b.samples)
       .map(control_curve => (
         <ControlCurve key={control_curve} control_curve={control_curve} />
       ));
