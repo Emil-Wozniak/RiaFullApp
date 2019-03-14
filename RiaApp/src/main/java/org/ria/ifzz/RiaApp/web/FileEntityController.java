@@ -2,7 +2,9 @@ package org.ria.ifzz.RiaApp.web;
 
 import org.ria.ifzz.RiaApp.domain.Backlog;
 import org.ria.ifzz.RiaApp.domain.FileEntity;
+import org.ria.ifzz.RiaApp.domain.FileModel;
 import org.ria.ifzz.RiaApp.domain.Result;
+import org.ria.ifzz.RiaApp.service.FileValidator;
 import org.ria.ifzz.RiaApp.repository.BacklogRepository;
 import org.ria.ifzz.RiaApp.repository.FileEntityRepository;
 import org.ria.ifzz.RiaApp.repository.ResultRepository;
@@ -13,11 +15,12 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.Valid;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
@@ -35,6 +38,7 @@ public class FileEntityController {
     private final ResultRepository resultRepository;
     private final GraphCurveService graphCurveService;
     private final BacklogService backlogService;
+    private final FileValidator fileValidator;
 
     @Autowired
     public FileEntityController(StorageService storageService,
@@ -42,7 +46,7 @@ public class FileEntityController {
                                 ResultService resultService,
                                 BacklogRepository backlogRepository,
                                 ResultRepository resultRepository,
-                                GraphCurveService graphCurveService, BacklogService backlogService) {
+                                GraphCurveService graphCurveService, BacklogService backlogService, FileValidator fileValidator) {
 
         this.storageService = storageService;
         this.fileEntityRepository = fileEntityRepository;
@@ -51,6 +55,12 @@ public class FileEntityController {
         this.resultRepository = resultRepository;
         this.graphCurveService = graphCurveService;
         this.backlogService = backlogService;
+        this.fileValidator = fileValidator;
+    }
+
+    @InitBinder
+    protected void initBinderFileModel(WebDataBinder binder) {
+        binder.setValidator(fileValidator);
     }
 
     @GetMapping("/download")
@@ -115,14 +125,19 @@ public class FileEntityController {
      * @throws IOException
      */
     @PostMapping
-    public ResponseEntity<?> handleFileUpload(@NotNull @RequestParam("file") MultipartFile file,
+    public ResponseEntity<?> handleFileUpload(@Valid FileModel file,
+                                              BindingResult result,
                                               RedirectAttributes redirectAttributes) throws IOException {
 
+        if (result.hasErrors()) {
+            redirectAttributes.addFlashAttribute("message",
+                    "You successfully uploaded " + file.getFile().getOriginalFilename() + "!");
+        }
         // File Entity
-        FileEntity fileEntity = new FileEntity(file.getOriginalFilename(), file.getContentType(),
-                file.getBytes());
+        FileEntity fileEntity = new FileEntity(file.getFile().getOriginalFilename(), file.getFile().getContentType(),
+                file.getFile().getBytes());
 
-        storageService.store(file, redirectAttributes);
+        storageService.store(file.getFile(), redirectAttributes);
         fileEntityRepository.save(fileEntity);
         fileEntity.setDataId(fileEntity.getFileName() + "_" + fileEntity.getId());
         fileEntityRepository.save(fileEntity);
@@ -135,10 +150,11 @@ public class FileEntityController {
         fileEntityRepository.save(fileEntity);
 
         // Result && Graph Curve
-        List<String> cleanedList = resultService.getFileData(file);
-        List<Result> results = resultService.setDataToResult(file, cleanedList, backlog, fileEntity);
+        List<String> cleanedList = resultService.getFileData(file.getFile());
+        List<Result> results = resultService.setDataToResult(file.getFile(), cleanedList, backlog, fileEntity);
         resultRepository.saveAll(results);
-        graphCurveService.setGraphCurveFileName(file, fileEntity);
+
+        graphCurveService.setGraphCurveFileName(file.getFile(), fileEntity);
 
         return new ResponseEntity<>(fileEntity, HttpStatus.CREATED);
     }
@@ -146,7 +162,6 @@ public class FileEntityController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteFile(@PathVariable Long id) {
         storageService.delete(id);
-        return new ResponseEntity<>("File with ID: " + id + "was deleted", HttpStatus.OK);
+        return new ResponseEntity<>("File with ID: '" + id + "' was deleted", HttpStatus.OK);
     }
-
 }

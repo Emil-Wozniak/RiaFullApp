@@ -27,6 +27,7 @@ public class CustomFileReader {
 
     /**
      * reads file from "/upload" directory, set maximum limit of expected lines;
+     *
      * @param file is upload to "/upload" directory
      * @return list of String if file is not empty
      * @throws IOException
@@ -45,6 +46,7 @@ public class CustomFileReader {
     /**
      * takes list of Strings from files stored in "/upload" directory
      * and return lists of Strings which starts with char 'U';
+     *
      * @param list comes from reading file;
      * @return list of String if fulfills requirements, should include
      * only lines which doesn't start with not expected letters,
@@ -65,36 +67,41 @@ public class CustomFileReader {
             list.removeIf(line -> line.startsWith("D"));
             list.removeIf(line -> line.startsWith(" \t1"));
             list.removeIf(item -> item == null || "".equals(item));
-            list.stream().filter(line->line.startsWith(" \tUnk")).collect(Collectors.toList());
+            list.stream().filter(line -> line.startsWith(" \tUnk")).collect(Collectors.toList());
         } catch (Exception e) {
             e.printStackTrace();
         }
 
+        System.out.println("\nCleaned List: ");
         list.forEach(System.out::println);
         return list;
     }
 
     /**
      * Finds the all word in all entries in the list that matches with the column number
-     * @param list The list of strings to check
+     *
+     * @param list         The list of strings to check
      * @param columnNumber The targeted column to use
      * @return list containing the words of all matching entries
      */
     public List<String> getMatchingStrings(List<String> list, Integer columnNumber) {
 
         List<String> matches = new ArrayList<>();
-
+        int a = 0;
         for (String added : list) {
+            int i = a++;
             List<String> wordInLine = Arrays.asList(added.split("\\t"));
             if (wordInLine.size() == 5) {
                 if (!wordInLine.isEmpty()) {
                     matches.add(wordInLine.get(columnNumber));
+                    System.out.println("Line " + i + " content: " + wordInLine);
                 }
             } else {
                 matches.isEmpty();
             }
         }
         matches.remove(0);
+        System.out.println("Matches: ");
         return matches;
     }
 
