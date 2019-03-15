@@ -31,6 +31,10 @@ public class FileEntity {
     @JsonIgnore
     private Backlog backlog;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    private User user;
+
     @Lob
     private byte[] data;
 

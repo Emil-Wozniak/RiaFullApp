@@ -36,7 +36,7 @@ public class User implements UserDetails {
     private String confirmPassword;
 
     @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER, mappedBy = "user", orphanRemoval = true)
-    private List<FileEntity> projects = new ArrayList<>();
+    private List<FileEntity> fileEntities = new ArrayList<>();
 
     private Date created_at;
     private Date update_at;
