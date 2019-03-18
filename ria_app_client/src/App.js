@@ -3,7 +3,7 @@ import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import "./App.css";
 import store from "./store";
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { Provider } from "react-redux";
 import { withStyles } from "@material-ui/core/styles";
 import FileBoard from "./components/FileBoard";
@@ -16,6 +16,7 @@ import setJwtToken from "./components/layout/security/SetJwtToken";
 import jwt_decode from "jwt-decode";
 import { SET_CURRENT_USER } from "./actions/types";
 import { logout } from "./actions/securityActions";
+import SecureRoute from "./components/layout/security/SecureRoute";
 
 const styles = theme => ({
   root: {
@@ -70,14 +71,17 @@ class App extends Component {
             {
               //Public Routes
             }
-            <Route exact path="/register" component={Register} />
-            <Route exact path="/login" component={Login} />
-            <Route exact path="/" component={Landing} />
-            {
-              //Private Routes
-            }
-            <Route exact path="/dashboard" component={Dashboard} />
-            <Route exact path="/fileBoard/:dataId" component={FileBoard} />
+            
+              <Route exact path="/register" component={Register} />
+              <Route exact path="/login" component={Login} />
+              <Route exact path="/" component={Landing} />
+              {
+                //Private Routes
+              }
+              <Switch>
+              <SecureRoute exact path="/dashboard" component={Dashboard} />
+              <SecureRoute exact path="/fileBoard/:dataId" component={FileBoard} />
+            </Switch>
           </div>
         </Router>
       </Provider>

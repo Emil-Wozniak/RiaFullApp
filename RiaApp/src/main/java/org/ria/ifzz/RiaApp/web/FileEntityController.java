@@ -18,11 +18,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.security.Principal;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -39,6 +41,7 @@ public class FileEntityController {
     private final GraphCurveService graphCurveService;
     private final BacklogService backlogService;
     private final FileValidator fileValidator;
+    private final MapValidationErrorService errorService;
 
     @Autowired
     public FileEntityController(StorageService storageService,
@@ -46,7 +49,7 @@ public class FileEntityController {
                                 ResultService resultService,
                                 BacklogRepository backlogRepository,
                                 ResultRepository resultRepository,
-                                GraphCurveService graphCurveService, BacklogService backlogService, FileValidator fileValidator) {
+                                GraphCurveService graphCurveService, BacklogService backlogService, FileValidator fileValidator, MapValidationErrorService errorService) {
 
         this.storageService = storageService;
         this.fileEntityRepository = fileEntityRepository;
@@ -56,6 +59,7 @@ public class FileEntityController {
         this.graphCurveService = graphCurveService;
         this.backlogService = backlogService;
         this.fileValidator = fileValidator;
+        this.errorService = errorService;
     }
 
     @InitBinder
@@ -127,34 +131,42 @@ public class FileEntityController {
     @PostMapping
     public ResponseEntity<?> handleFileUpload(@Valid FileModel file,
                                               BindingResult result,
-                                              RedirectAttributes redirectAttributes) throws IOException {
+                                              RedirectAttributes redirectAttributes,
+                                              Principal principal) throws IOException {
+        int id = 0;
+        int newId = id;
+        ResponseEntity<?> errorMap = errorService.MapValidationService(result);
+        if (errorMap != null) return errorMap;
 
-        if (result.hasErrors()) {
-            redirectAttributes.addFlashAttribute("message",
-                    "You successfully uploaded " + file.getFile().getOriginalFilename() + "!");
-        }
         // File Entity
-        FileEntity fileEntity = new FileEntity(file.getFile().getOriginalFilename(), file.getFile().getContentType(),
-                file.getFile().getBytes());
+//        FileEntity fileEntity = new FileEntity(
+//                file.getFile().getOriginalFilename(),
+//                file.getFile().getContentType(),
+//                file.getFile().getBytes());
+        if (file != null) {
+            newId++;
+        }
+        Backlog backlog = new Backlog();
+        FileEntity fileEntity = storageService.storeAndSaveFileEntity(file.getFile(), backlog, redirectAttributes, principal.getName(), newId);
+//
+//        fileEntity.setDataId(fileEntity.getFileName() + "_" + fileEntity.getId());
+//        fileEntityRepository.save(fileEntity);
+//
+//        // Backlog
+//        Backlog backlog = backlogService.setBacklog(fileEntity);
+//        backlogRepository.save(backlog);
+//
+//        fileEntity.setBacklog(backlog);
+//        fileEntityRepository.save(fileEntity);
 
-        storageService.store(file.getFile(), redirectAttributes);
-        fileEntityRepository.save(fileEntity);
-        fileEntity.setDataId(fileEntity.getFileName() + "_" + fileEntity.getId());
-        fileEntityRepository.save(fileEntity);
-
-        // Backlog
-        Backlog backlog = backlogService.setBacklog(fileEntity);
-        backlogRepository.save(backlog);
-
-        fileEntity.setBacklog(backlog);
-        fileEntityRepository.save(fileEntity);
+//        storageService.storeAndSaveFileEntity((MultipartFile) file, backlog, redirectAttributes, principal.getName());
 
         // Result && Graph Curve
-        List<String> cleanedList = resultService.getFileData(file.getFile());
-        List<Result> results = resultService.setDataToResult(file.getFile(), cleanedList, backlog, fileEntity);
-        resultRepository.saveAll(results);
+//        List<String> cleanedList = resultService.getFileData(file.getFile());
+//        List<Result> results = resultService.setDataToResult(file.getFile(), cleanedList, backlog, fileEntity);
+//        resultRepository.saveAll(results);
 
-        graphCurveService.setGraphCurveFileName(file.getFile(), fileEntity);
+//        graphCurveService.setGraphCurveFileName(file.getFile(), fileEntity);
 
         return new ResponseEntity<>(fileEntity, HttpStatus.CREATED);
     }

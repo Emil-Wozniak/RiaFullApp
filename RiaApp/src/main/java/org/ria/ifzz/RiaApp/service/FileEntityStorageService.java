@@ -1,10 +1,13 @@
 package org.ria.ifzz.RiaApp.service;
 
+import org.ria.ifzz.RiaApp.domain.Backlog;
 import org.ria.ifzz.RiaApp.domain.FileEntity;
+import org.ria.ifzz.RiaApp.domain.User;
 import org.ria.ifzz.RiaApp.exception.FileEntityNotFoundException;
 import org.ria.ifzz.RiaApp.exception.StorageException;
 import org.ria.ifzz.RiaApp.exception.StorageFileNotFoundException;
 import org.ria.ifzz.RiaApp.repository.FileEntityRepository;
+import org.ria.ifzz.RiaApp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -27,17 +30,60 @@ public class FileEntityStorageService implements StorageService {
 
     private final Path rootLocation;
     private final FileEntityRepository fileEntityRepository;
+    private final BacklogService backlogService;
 
     @Autowired
-    public FileEntityStorageService(StorageProperties properties, FileEntityRepository fileEntityRepository) {
+    private UserRepository userRepository;
+
+    @Autowired
+    public FileEntityStorageService(StorageProperties properties, FileEntityRepository fileEntityRepository, BacklogService backlogService, UserRepository userRepository) {
         this.rootLocation = Paths.get(properties.getLocation());
         this.fileEntityRepository = fileEntityRepository;
+        this.backlogService = backlogService;
+        this.userRepository = userRepository;
     }
 
     @Override
-    public void store(MultipartFile file, RedirectAttributes redirectAttributes) {
+    public void store(MultipartFile file, RedirectAttributes redirectAttributes, String username) {
+        String filename = StringUtils.cleanPath(file.getOriginalFilename());
+//        try {
+//            if (fileEntityRepository.findByFileName(filename) != null){
+//                throw new StorageException("File already uploaded: " + filename);
+//            }
+//            if (file.isEmpty()) {
+//                throw new StorageException("Failed to store empty file " + filename);
+//            }
+//            if (filename.contains("..")) {
+//                // This is a security check
+//                throw new StorageException(
+//                        "Cannot store file with relative path outside current directory "
+//                                + filename);
+//            }
+//            try (InputStream inputStream = file.getInputStream()) {
+//                Files.copy(inputStream, this.rootLocation.resolve(filename),
+//                    StandardCopyOption.REPLACE_EXISTING);
+//                redirectAttributes.addFlashAttribute("message",
+//                        "You successfully uploaded " + file.getOriginalFilename() + "!");
+//            }
+//        }
+//        catch (IOException e) {
+//            throw new StorageException("Failed to store file " + filename);
+//        }
+        redirectAttributes.addAttribute("message",
+                "File already uploaded: " + filename + "!");
+    }
+
+    @Override
+    public FileEntity storeAndSaveFileEntity(MultipartFile file, Backlog backlog, RedirectAttributes redirectAttributes, String username, int setId) throws IOException {
+
+
+        FileEntity fileEntity = new FileEntity(
+                file.getOriginalFilename(),
+                file.getContentType(),
+                file.getBytes());
 
         String filename = StringUtils.cleanPath(file.getOriginalFilename());
+
         try {
             if (fileEntityRepository.findByFileName(filename) != null){
                 throw new StorageException("File already uploaded: " + filename);
@@ -53,7 +99,7 @@ public class FileEntityStorageService implements StorageService {
             }
             try (InputStream inputStream = file.getInputStream()) {
                 Files.copy(inputStream, this.rootLocation.resolve(filename),
-                    StandardCopyOption.REPLACE_EXISTING);
+                        StandardCopyOption.REPLACE_EXISTING);
                 redirectAttributes.addFlashAttribute("message",
                         "You successfully uploaded " + file.getOriginalFilename() + "!");
             }
@@ -61,8 +107,18 @@ public class FileEntityStorageService implements StorageService {
         catch (IOException e) {
             throw new StorageException("Failed to store file " + filename);
         }
-        redirectAttributes.addAttribute("message",
-                "File already uploaded: " + filename + "!");
+        try{
+            User user = userRepository.findByUsername(username);
+            fileEntity.setUser(user);
+            fileEntity.setFileOwner(user.getUsername());
+            fileEntity.setDataId(fileEntity.getFileName() + "_" + setId);
+            if (fileEntity.getId() == null){
+                fileEntity.setBacklog(backlogService.setBacklog(fileEntity));
+            }
+           return fileEntityRepository.save(fileEntity);
+        } catch (Exception exception){
+            throw new StorageException("File already uploaded: " + filename);
+        }
     }
 
     @Override

@@ -27,6 +27,8 @@ public class FileEntity {
     @JsonFormat(pattern = "yyyy-MM-dd' 'HH:mm:ss")
     private Date updated_date;
 
+    private String fileOwner;
+
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "fileEntity", orphanRemoval = true)
     @JsonIgnore
     private Backlog backlog;

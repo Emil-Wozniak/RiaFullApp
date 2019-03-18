@@ -4,6 +4,8 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import toRenderProps from 'recompose/toRenderProps';
 import withState from 'recompose/withState';
+import { logout } from "../../../actions/securityActions";
+import store from "../../../store"
 
 const WithState = toRenderProps(withState('anchorEl', 'updateAnchorEl', null));
 
@@ -15,6 +17,10 @@ function RenderPropsMenu() {
         const handleClose = () => {
           updateAnchorEl(null);
         };
+        const handleLogout= () =>{
+          store.dispatch(logout());
+    window.location.href = "/";
+        }
 
         return (
           <React.Fragment>
@@ -30,7 +36,7 @@ function RenderPropsMenu() {
             <Menu id="render-props-menu" anchorEl={anchorEl} open={open} onClose={handleClose}>
               <MenuItem onClick={handleClose}>Profile</MenuItem>
               <MenuItem onClick={handleClose}>My account</MenuItem>
-              <MenuItem onClick={handleClose}>Logout</MenuItem>
+              <MenuItem onClick={handleLogout}>Logout</MenuItem>
             </Menu>
           </React.Fragment>
         );
