@@ -20,7 +20,6 @@ public class Backlog {
     private Long id;
     private String fileName;
     private String contentType;
-
     private String dataId;
 
     @OneToOne(fetch = FetchType.EAGER)

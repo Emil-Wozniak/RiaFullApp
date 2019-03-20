@@ -1,11 +1,9 @@
 package org.ria.ifzz.RiaApp.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @Data
@@ -19,4 +17,9 @@ public class GraphCurve {
     private Double r;
     private String fileName;
     private String dataId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="fileEntity_id", updatable = false, nullable = false)
+    @JsonIgnore
+    private FileEntity fileEntity;
 }
