@@ -14,9 +14,6 @@ public interface StorageService {
 
     void init();
 
-//    void store(MultipartFile file);
-
-    void store(MultipartFile file, RedirectAttributes redirectAttributes, String name);
 
     FileEntity storeAndSaveFileEntity(MultipartFile file, Backlog backlog, RedirectAttributes redirectAttributes, String username, int setId) throws IOException;
 

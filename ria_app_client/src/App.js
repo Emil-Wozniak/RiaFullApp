@@ -71,16 +71,20 @@ class App extends Component {
             {
               //Public Routes
             }
-            
-              <Route exact path="/register" component={Register} />
-              <Route exact path="/login" component={Login} />
-              <Route exact path="/" component={Landing} />
-              {
-                //Private Routes
-              }
-              <Switch>
+
+            <Route exact path="/register" component={Register} />
+            <Route exact path="/login" component={Login} />
+            <Route exact path="/" component={Landing} />
+            {
+              //Private Routes
+            }
+            <Switch>
               <SecureRoute exact path="/dashboard" component={Dashboard} />
-              <SecureRoute exact path="/fileBoard/:dataId" component={FileBoard} />
+              <SecureRoute
+                exact
+                path="/fileBoard/:dataId"
+                component={FileBoard}
+              />
             </Switch>
           </div>
         </Router>

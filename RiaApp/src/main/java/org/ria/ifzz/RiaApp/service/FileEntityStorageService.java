@@ -44,43 +44,13 @@ public class FileEntityStorageService implements StorageService {
     }
 
     @Override
-    public void store(MultipartFile file, RedirectAttributes redirectAttributes, String username) {
-        String filename = StringUtils.cleanPath(file.getOriginalFilename());
-//        try {
-//            if (fileEntityRepository.findByFileName(filename) != null){
-//                throw new StorageException("File already uploaded: " + filename);
-//            }
-//            if (file.isEmpty()) {
-//                throw new StorageException("Failed to store empty file " + filename);
-//            }
-//            if (filename.contains("..")) {
-//                // This is a security check
-//                throw new StorageException(
-//                        "Cannot store file with relative path outside current directory "
-//                                + filename);
-//            }
-//            try (InputStream inputStream = file.getInputStream()) {
-//                Files.copy(inputStream, this.rootLocation.resolve(filename),
-//                    StandardCopyOption.REPLACE_EXISTING);
-//                redirectAttributes.addFlashAttribute("message",
-//                        "You successfully uploaded " + file.getOriginalFilename() + "!");
-//            }
-//        }
-//        catch (IOException e) {
-//            throw new StorageException("Failed to store file " + filename);
-//        }
-        redirectAttributes.addAttribute("message",
-                "File already uploaded: " + filename + "!");
-    }
-
-    @Override
     public FileEntity storeAndSaveFileEntity(MultipartFile file, Backlog backlog, RedirectAttributes redirectAttributes, String username, int setId) throws IOException {
-
 
         FileEntity fileEntity = new FileEntity(
                 file.getOriginalFilename(),
                 file.getContentType(),
                 file.getBytes());
+        System.out.println("=====> New File Entity create");
 
         String filename = StringUtils.cleanPath(file.getOriginalFilename());
 
@@ -107,6 +77,7 @@ public class FileEntityStorageService implements StorageService {
         catch (IOException e) {
             throw new StorageException("Failed to store file " + filename);
         }
+        System.out.println("=====> New File is correct");
         try{
             User user = userRepository.findByUsername(username);
             fileEntity.setUser(user);

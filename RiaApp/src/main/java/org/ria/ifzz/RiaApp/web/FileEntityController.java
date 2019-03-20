@@ -138,35 +138,19 @@ public class FileEntityController {
         ResponseEntity<?> errorMap = errorService.MapValidationService(result);
         if (errorMap != null) return errorMap;
 
-        // File Entity
-//        FileEntity fileEntity = new FileEntity(
-//                file.getFile().getOriginalFilename(),
-//                file.getFile().getContentType(),
-//                file.getFile().getBytes());
         if (file != null) {
             newId++;
         }
         Backlog backlog = new Backlog();
         FileEntity fileEntity = storageService.storeAndSaveFileEntity(file.getFile(), backlog, redirectAttributes, principal.getName(), newId);
-//
-//        fileEntity.setDataId(fileEntity.getFileName() + "_" + fileEntity.getId());
-//        fileEntityRepository.save(fileEntity);
-//
-//        // Backlog
-//        Backlog backlog = backlogService.setBacklog(fileEntity);
-//        backlogRepository.save(backlog);
-//
-//        fileEntity.setBacklog(backlog);
-//        fileEntityRepository.save(fileEntity);
-
-//        storageService.storeAndSaveFileEntity((MultipartFile) file, backlog, redirectAttributes, principal.getName());
+        Backlog currentBacklog = fileEntity.getBacklog();
 
         // Result && Graph Curve
-//        List<String> cleanedList = resultService.getFileData(file.getFile());
-//        List<Result> results = resultService.setDataToResult(file.getFile(), cleanedList, backlog, fileEntity);
-//        resultRepository.saveAll(results);
+        List<String> cleanedList = resultService.getFileData(file.getFile());
+        List<Result> results = resultService.setDataToResult(file.getFile(), cleanedList, currentBacklog, fileEntity);
+        resultRepository.saveAll(results);
 
-//        graphCurveService.setGraphCurveFileName(file.getFile(), fileEntity);
+        graphCurveService.setGraphCurveFileName(file.getFile(), fileEntity);
 
         return new ResponseEntity<>(fileEntity, HttpStatus.CREATED);
     }

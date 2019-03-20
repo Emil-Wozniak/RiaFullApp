@@ -18,7 +18,6 @@ public class FileEntity {
     private Long id;
     private String fileName;
     private String contentType;
-
     private String dataId;
 
     @JsonFormat(pattern = "yyyy-MM-dd' 'HH:mm:ss")

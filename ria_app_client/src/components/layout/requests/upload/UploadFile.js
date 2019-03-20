@@ -5,7 +5,8 @@ import { createMuiTheme } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
-import Loading from "../../components/layout/ui/Loading";
+import Loading from "../../ui/Loading";
+import {addFile} from "../../../../actions/addFile"
 
 const styles = theme => createMuiTheme({
    typography: {
@@ -69,26 +70,7 @@ class AddFile extends Component {
         image: true
       });
     }
-
-    let data = new FormData();
-    data.append("file", this.state.file);
-    data.append("name", this.state.file.name);
-    console.log(data);
-    fetch("http://localhost:8080/api/files/", {
-      method: "POST",
-      body: data
-    })
-      .then(response => {
-        this.setState({
-          error: "",
-          msg: "Successfully uploaded file",
-          image: false
-        });
-        window.location.reload();
-      })
-      .catch(err => {
-        this.setState({ error: err });
-      });
+    addFile(this.state.file);
   };
 
   onFileChange = event => {

@@ -45,6 +45,7 @@ public class UserController {
 
     /**
      * authenticateUser was provided to handle login with black
+     *
      * @param loginRequest represent the message received when credentials are incorrect
      * @param result
      * @return
@@ -63,23 +64,21 @@ public class UserController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = TOKEN_PREFIX + jwtTokenProvider.generateToken(authentication);
 
-        return ResponseEntity.ok(new JWTLoginSuccessResponse(true,jwt));
+        return ResponseEntity.ok(new JWTLoginSuccessResponse(true, jwt));
     }
 
     /**
-     * @param user is User object
+     * @param user   is User object
      * @param result validate passwords match
      * @return Valid User object
      */
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody User user, BindingResult result) {
         // Validate passwords match
-        userValidator.validate(user,result);
+        userValidator.validate(user, result);
         ResponseEntity<?> errorMap = mapValidationErrorService.MapValidationService(result);
         if (errorMap != null) return errorMap;
-
         User newUser = userService.saveUser(user);
-
-        return new ResponseEntity<User>(newUser, HttpStatus.CREATED);
+        return new ResponseEntity<>(newUser, HttpStatus.CREATED);
     }
 }

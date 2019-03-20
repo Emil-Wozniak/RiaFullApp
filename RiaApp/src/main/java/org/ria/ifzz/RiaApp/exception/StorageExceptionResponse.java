@@ -5,9 +5,9 @@ import lombok.Data;
 @Data
 public class StorageExceptionResponse {
 
-    private String filename;
+    private String message;
 
-    public StorageExceptionResponse(String filename) {
-        this.filename = filename;
+    public StorageExceptionResponse(String message) {
+        this.message = message;
     }
 }
