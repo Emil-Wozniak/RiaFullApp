@@ -4,13 +4,9 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 @Entity
 @Data
@@ -39,10 +35,6 @@ public class FileEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     private User user;
-
-    @LazyCollection(LazyCollectionOption.FALSE)
-    @OneToMany(cascade = CascadeType.REFRESH, mappedBy = "fileEntity", orphanRemoval = true)
-    private List<GraphCurve> graphCurves = new ArrayList<>();
 
     @Lob
     private byte[] data;

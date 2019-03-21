@@ -1,5 +1,6 @@
 package org.ria.ifzz.RiaApp.service;
 
+import org.ria.ifzz.RiaApp.domain.Backlog;
 import org.ria.ifzz.RiaApp.domain.FileEntity;
 import org.ria.ifzz.RiaApp.domain.GraphCurve;
 import org.ria.ifzz.RiaApp.exception.FileEntityNotFoundException;
@@ -35,8 +36,9 @@ public class GraphCurveService {
     /**
      * @param listX logDose list
      * @param listY Logarithm Real Zero list
+     * @param backlog
      */
-    public void setCoordinates(List<Double> listX, List<Double> listY) {
+    public List<GraphCurve>  setCoordinates(List<Double> listX, List<Double> listY, Backlog backlog) {
         graphCurves = new ArrayList<>();
         for (int i = 0; i < listX.size(); i++) {
             double x = listX.get(i);
@@ -44,30 +46,28 @@ public class GraphCurveService {
             GraphCurve graphCurve = new GraphCurve();
             graphCurve.setX(x);
             graphCurve.setY(y);
+            graphCurve.setBacklog(backlog);
             graphCurves.add(graphCurve);
         }
-        graphCurveRepository.saveAll(graphCurves);
+        return graphCurves;
     }
 
     /**
      * @param file upload file
      * @return list of point for graphical curve, each point has set id(fileName) and set points x, y
      */
-    public List<GraphCurve> setGraphCurveFileName(MultipartFile file, FileEntity fileEntity) {
+    public List<GraphCurve> setGraphCurveFileName(MultipartFile file, FileEntity fileEntity, Backlog backlog) {
         String fileId = fileEntity.getDataId();
         List<GraphCurve> graphCurvesNamed = new ArrayList<>();
         GraphCurve graphCurve;
-        setCoordinates(countResultUtil.getLogDoseList(), countResultUtil.getLogarithmRealZeroTable());
+        setCoordinates(countResultUtil.getLogDoseList(), countResultUtil.getLogarithmRealZeroTable(), backlog);
         for (int i = 0; i < graphCurves.size(); i++) {
             graphCurve = graphCurves.get(i);
             graphCurve.setFileName(fileUtils.setFileName(file) + "_" + i);
             graphCurve.setDataId(fileId);
             graphCurvesNamed.add(graphCurve);
             graphCurve.setR(countResultUtil.setCorrelation());
-            graphCurve.setFileEntity(fileEntity);
         }
-        System.out.println("======================================\nSave Graph Curve");
-        graphCurveRepository.saveAll(graphCurvesNamed);
         return graphCurvesNamed;
     }
 

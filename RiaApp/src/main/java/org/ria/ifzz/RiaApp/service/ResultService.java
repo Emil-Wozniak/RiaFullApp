@@ -129,7 +129,7 @@ public class ResultService {
         return resultsWithData;
     }
 
-    public List<Result> assignNgPerMl(@NotNull MultipartFile file, List<String> list, List<ControlCurve> controlCurveList, List<Result> results) {
+    public List<Result> assignNgPerMl(List<String> list, List<ControlCurve> controlCurveList, List<Result> results) {
 
         Result result = new Result();
         List<Result> countedResults = new ArrayList<>();
@@ -170,7 +170,6 @@ public class ResultService {
             result.setNg(counted);
             countedResults.add(result);
         }
-
         return countedResults;
     }
 
@@ -179,9 +178,9 @@ public class ResultService {
         List<Result> results = setResultFromColumnsLength(list, file, backlog, newResult);
         List<Result> resultsWithData = assignDataToResult(list, fileEntity, results);
         List<ControlCurve> controlCurveList = controlCurveService.setControlCurveFromColumnsLength(list, file, backlog);
-        List<ControlCurve> controlCurveListWithData = controlCurveService.setDataToControlCurve(list, file, fileEntity, controlCurveList);
+        List<ControlCurve> controlCurveListWithData = controlCurveService.setDataToControlCurve(list, fileEntity, controlCurveList);
         controlCurveRepository.saveAll(controlCurveListWithData);
-        List<Result> resultListWithNg = assignNgPerMl(file, list, controlCurveListWithData, resultsWithData);
+        List<Result> resultListWithNg = assignNgPerMl(list, controlCurveListWithData, resultsWithData);
 
         return resultListWithNg;
     }

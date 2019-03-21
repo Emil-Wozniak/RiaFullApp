@@ -35,4 +35,8 @@ public class Backlog {
     @OneToMany(cascade = CascadeType.REFRESH, mappedBy = "backlog", orphanRemoval = true)
     private List<ControlCurve> controlCurves = new ArrayList<>();
 
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @OneToMany(cascade = CascadeType.REFRESH, mappedBy = "backlog", orphanRemoval = true)
+    private List<GraphCurve> graphCurveList = new ArrayList<>();
+
 }

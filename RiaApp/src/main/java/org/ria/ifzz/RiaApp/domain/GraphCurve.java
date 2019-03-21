@@ -18,8 +18,8 @@ public class GraphCurve {
     private String fileName;
     private String dataId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="fileEntity_id", updatable = false, nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="backlog_id", updatable = false, nullable = false)
     @JsonIgnore
-    private FileEntity fileEntity;
+    private Backlog backlog;
 }

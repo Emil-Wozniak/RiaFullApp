@@ -1,11 +1,8 @@
 package org.ria.ifzz.RiaApp.web;
 
-import org.ria.ifzz.RiaApp.domain.Backlog;
-import org.ria.ifzz.RiaApp.domain.FileEntity;
-import org.ria.ifzz.RiaApp.domain.FileModel;
-import org.ria.ifzz.RiaApp.domain.Result;
+import org.ria.ifzz.RiaApp.domain.*;
+import org.ria.ifzz.RiaApp.repository.GraphCurveRepository;
 import org.ria.ifzz.RiaApp.service.FileValidator;
-import org.ria.ifzz.RiaApp.repository.BacklogRepository;
 import org.ria.ifzz.RiaApp.repository.FileEntityRepository;
 import org.ria.ifzz.RiaApp.repository.ResultRepository;
 import org.ria.ifzz.RiaApp.service.*;
@@ -18,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
@@ -36,30 +32,30 @@ public class FileEntityController {
     private final StorageService storageService;
     private final FileEntityRepository fileEntityRepository;
     private final ResultService resultService;
-    private final BacklogRepository backlogRepository;
     private final ResultRepository resultRepository;
     private final GraphCurveService graphCurveService;
-    private final BacklogService backlogService;
     private final FileValidator fileValidator;
     private final MapValidationErrorService errorService;
+    private final GraphCurveRepository graphCurveRepository;
 
     @Autowired
     public FileEntityController(StorageService storageService,
                                 FileEntityRepository fileEntityRepository,
                                 ResultService resultService,
-                                BacklogRepository backlogRepository,
                                 ResultRepository resultRepository,
-                                GraphCurveService graphCurveService, BacklogService backlogService, FileValidator fileValidator, MapValidationErrorService errorService) {
+                                GraphCurveService graphCurveService,
+                                FileValidator fileValidator,
+                                MapValidationErrorService errorService,
+                                GraphCurveRepository graphCurveRepository) {
 
         this.storageService = storageService;
         this.fileEntityRepository = fileEntityRepository;
         this.resultService = resultService;
-        this.backlogRepository = backlogRepository;
         this.resultRepository = resultRepository;
         this.graphCurveService = graphCurveService;
-        this.backlogService = backlogService;
         this.fileValidator = fileValidator;
         this.errorService = errorService;
+        this.graphCurveRepository = graphCurveRepository;
     }
 
     @InitBinder
@@ -133,24 +129,23 @@ public class FileEntityController {
                                               BindingResult result,
                                               RedirectAttributes redirectAttributes,
                                               Principal principal) throws IOException {
-        int id = 0;
-        int newId = id;
+        int newId = 0;
         ResponseEntity<?> errorMap = errorService.MapValidationService(result);
         if (errorMap != null) return errorMap;
 
-        if (file != null) {
-            newId++;
-        }
         Backlog backlog = new Backlog();
         FileEntity fileEntity = storageService.storeAndSaveFileEntity(file.getFile(), backlog, redirectAttributes, principal.getName(), newId);
         Backlog currentBacklog = fileEntity.getBacklog();
 
-        // Result && Graph Curve
+        // Get data from uploaded file
         List<String> cleanedList = resultService.getFileData(file.getFile());
+
+        // Result && Graph Curve
         List<Result> results = resultService.setDataToResult(file.getFile(), cleanedList, currentBacklog, fileEntity);
         resultRepository.saveAll(results);
 
-        graphCurveService.setGraphCurveFileName(file.getFile(), fileEntity);
+        List<GraphCurve> graphCurveList =graphCurveService.setGraphCurveFileName(file.getFile(), fileEntity, currentBacklog);
+        graphCurveRepository.saveAll(graphCurveList);
 
         return new ResponseEntity<>(fileEntity, HttpStatus.CREATED);
     }

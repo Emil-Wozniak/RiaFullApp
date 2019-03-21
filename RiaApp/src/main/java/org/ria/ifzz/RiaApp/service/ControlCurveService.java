@@ -48,7 +48,7 @@ public class ControlCurveService {
         return controlCurveList;
     }
 
-    public List<ControlCurve> setDataToControlCurve(List<String> list, @NotNull MultipartFile file, FileEntity fileEntity, List<ControlCurve> controlCurves) {
+    public List<ControlCurve> setDataToControlCurve(List<String> list, FileEntity fileEntity, List<ControlCurve> curveList) {
 
         List<ControlCurve> controlCurveList = new ArrayList<>();
         String fileId = fileEntity.getDataId();
@@ -60,7 +60,7 @@ public class ControlCurveService {
             List CCMP = customFileReader.getMatchingStrings(list, 3);
 
             index = i;
-            controlCurve = controlCurves.get(index);
+            controlCurve = curveList.get(index);
 
             // convert String value of CCMP to Integer
             String ccmpString = CCMP.get(i).toString();
@@ -75,25 +75,25 @@ public class ControlCurveService {
             List position = customFileReader.getMatchingStrings(list, 2);
 
             index = i;
-            controlCurve = controlCurves.get(index);
+            controlCurve = curveList.get(index);
 
             if (i == 0 || i == 1) {
                 String preConvertedPosition = position.get(i).toString();
-                String converted = preConvertedPosition.replaceAll("A", "T");
+                String converted = preConvertedPosition.replaceAll("A", "Total");
                 String postConvert = converted.replaceAll("[0-9]", "");
                 controlCurve.setPosition(postConvert);
                 controlCurveList.add(controlCurve);
 
             } else if (i == 2 || i == 3 || i == 4) {
                 String preConvertedPosition = position.get(i).toString();
-                String converted = preConvertedPosition.replaceAll("A", "O");
+                String converted = preConvertedPosition.replaceAll("A", "NSB");
                 String postConvert = converted.replaceAll("[0-9]", "");
                 controlCurve.setPosition(postConvert);
                 controlCurveList.add(controlCurve);
 
             } else if (i == 5 || i == 6 || i == 7) {
                 String preConvertedPosition = position.get(i).toString();
-                String converted = preConvertedPosition.replaceAll("[A-Z]", "N");
+                String converted = preConvertedPosition.replaceAll("[A-Z]", "O");
                 String postConvert = converted.replaceAll("[0-9]", "");
                 controlCurve.setPosition(postConvert);
                 controlCurveList.add(controlCurve);
@@ -101,7 +101,7 @@ public class ControlCurveService {
             } else if (i < 22) {
                 String preConvertedPosition = position.get(i).toString();
                 double point = CORTISOL_PATTERN[i - 8];
-                System.out.println("POINT: "+point);
+                System.out.println("POINT: " + point);
                 String convert = preConvertedPosition.replaceAll("[0-9]", "");
                 String postConvert = convert.replaceAll("[A-Z]", String.valueOf(point));
                 controlCurve.setPosition(postConvert);
@@ -118,13 +118,12 @@ public class ControlCurveService {
         //Assign samples to Result
         for (int i = 0; i < 25 - 1; i++) {
             index = i;
-            controlCurve = controlCurves.get(index);
+            controlCurve = curveList.get(index);
             controlCurve.setDataId(fileId);
             controlCurve.setSamples(i);
             System.out.println(" \tResult samples value: " + controlCurve.getSamples());
             controlCurveList.add(controlCurve);
         }
-
         return controlCurveList;
     }
 

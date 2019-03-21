@@ -20,6 +20,15 @@ public class BacklogService {
         this.resultRepository = resultRepository;
     }
 
+    public Backlog setBacklog(FileEntity fileEntity) {
+        Backlog backlog = new Backlog();
+        backlog.setFileEntity(fileEntity);
+        backlog.setFileName(fileEntity.getFileName());
+        backlog.setDataId(fileEntity.getDataId());
+        backlog.setContentType(fileEntity.getContentType());
+        return backlog;
+    }
+
     /**
      * @param dataId unique identifier
      * @return Result from repository if exists
@@ -41,14 +50,5 @@ public class BacklogService {
             throw new FileEntityNotFoundException("Result '" + fileName + "' does not exist: '" + dataId);
         }
         return result;
-    }
-
-    public Backlog setBacklog(FileEntity fileEntity) {
-        Backlog backlog = new Backlog();
-        backlog.setFileEntity(fileEntity);
-        backlog.setFileName(fileEntity.getFileName());
-        backlog.setDataId(fileEntity.getDataId());
-        backlog.setContentType(fileEntity.getContentType());
-        return backlog;
     }
 }
