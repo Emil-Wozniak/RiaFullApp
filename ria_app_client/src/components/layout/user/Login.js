@@ -1,8 +1,13 @@
 import React, { Component } from "react";
+import { Container, Row, Col } from "reactstrap";
+import Paper from "@material-ui/core/Paper";
+import IconButton from "@material-ui/core/IconButton";
+import { Fingerprint, PersonAdd } from "@material-ui/icons/";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import classnames from "classnames";
 import { login } from "../../../actions/securityActions";
+
 
 class Login extends Component {
   constructor() {
@@ -33,56 +38,73 @@ class Login extends Component {
     if (nextProps.security.validToken) {
       this.props.history.push("/dashboard");
     }
-    if(nextProps.errors){
-      this.setState({errors: nextProps.errors})
+    if (nextProps.errors) {
+      this.setState({ errors: nextProps.errors });
     }
   }
 
   render() {
     const { errors } = this.state;
     return (
-      <div className="login">
-        <div className="container">
-          <div className="row">
-            <div className="col-md-8 m-auto">
-              <h1 className="display-4 text-center">Log In</h1>
-              <form onSubmit={this.onSubmit}>
-                <div className="form-group">
-                  <input
-                    type="text"
-                    className={classnames("form-control form-control-lg", {
-                      "is-invalid": errors.username
-                    })}
-                    placeholder="Email Address (username)"
-                    name="username"
-                    value={this.state.username}
-                    onChange={this.onChange}
-                  />
-                  {errors.username && (
-                    <div className="invalid-feedback">{errors.username}</div>
-                  )}
-                </div>
-                <div className="form-group">
-                  <input
-                    type="password"
-                    className={classnames("form-control form-control-lg", {
-                      "is-invalid": errors.password
-                    })}
-                    placeholder="Password"
-                    name="password"
-                    value={this.state.password}
-                    onChange={this.onChange}
-                  />
-                  {errors.password && (
-                    <div className="invalid-feedback">{errors.password}</div>
-                  )}
-                </div>
-                <input type="submit" className="btn btn-info btn-block mt-4" />
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
+      <Container>
+        <br />
+        <Paper>
+          <Row>
+            <Col>
+              <br />
+              <h4 className="text-center">Login</h4>
+              <Container>
+                <form onSubmit={this.onSubmit}>
+                  <Col>
+                    <div className="form-group">
+                      <input
+                        type="text"
+                        className={classnames("form-control form-control-lg", {
+                          "is-invalid": errors.username
+                        })}
+                        placeholder="Email Address (username)"
+                        name="username"
+                        value={this.state.username}
+                        onChange={this.onChange}
+                      />
+                      {errors.username && (
+                        <div className="invalid-feedback">
+                          {errors.username}
+                        </div>
+                      )}
+                    </div>
+                    <div className="form-group">
+                      <input
+                        type="password"
+                        className={classnames("form-control form-control-lg", {
+                          "is-invalid": errors.password
+                        })}
+                        placeholder="Password"
+                        name="password"
+                        value={this.state.password}
+                        onChange={this.onChange}
+                      />
+                      {errors.password && (
+                        <div className="invalid-feedback">
+                          {errors.password}
+                        </div>
+                      )}
+                    </div>
+                    <IconButton type="submit">
+                      <Fingerprint style={{ width: "50px", height: "50px" }} />
+                    </IconButton>
+                    <IconButton href="/register">
+                      <PersonAdd style={{ width: "50px", height: "50px" }} />
+                    </IconButton>
+                    <br />
+                    <br />
+                  </Col>
+                </form>
+              </Container>
+            </Col>
+          </Row>
+        </Paper>
+      </Container>
     );
   }
 }

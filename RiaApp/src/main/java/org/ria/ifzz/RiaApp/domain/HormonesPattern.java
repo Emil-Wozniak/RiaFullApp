@@ -16,5 +16,6 @@ public class HormonesPattern {
             40.000,
             40.000,
             80.000,
-            80.000};
+            80.000
+    };
 }
