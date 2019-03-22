@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -94,14 +93,12 @@ public class CustomFileReader {
             if (wordInLine.size() == 5) {
                 if (!wordInLine.isEmpty()) {
                     matches.add(wordInLine.get(columnNumber));
-                    System.out.println("Line " + i + " content: " + wordInLine);
                 }
             } else {
                 matches.isEmpty();
             }
         }
         matches.remove(0);
-        System.out.println("Matches: ");
         return matches;
     }
 

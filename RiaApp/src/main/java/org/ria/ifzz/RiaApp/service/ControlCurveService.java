@@ -41,7 +41,6 @@ public class ControlCurveService {
                 ControlCurve controlCurvePoint = new ControlCurve();
                 controlCurvePoint.setFileName("row_" + i + "_" + fileUtils.setFileName(file));
                 controlCurvePoint.setBacklog(backlog);
-                System.out.println("Control Curve " + controlCurvePoint.getFileName() + " saved");
                 controlCurveList.add(controlCurvePoint);
             }
         }
@@ -101,7 +100,6 @@ public class ControlCurveService {
             } else if (i < 22) {
                 String preConvertedPosition = position.get(i).toString();
                 double point = CORTISOL_PATTERN[i - 8];
-                System.out.println("POINT: " + point);
                 String convert = preConvertedPosition.replaceAll("[0-9]", "");
                 String postConvert = convert.replaceAll("[A-Z]", String.valueOf(point));
                 controlCurve.setPosition(postConvert);

@@ -8,7 +8,6 @@ import { connect } from "react-redux";
 import classnames from "classnames";
 import { login } from "../../../actions/securityActions";
 
-
 class Login extends Component {
   constructor() {
     super();
@@ -93,13 +92,13 @@ class Login extends Component {
                     <IconButton type="submit">
                       <Fingerprint style={{ width: "50px", height: "50px" }} />
                     </IconButton>
-                    <IconButton href="/register">
-                      <PersonAdd style={{ width: "50px", height: "50px" }} />
-                    </IconButton>
-                    <br />
-                    <br />
                   </Col>
                 </form>
+                <IconButton href="/register">
+                  <PersonAdd style={{ width: "50px", height: "50px" }} />
+                </IconButton>
+                <br />
+                <br />
               </Container>
             </Col>
           </Row>

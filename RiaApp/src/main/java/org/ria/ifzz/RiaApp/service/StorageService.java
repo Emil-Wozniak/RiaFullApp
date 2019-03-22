@@ -1,6 +1,5 @@
 package org.ria.ifzz.RiaApp.service;
 
-import org.ria.ifzz.RiaApp.domain.Backlog;
 import org.ria.ifzz.RiaApp.domain.FileEntity;
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,7 +14,7 @@ public interface StorageService {
     void init();
 
 
-    FileEntity storeAndSaveFileEntity(MultipartFile file, Backlog backlog, RedirectAttributes redirectAttributes, String username, int setId) throws IOException;
+    FileEntity storeAndSaveFileEntity(MultipartFile file, RedirectAttributes redirectAttributes, String username, int setId) throws IOException;
 
     Iterable<FileEntity> loadAll();
 

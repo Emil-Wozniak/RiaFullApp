@@ -1,6 +1,5 @@
 package org.ria.ifzz.RiaApp.service;
 
-import org.ria.ifzz.RiaApp.domain.Backlog;
 import org.ria.ifzz.RiaApp.domain.FileEntity;
 import org.ria.ifzz.RiaApp.domain.User;
 import org.ria.ifzz.RiaApp.exception.FileEntityNotFoundException;
@@ -43,14 +42,21 @@ public class FileEntityStorageService implements StorageService {
         this.userRepository = userRepository;
     }
 
+    /**
+     *
+     * @param file uploaded
+     * @param redirectAttributes page response
+     * @param username user credentials
+     * @param setId file id
+     * @return file_entity object with all necessary contents
+     * @throws IOException if upload is not successful
+     */
     @Override
-    public FileEntity storeAndSaveFileEntity(MultipartFile file, Backlog backlog, RedirectAttributes redirectAttributes, String username, int setId) throws IOException {
-
+    public FileEntity storeAndSaveFileEntity(MultipartFile file, RedirectAttributes redirectAttributes, String username, int setId) throws IOException {
         FileEntity fileEntity = new FileEntity(
                 file.getOriginalFilename(),
                 file.getContentType(),
                 file.getBytes());
-        System.out.println("=====> New File Entity create");
 
         String filename = StringUtils.cleanPath(file.getOriginalFilename());
 
@@ -77,7 +83,6 @@ public class FileEntityStorageService implements StorageService {
         catch (IOException e) {
             throw new StorageException("Failed to store file " + filename);
         }
-        System.out.println("=====> New File is correct");
         try{
             User user = userRepository.findByUsername(username);
             fileEntity.setUser(user);
@@ -141,9 +146,11 @@ public class FileEntityStorageService implements StorageService {
         fileEntityRepository.delete(fileEntity);
     }
 
+    /**
+     * Generate directory for uploaded files
+     */
     @Override
     public void init() {
-
         try {
             Files.createDirectories(rootLocation);
         }

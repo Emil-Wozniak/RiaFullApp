@@ -8,6 +8,9 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.Date;
 
+/**
+ * Represents
+ */
 @Entity
 @Data
 @NoArgsConstructor
@@ -21,6 +24,7 @@ public class ControlCurve  {
     private Double ccpm = null;
     private String fileName = "";
     private String dataId = "";
+    private boolean flagged = false;
 
     @JsonFormat(pattern = "yyyy-MM-dd' 'HH:mm:ss")
     @Column(updatable = false)

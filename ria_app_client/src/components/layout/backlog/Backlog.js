@@ -97,7 +97,7 @@ class Backlog extends Component {
               <tr>
                 <th>position</th>
                 <th>CPM:</th>
-                <th />
+                <th>Flagged:</th>
                 <th />
               </tr>
             </thead>

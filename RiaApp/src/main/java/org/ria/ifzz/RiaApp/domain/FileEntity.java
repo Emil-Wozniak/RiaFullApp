@@ -8,6 +8,9 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.Date;
 
+/**
+ * Represents uploaded file with its content
+ */
 @Entity
 @Data
 @NoArgsConstructor

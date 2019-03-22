@@ -133,8 +133,7 @@ public class FileEntityController {
         ResponseEntity<?> errorMap = errorService.MapValidationService(result);
         if (errorMap != null) return errorMap;
 
-        Backlog backlog = new Backlog();
-        FileEntity fileEntity = storageService.storeAndSaveFileEntity(file.getFile(), backlog, redirectAttributes, principal.getName(), newId);
+        FileEntity fileEntity = storageService.storeAndSaveFileEntity(file.getFile(), redirectAttributes, principal.getName(), newId);
         Backlog currentBacklog = fileEntity.getBacklog();
 
         // Get data from uploaded file

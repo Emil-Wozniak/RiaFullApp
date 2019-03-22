@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { deleteFileEntity } from "../../../actions/filesActions";
 import { withStyles } from "@material-ui/core/styles";
+
 const styles = theme => ({
   root: {
     flexGrow: 1
@@ -18,14 +19,14 @@ const styles = theme => ({
 class ControlCurve extends Component {
   render() {
     const { control_curve } = this.props;
-
+    const condition = control_curve.flagged === false;
     return (
       <React.Fragment>
         <tbody>
           <tr>
             <td>{control_curve.position}</td>
             <td>{control_curve.ccpm}</td>
-            <td/>
+            <td>{condition ? "No" : "Yes"}</td>
             <td />
           </tr>
         </tbody>

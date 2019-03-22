@@ -143,7 +143,6 @@ public class ResultService {
             for (int i = 0; i < 24; i++) {
                 controlCurve = controlCurveList.get(i);
                 double point = controlCurve.getCcpm();
-                System.out.println(point);
                 curve.add(point);
             }
         } catch (Exception exception) {
@@ -162,7 +161,6 @@ public class ResultService {
             result = results.get(i);
             double point = result.getCcpm();
             double counted = countResultUtil.countResult(point);
-            System.out.println("nr: " + i + " counted: " + counted);
             countedList.add(counted);
             if (Double.isNaN(counted)) {
                 counted = 0.0;
