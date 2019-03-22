@@ -34,7 +34,6 @@ public class ControlCurveService {
 
     public List<ControlCurve> setControlCurveFromColumnsLength(List<String> list, @NotNull MultipartFile file, Backlog backlog) {
         List<ControlCurve> controlCurveList = new ArrayList<>();
-
         for (int i = 0; i < 25; i++) {
             String line = list.get(i);
             if (line.startsWith(" \tUnk")) {
@@ -47,13 +46,19 @@ public class ControlCurveService {
         return controlCurveList;
     }
 
+    /**
+     * assigns data from list to ControlCurve object
+     *
+     * @param list contains data
+     * @return list of all control curve points
+     */
     public List<ControlCurve> setDataToControlCurve(List<String> list, FileEntity fileEntity, List<ControlCurve> curveList) {
 
         List<ControlCurve> controlCurveList = new ArrayList<>();
         String fileId = fileEntity.getDataId();
         int index = 0;
-
         ControlCurve controlCurve;
+
         //Assign CCMP to Result
         for (int i = 0; i < 24; i++) {
             List CCMP = customFileReader.getMatchingStrings(list, 3);
@@ -67,6 +72,12 @@ public class ControlCurveService {
             controlCurve.setCcpm(ccmpInteger);
             System.out.println(" \tControl Curve CCMP value: " + controlCurve.getCcpm());
             controlCurveList.add(controlCurve);
+        }
+
+        //Check if NSBs or Zeros have too large spread
+        if (!controlCurveList.isEmpty()) {
+            isSpreadTooLarge(2, 3, 4, controlCurveList);
+            isSpreadTooLarge(5, 6, 7, controlCurveList);
         }
 
         //Assign position to Result
@@ -125,6 +136,13 @@ public class ControlCurveService {
         return controlCurveList;
     }
 
+    private void isSpreadTooLarge(int first, int second, int third, List<ControlCurve> controlCurveList) {
+        ControlCurve controlCurve1 = controlCurveList.get(first);
+        ControlCurve controlCurve2 = controlCurveList.get(second);
+        ControlCurve controlCurve3 = controlCurveList.get(third);
+        setFlag(controlCurve1, controlCurve2, controlCurve3);
+    }
+
     public Iterable<ControlCurve> findCCBacklogByDataId(String dataId) throws FileNotFoundException {
         fileEntityService.findFileEntityByDataId(dataId);
         return controlCurveRepository.findByDataIdOrderByFileName(dataId);
@@ -141,5 +159,18 @@ public class ControlCurveService {
             throw new FileEntityNotFoundException("Curve '" + fileName + "' does not exist: '" + dataId);
         }
         return controlCurve;
+    }
+
+    public void setFlag(ControlCurve first, ControlCurve second, ControlCurve third) {
+        if (Math.abs(first.getCcpm() - second.getCcpm()) > (first.getCcpm() / 10)) {
+            System.out.println(first.getCcpm() + " is more than 10% of " + second.getCcpm());
+            first.setFlagged(true);
+        } else if (Math.abs(second.getCcpm() - third.getCcpm()) > (second.getCcpm() / 10)) {
+            System.out.println(second.getCcpm() + " is more than 10% of " + third.getCcpm());
+            second.setFlagged(true);
+        } else if (Math.abs(third.getCcpm() - first.getCcpm()) > (third.getCcpm() / 10)) {
+            System.out.println(third.getCcpm() + " is more than 10% of " + first.getCcpm());
+            third.setFlagged(true);
+        }
     }
 }

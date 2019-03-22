@@ -60,7 +60,6 @@ public class CountResultUtil {
                 n2 = curve.get(6);
                 n3 = curve.get(7);
             }
-
             // set Total ZERO NSBN
             total = resultMath.averageTwo(t1, t2);
             zero = resultMath.averageThree(zero1, zero2, zero3);
@@ -70,13 +69,14 @@ public class CountResultUtil {
             binding = nonSpecificBinding - zero;
             System.out.println("Curve:");
             curve.forEach(System.out::println);
-            System.out.println("T: " + total + " | N: " + nonSpecificBinding + " | O: " + zero + " >>> N - O = " + binding);
+            System.out.println("T: " + total + " | N: " + nonSpecificBinding + " | O: " + zero + " ==> N - O = " + binding);
         }
         return curve;
     }
 
 
     //tableC && tableG -> Control Curve CCMP
+
     /**
      * @param controlCurve array of CMP of hormone standardized pattern e.g CORTISOL_PATTERN
      * @return array of CMP of hormone standardized pattern e.g CORTISOL_PATTERN
@@ -84,7 +84,7 @@ public class CountResultUtil {
     public List<Double> setStandardsCMP(List<Double> controlCurve) {
         standardsCMP = new ArrayList<>();
         if (standardsCMP.size() < 8) {
-            for (int i = 8; i < controlCurve.size()-2; i++) {
+            for (int i = 8; i < controlCurve.size() - 2; i++) {
                 double point = controlCurve.get(i);
                 standardsCMP.add(point);
             }
@@ -95,6 +95,7 @@ public class CountResultUtil {
     }
 
     //table M == table I
+
     /**
      * take double array which contains standardized pattern and
      * performs a logarithmic function for each elements of the array
@@ -190,7 +191,7 @@ public class CountResultUtil {
         Double sumLogRealZero = resultMath.sum4(logarithmRealZeroTableNotLong);
 
         firstFactor = (logDoseCount * sum) - (sumLogDose * sumLogRealZero);
-        Double firstFactor2 = Precision.round(firstFactor,2);
+        Double firstFactor2 = Precision.round(firstFactor, 2);
         System.out.println("First " + firstFactor2);
 
         System.out.println("\nSecond factor");
@@ -213,9 +214,11 @@ public class CountResultUtil {
     /* Excel version:
      * = 10^ * (( LOG((B44-$I$16) *100 /$J$18 / (100-(B44-$I$16) *100 /$J$18)) -$R$19) /$R$20)
      */
+
     /**
      * calculates the value of hormone nanograms by formula:
      * { 10^(( LOG((cmp-zero) *100 / binding / (100-(cmp-zero) *100 / binding)) - regressionParameterA) / regressionParameterB)}
+     *
      * @param CMP ccmp value from file
      * @return the value of hormone nanograms in the sample
      */
@@ -236,14 +239,15 @@ public class CountResultUtil {
     public double setCorrelation() {
         Double correlation;
         logDoseListArray = new double[logDoseList.size()];
-        for (int i = 0; i<logDoseList.size(); i++)logDoseListArray[i] = logDoseList.get(i);
+        for (int i = 0; i < logDoseList.size(); i++) logDoseListArray[i] = logDoseList.get(i);
         logarithmRealZeroArray = new double[logarithmRealZeroTable.size()];
-        for (int i = 0; i<logarithmRealZeroTable.size(); i++)logarithmRealZeroArray[i] = logarithmRealZeroTable.get(i);
-                PearsonsCorrelation pearsonsCorrelation = new PearsonsCorrelation();
-                correlation= pearsonsCorrelation.correlation(logDoseListArray, logarithmRealZeroArray);
-                correlation = Precision.round(correlation,4);
-                Double correlationPow = Math.pow(correlation,2);
-        System.out.println("Correlation: " +correlationPow);
+        for (int i = 0; i < logarithmRealZeroTable.size(); i++)
+            logarithmRealZeroArray[i] = logarithmRealZeroTable.get(i);
+        PearsonsCorrelation pearsonsCorrelation = new PearsonsCorrelation();
+        correlation = pearsonsCorrelation.correlation(logDoseListArray, logarithmRealZeroArray);
+        correlation = Precision.round(correlation, 4);
+        Double correlationPow = Math.pow(correlation, 2);
+        System.out.println("Correlation: " + correlationPow);
         return correlationPow;
     }
 }
