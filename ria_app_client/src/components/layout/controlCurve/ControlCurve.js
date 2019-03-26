@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { deleteFileEntity } from "../../../actions/filesActions";
 import { withStyles } from "@material-ui/core/styles";
+import CheckBoxOutlined  from "@material-ui/icons/CheckBoxOutlined";
 
 const styles = theme => ({
   root: {
@@ -27,7 +28,7 @@ class ControlCurve extends Component {
             <td>{control_curve.position}</td>
             <td>{control_curve.ccpm}</td>
             <td>{condition ? "No" : "Yes"}</td>
-            <td />
+            <td />{CheckBoxOutlined}
           </tr>
         </tbody>
       </React.Fragment>

@@ -21,6 +21,7 @@ import javax.validation.Valid;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -143,8 +144,13 @@ public class FileEntityController {
         List<Result> results = resultService.setDataToResult(file.getFile(), cleanedList, currentBacklog, fileEntity);
         resultRepository.saveAll(results);
 
-        List<GraphCurve> graphCurveList =graphCurveService.setGraphCurveFileName(file.getFile(), fileEntity, currentBacklog);
+        List<GraphCurve> graphCurveList = graphCurveService.setGraphCurveFileName(file.getFile(), fileEntity, currentBacklog);
         graphCurveRepository.saveAll(graphCurveList);
+
+        //TODO probably another way to handle file contents
+//        String fileManager = file.getContents().get();
+//        StringBuilder a ;
+//        System.out.println("File Manager:\n" + fileManager);
 
         return new ResponseEntity<>(fileEntity, HttpStatus.CREATED);
     }

@@ -74,9 +74,7 @@ public class CountResultUtil {
         return curve;
     }
 
-
     //tableC && tableG -> Control Curve CCMP
-
     /**
      * @param controlCurve array of CMP of hormone standardized pattern e.g CORTISOL_PATTERN
      * @return array of CMP of hormone standardized pattern e.g CORTISOL_PATTERN

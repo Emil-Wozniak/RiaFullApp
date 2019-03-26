@@ -16,8 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static org.ria.ifzz.RiaApp.domain.HormonesPattern.CORTISOL_PATTERN;
 
@@ -135,6 +134,7 @@ public class ResultService {
         List<Result> countedResults = new ArrayList<>();
         List<Double> curve = new ArrayList<>();
         ControlCurve controlCurve;
+        Map<Boolean, Double> curveWithKeys = new HashMap<>();
 
         // get standard pattern
         countResultUtil.logDose(CORTISOL_PATTERN);
@@ -142,12 +142,15 @@ public class ResultService {
         try {
             for (int i = 0; i < 24; i++) {
                 controlCurve = controlCurveList.get(i);
-                double point = controlCurve.getCcpm();
+                Double point = controlCurve.getCcpm();
+                Boolean flag = controlCurve.isFlagged();
                 curve.add(point);
+                curveWithKeys.put(flag, point);
             }
         } catch (Exception exception) {
             throw new CurveException("\nFile " + curve.toString() + " doesn't have a proper size; \nIt must contain at least 24 line for curve and 2 line of results;\n" + exception.getCause());
         }
+        System.out.println("With keys:"+curveWithKeys.size()+"\n"+ Collections.singletonList(curveWithKeys));
 
         countResultUtil.setControlCurveCMP(curve);
         countResultUtil.setStandardsCMP(curve);
