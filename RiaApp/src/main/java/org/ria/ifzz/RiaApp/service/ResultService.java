@@ -6,10 +6,10 @@ import org.ria.ifzz.RiaApp.domain.FileEntity;
 import org.ria.ifzz.RiaApp.domain.Result;
 import org.ria.ifzz.RiaApp.exception.CurveException;
 import org.ria.ifzz.RiaApp.repository.ControlCurveRepository;
-import org.ria.ifzz.RiaApp.repository.ResultRepository;
 import org.ria.ifzz.RiaApp.utils.CountResultUtil;
 import org.ria.ifzz.RiaApp.utils.CustomFileReader;
 import org.ria.ifzz.RiaApp.utils.FileUtils;
+import org.ria.ifzz.RiaApp.utils.Point;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -134,26 +134,32 @@ public class ResultService {
         List<Result> countedResults = new ArrayList<>();
         List<Double> curve = new ArrayList<>();
         ControlCurve controlCurve;
-        Map<Boolean, Double> curveWithKeys = new HashMap<>();
+        List<Point> points = new ArrayList<>();
 
         // get standard pattern
         countResultUtil.logDose(CORTISOL_PATTERN);
 
+        //set ccmp values to control curve points
         try {
             for (int i = 0; i < 24; i++) {
+
                 controlCurve = controlCurveList.get(i);
-                Double point = controlCurve.getCcpm();
+                Double pointValue = controlCurve.getCcpm();
                 Boolean flag = controlCurve.isFlagged();
-                curve.add(point);
-                curveWithKeys.put(flag, point);
+                curve.add(pointValue);
+
+                Point point = new Point(pointValue, flag);
+
+                points.add(point);
             }
         } catch (Exception exception) {
             throw new CurveException("\nFile " + curve.toString() + " doesn't have a proper size; \nIt must contain at least 24 line for curve and 2 line of results;\n" + exception.getCause());
         }
-        System.out.println("With keys:"+curveWithKeys.size()+"\n"+ Collections.singletonList(curveWithKeys));
 
         countResultUtil.setControlCurveCMP(curve);
         countResultUtil.setStandardsCMP(curve);
+        countResultUtil.setStandardsCpmWithFlags(points);
+
         countResultUtil.bindingPercent();
         countResultUtil.logarithmRealZero();
         countResultUtil.countRegressionParameterB();

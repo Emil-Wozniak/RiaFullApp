@@ -151,7 +151,8 @@ public class ControlCurveService {
     }
 
     /**
-     * takes absolute values of 3 of NSBs or Zeros curve points and checks if one of them is greater than percent value
+     * takes absolute values of 3 of NSBs or Zeros curve points and checks if one of them is greater than acceptable percent value,
+     * if it is flagged with value "true"
      *
      * @param first   curve point
      * @param second  curve point

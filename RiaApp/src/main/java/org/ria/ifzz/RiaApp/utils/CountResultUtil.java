@@ -20,6 +20,8 @@ public class CountResultUtil {
     @Getter
     private List<Double> standardsCMP;
     @Getter
+    private List<Point> standardsCpmFlagged;
+    @Getter
     private List<Double> logDoseList;
     private double[] logDoseListArray;
     private List<Double> bindingPercent;
@@ -74,6 +76,7 @@ public class CountResultUtil {
         return curve;
     }
 
+
     //tableC && tableG -> Control Curve CCMP
     /**
      * @param controlCurve array of CMP of hormone standardized pattern e.g CORTISOL_PATTERN
@@ -90,6 +93,22 @@ public class CountResultUtil {
         System.out.println("\nStandard CMP: ");
         standardsCMP.forEach(System.out::println);
         return standardsCMP;
+    }
+
+    public List<Point> setStandardsCpmWithFlags(List<Point> points) {
+        standardsCpmFlagged = new ArrayList<>();
+
+        if (standardsCpmFlagged.size()<8){
+            System.out.println("\nStandard CPM_FLAG: ");
+            for (int i = 8; i < points.size() - 2; i++) {
+                Point point = points.get(i);
+                standardsCpmFlagged.add(point);
+                System.out.println(point.getValue() + " | " + point.isFlag());
+            }
+        }
+
+
+        return standardsCpmFlagged;
     }
 
     //table M == table I
