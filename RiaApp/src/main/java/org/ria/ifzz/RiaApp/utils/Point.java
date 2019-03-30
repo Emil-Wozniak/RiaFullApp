@@ -1,5 +1,8 @@
 package org.ria.ifzz.RiaApp.utils;
 
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
 public class Point {
 
     private double value;

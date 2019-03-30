@@ -147,17 +147,17 @@ public class ResultService {
                 Double pointValue = controlCurve.getCcpm();
                 Boolean flag = controlCurve.isFlagged();
                 curve.add(pointValue);
-
                 Point point = new Point(pointValue, flag);
-
                 points.add(point);
             }
         } catch (Exception exception) {
             throw new CurveException("\nFile " + curve.toString() + " doesn't have a proper size; \nIt must contain at least 24 line for curve and 2 line of results;\n" + exception.getCause());
         }
 
-        countResultUtil.setControlCurveCMP(curve);
-        countResultUtil.setStandardsCMP(curve);
+//        countResultUtil.setControlCurveCMP(curve);
+//        countResultUtil.setStandardsCMP(curve);
+
+        countResultUtil.setControlCurveCpmWithFlag(points);
         countResultUtil.setStandardsCpmWithFlags(points);
 
         countResultUtil.bindingPercent();
@@ -180,6 +180,7 @@ public class ResultService {
         return countedResults;
     }
 
+    //TODO catch NonResultException
     public List<Result> setDataToResult(@NotNull MultipartFile file, List<String> list, Backlog backlog, FileEntity fileEntity) {
         Result newResult = new Result();
         List<Result> results = setResultFromColumnsLength(list, file, backlog, newResult);
