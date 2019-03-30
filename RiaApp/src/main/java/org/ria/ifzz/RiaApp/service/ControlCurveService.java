@@ -76,8 +76,10 @@ public class ControlCurveService {
 
         //Check if NSBs or Zeros have too large spread and flag those which are
         if (!controlCurveList.isEmpty()) {
-            isSpreadTooLarge(2, 3, 4, controlCurveList);
-            isSpreadTooLarge(5, 6, 7, controlCurveList);
+            isSpreadTooLarge(2, 3, 4, controlCurveList, 10);
+            System.out.println("isSpreadTooLarge good");
+            isSpreadTooLarge(5, 6, 7, controlCurveList, 10);
+            System.out.println("isSpreadTooLarge good");
         }
 
         //Assign position to Result
@@ -129,7 +131,6 @@ public class ControlCurveService {
             controlCurve = curveList.get(index);
             controlCurve.setDataId(fileId);
             controlCurve.setSamples(i);
-            System.out.println(" \tResult samples value: " + controlCurve.getSamples());
             controlCurveList.add(controlCurve);
         }
         return controlCurveList;
@@ -142,12 +143,13 @@ public class ControlCurveService {
      * @param second           curve point
      * @param third            curve point
      * @param controlCurveList list of flagged curve point
+     * @param percentage       not accepted percentage difference between the points
      */
-    private void isSpreadTooLarge(int first, int second, int third, @org.jetbrains.annotations.NotNull List<ControlCurve> controlCurveList) {
+    private void isSpreadTooLarge(int first, int second, int third, @org.jetbrains.annotations.NotNull List<ControlCurve> controlCurveList, int percentage) {
         ControlCurve controlCurve1 = controlCurveList.get(first);
         ControlCurve controlCurve2 = controlCurveList.get(second);
         ControlCurve controlCurve3 = controlCurveList.get(third);
-        setFlag(controlCurve1, controlCurve2, controlCurve3, 10);
+        setFlag(controlCurve1, controlCurve2, controlCurve3, percentage);
     }
 
     /**
@@ -157,17 +159,17 @@ public class ControlCurveService {
      * @param first   curve point
      * @param second  curve point
      * @param third   curve point
-     * @param percent not accepted percentage difference between points
+     * @param percent not accepted percentage difference between the points
      */
     public void setFlag(ControlCurve first, ControlCurve second, ControlCurve third, int percent) {
         if (Math.abs(first.getCcpm() - second.getCcpm()) > (first.getCcpm() / percent)) {
-            System.out.println(first.getCcpm() + " is more than " + percent + "% of " + second.getCcpm());
+            System.out.println(first.getCcpm() + " is greater than " + percent + "% of " + second.getCcpm());
             first.setFlagged(true);
         } else if (Math.abs(second.getCcpm() - third.getCcpm()) > (second.getCcpm() / percent)) {
-            System.out.println(second.getCcpm() + " is more than " + percent + "% of " + third.getCcpm());
+            System.out.println(second.getCcpm() + " is greater than " + percent + "% of " + third.getCcpm());
             second.setFlagged(true);
         } else if (Math.abs(third.getCcpm() - first.getCcpm()) > (third.getCcpm() / percent)) {
-            System.out.println(third.getCcpm() +" is more than " + percent + "% of " + first.getCcpm());
+            System.out.println(third.getCcpm() + " is greater than " + percent + "% of " + first.getCcpm());
             third.setFlagged(true);
         }
     }

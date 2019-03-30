@@ -23,9 +23,6 @@ import static org.ria.ifzz.RiaApp.domain.HormonesPattern.CORTISOL_PATTERN;
 @RestController
 public class ResultService {
 
-    @Autowired
-    FileEntityService fileEntityService;
-
     private final CustomFileReader customFileReader;
     private final CountResultUtil countResultUtil;
     private final FileUtils fileUtils;
@@ -70,7 +67,6 @@ public class ResultService {
         for (String line : list) {
             if (line.startsWith(" \tUnk")) {
                 int a = i++;
-                System.out.println(a + " > " + line);
                 result = new Result();
                 result.setFileName("row_" + list.indexOf(line) + "_" + fileUtils.setFileName(file));
                 result.setBacklog(backlog);
@@ -90,12 +86,10 @@ public class ResultService {
     public List<Result> assignDataToResult(List<String> list, FileEntity fileEntity, List<Result> results) {
 
         String fileId = fileEntity.getDataId();
-
         List<Result> resultsWithData = new ArrayList<>();
         //Assign CCMP to Result
         for (int i = 24; i < list.size() - 1; i++) {
             List CCMP = customFileReader.getMatchingStrings(list, 3);
-
             Result result = results.get(i);
             String ccmpString = CCMP.get(i).toString();
             Double ccmpInteger = Double.parseDouble(ccmpString);
@@ -122,12 +116,18 @@ public class ResultService {
             String replacedSamples = cleanedSamples.replace("Unk_", "");
             Integer samplesInt = Integer.parseInt(replacedSamples);
             result.setSamples(samplesInt);
-            System.out.println(" \tResult samples value: " + result.getSamples());
             resultsWithData.add(result);
         }
         return resultsWithData;
     }
 
+    /**
+     *
+     * @param list contains data which will be assign to Result
+     * @param controlCurveList curve points
+     * @param results list of the Result entities with assigned data
+     * @return list of Result entities with calculated mass of the hormone in nanograms
+     */
     public List<Result> assignNgPerMl(List<String> list, List<ControlCurve> controlCurveList, List<Result> results) {
 
         Result result = new Result();
@@ -142,7 +142,6 @@ public class ResultService {
         //set ccmp values to control curve points
         try {
             for (int i = 0; i < 24; i++) {
-
                 controlCurve = controlCurveList.get(i);
                 Double pointValue = controlCurve.getCcpm();
                 Boolean flag = controlCurve.isFlagged();
@@ -153,9 +152,6 @@ public class ResultService {
         } catch (Exception exception) {
             throw new CurveException("\nFile " + curve.toString() + " doesn't have a proper size; \nIt must contain at least 24 line for curve and 2 line of results;\n" + exception.getCause());
         }
-
-//        countResultUtil.setControlCurveCMP(curve);
-//        countResultUtil.setStandardsCMP(curve);
 
         countResultUtil.setControlCurveCpmWithFlag(points);
         countResultUtil.setStandardsCpmWithFlags(points);
@@ -183,12 +179,22 @@ public class ResultService {
     //TODO catch NonResultException
     public List<Result> setDataToResult(@NotNull MultipartFile file, List<String> list, Backlog backlog, FileEntity fileEntity) {
         Result newResult = new Result();
+        List<Result> resultsWithData = new ArrayList<>();
+        List<Result> resultListWithNg = new ArrayList<>();
         List<Result> results = setResultFromColumnsLength(list, file, backlog, newResult);
-        List<Result> resultsWithData = assignDataToResult(list, fileEntity, results);
+        try{
+            resultsWithData = assignDataToResult(list, fileEntity, results);
+        }catch (Exception e){
+            System.out.println("Assign Data To Result"+e.getMessage());
+        }
         List<ControlCurve> controlCurveList = controlCurveService.setControlCurveFromColumnsLength(list, file, backlog);
         List<ControlCurve> controlCurveListWithData = controlCurveService.setDataToControlCurve(list, fileEntity, controlCurveList);
         controlCurveRepository.saveAll(controlCurveListWithData);
-        List<Result> resultListWithNg = assignNgPerMl(list, controlCurveListWithData, resultsWithData);
+        try{
+            resultListWithNg = assignNgPerMl(list, controlCurveListWithData, resultsWithData);
+        } catch (Exception e){
+            System.out.println("Exception ng" + e.getMessage());
+        }
 
         return resultListWithNg;
     }

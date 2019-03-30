@@ -1,5 +1,8 @@
 package org.ria.ifzz.RiaApp.domain;
 
+/**
+ * represents hormones patterns which should be founded in uploaded file
+ */
 public class HormonesPattern {
 
     public static final double[] CORTISOL_PATTERN = {

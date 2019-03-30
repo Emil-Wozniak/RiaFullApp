@@ -17,8 +17,6 @@ public class CountResultUtil {
     private Double binding;
 
     @Getter
-    private List<Double> curve;
-    @Getter
     private List<Double> standardsCMP;
     @Getter
     private List<Point> curveFlagged;
@@ -35,47 +33,6 @@ public class CountResultUtil {
     private Double regressionParameterA;
 
     ResultMath resultMath = new ResultMath();
-
-    /**
-     * @return List which represents first 8 points of Control Curve (T, N, O)
-     * and average results of total, zero and nsb
-     */
-//    public List<Double> setControlCurveCMP(List<Double> controlCurve) {
-//        curve = new ArrayList<>();
-//        if (!controlCurve.isEmpty()) {
-//            curve.addAll(controlCurve);
-//            double t1 = 0;
-//            double t2 = 0;
-//            double zero1 = 0;
-//            double zero2 = 0;
-//            double zero3 = 0;
-//            double n1 = 0;
-//            double n2 = 0;
-//            double n3 = 0;
-//
-//            for (int i = 0; i < 8; i++) {
-//                t1 = curve.get(0);
-//                t2 = curve.get(1);
-//                zero1 = curve.get(2);
-//                zero2 = curve.get(3);
-//                zero3 = curve.get(4);
-//                n1 = curve.get(5);
-//                n2 = curve.get(6);
-//                n3 = curve.get(7);
-//            }
-//            // set Total ZERO NSBN
-//            total = resultMath.averageTwo(t1, t2);
-//            zero = resultMath.averageThree(zero1, zero2, zero3);
-//            nsb = resultMath.averageThree(n1, n3, n2);
-//
-//            // J18 = I18 - I16
-//            binding = nsb - zero;
-//            System.out.println("Curve:");
-//            curve.forEach(System.out::println);
-//            System.out.println("T: " + total + " | O: " + nsb + " | N: " + zero + " ==> N - O = " + binding);
-//        }
-//        return curve;
-//    }
 
     /**
      * @param points list containing CMPs and flags
@@ -98,7 +55,7 @@ public class CountResultUtil {
             for (int i = 0; i < 8; i++) {
                 t1 = curveFlagged.get(0);
                 t2 = curveFlagged.get(1);
-                nsb1 = curveFlagged.get(5); //should be
+                nsb1 = curveFlagged.get(5);
                 nsb2 = curveFlagged.get(6);
                 nsb3 = curveFlagged.get(7);
                 zero1 = curveFlagged.get(2);
@@ -143,27 +100,13 @@ public class CountResultUtil {
         return output;
     }
 
+    //Standard storing CMP and Flag
     //tableC && tableG -> Control Curve CCMP
-
     /**
-     * //     * @param controlCurve array of CMP of hormone standardized pattern e.g CORTISOL_PATTERN
+     * * @param controlCurve array of CMP of hormone standardized pattern e.g CORTISOL_PATTERN
      *
      * @return array of CMP of hormone standardized pattern e.g CORTISOL_PATTERN
      */
-//    public List<Double> setStandardsCMP(List<Double> controlCurve) {
-//        standardsCMP = new ArrayList<>();
-//        if (standardsCMP.size() < 8) {
-//            for (int i = 8; i < controlCurve.size() - 2; i++) {
-//                double point = controlCurve.get(i);
-//                standardsCMP.add(point);
-//            }
-//        }
-//        System.out.println("\nStandard CMP: ");
-//        standardsCMP.forEach(System.out::println);
-//        return standardsCMP;
-//    }
-
-    //Standard storing CMP and Flag
     public List<Double> setStandardsCpmWithFlags(List<Point> points) {
         standardsCpmFlagged = new ArrayList<>();
         standardsCMP = new ArrayList<>();
