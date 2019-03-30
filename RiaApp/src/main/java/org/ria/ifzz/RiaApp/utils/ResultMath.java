@@ -34,10 +34,9 @@ public class ResultMath {
     }
 
     public List<Double> subtractTableElements(Double subtrahend, List<Double> values) {
-        List<Double> result = new ArrayList<>(values
+        List<Double> result = values
                 .stream()
-                .map(element -> (subtrahend - element))
-                .collect(Collectors.toList()));
+                .map(element -> (subtrahend - element)).collect(Collectors.toList());
         System.out.println("Subtract Table Elements: ");
         result.forEach(System.out::println);
         return result;
@@ -58,12 +57,11 @@ public class ResultMath {
     }
 
     public List<Double> divideTableCeilElements(double factor, List<Double> values) {
-        List<Double> productTable = new ArrayList<>(values
+        List<Double> productTable = values
                 .stream()
                 .map(element -> (element / factor))
                 .map(element -> round(element, 1))
-                .map(element -> Precision.round(element, 0))
-                .collect(Collectors.toList()));
+                .map(element -> Precision.round(element, 0)).collect(Collectors.toList());
         System.out.println("\nDivide Table Ceil Elements: ");
         productTable.forEach(System.out::println);
         return productTable;
@@ -108,17 +106,17 @@ public class ResultMath {
 
     public List<Double> multiplyList(Double multiplier, List<Double> values) {
         System.out.println("\nMultiply List:");
-        List<Double> newList = new ArrayList<>(values
+        List<Double> newList = values
                 .stream()
                 .map(element -> (element * multiplier))
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList());
         newList.forEach(System.out::println);
         return newList;
     }
 
 
     public double sum(List<Double> values) {
-        Double product = values.stream()
+        double product = values.stream()
                 .mapToDouble(value -> Precision.round(value, 2))
                 .sum();
         product = Precision.round(product, 2);

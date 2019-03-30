@@ -14,7 +14,12 @@ class ControlCurve extends Component {
         <tbody>
           <tr>
             <td>{control_curve.position}</td>
-            <td>{control_curve.ccpm}</td>
+            <td
+              className="mx-auto"
+              style={{ color: condition ? "green" : "red" }}
+            >
+              {control_curve.ccpm}
+            </td>
             <td>
               {condition ? <CheckBoxOutlineBlank /> : <CheckBoxOutlined />}
             </td>
