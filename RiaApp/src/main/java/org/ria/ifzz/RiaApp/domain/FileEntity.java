@@ -1,12 +1,10 @@
 package org.ria.ifzz.RiaApp.domain;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Date;
 
 /**
  * Represents uploaded file with its content
@@ -22,12 +20,6 @@ public class FileEntity {
     private String fileName;
     private String contentType;
     private String dataId;
-
-    @JsonFormat(pattern = "yyyy-MM-dd' 'HH:mm:ss")
-    @Column(updatable = false)
-    private Date created_date;
-    @JsonFormat(pattern = "yyyy-MM-dd' 'HH:mm:ss")
-    private Date updated_date;
 
     private String fileOwner;
 
@@ -46,15 +38,5 @@ public class FileEntity {
         this.fileName = fileName;
         this.contentType = contentType;
         this.data = data;
-    }
-
-    @PrePersist
-    protected void onCreate() {
-        this.created_date = new Date();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        this.updated_date = new Date();
     }
 }

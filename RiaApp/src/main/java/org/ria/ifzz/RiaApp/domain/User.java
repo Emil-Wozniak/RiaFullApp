@@ -38,19 +38,6 @@ public class User implements UserDetails {
     @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER, mappedBy = "user", orphanRemoval = true)
     private List<FileEntity> projects = new ArrayList<>();
 
-    private Date created_at;
-    private Date update_at;
-
-    @PrePersist
-    protected void onCreate() {
-        this.created_at = new Date();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        this.update_at = new Date();
-    }
-
     // UserDetails interface methods
 
     @Override

@@ -60,7 +60,6 @@ class Dashboard extends Component {
                         <th />
                         <th>File Name</th>
                         <th>Content Type:</th>
-                        <th>Uploaded</th>
                         <th />
                       </tr>
                     </thead>

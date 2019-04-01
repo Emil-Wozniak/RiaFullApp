@@ -36,7 +36,6 @@ class FileEntity extends Component {
               </Link>
             </td>
             <td>{file_entity.contentType}</td>
-            <td>{file_entity.created_date}</td>
             <td>
               <CustomDownloadFile />
               <IconButton
