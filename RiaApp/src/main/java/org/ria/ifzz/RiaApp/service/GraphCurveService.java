@@ -2,6 +2,7 @@ package org.ria.ifzz.RiaApp.service;
 
 import org.ria.ifzz.RiaApp.domain.Backlog;
 import org.ria.ifzz.RiaApp.domain.FileEntity;
+import org.ria.ifzz.RiaApp.domain.FileModel;
 import org.ria.ifzz.RiaApp.domain.GraphCurve;
 import org.ria.ifzz.RiaApp.exception.FileEntityNotFoundException;
 import org.ria.ifzz.RiaApp.repository.GraphCurveRepository;
@@ -56,7 +57,7 @@ public class GraphCurveService {
      * @param file upload file
      * @return list of point for graphical curve, each point has set id(fileName) and set points x, y
      */
-    public List<GraphCurve> setGraphCurveFileName(MultipartFile file, FileEntity fileEntity, Backlog backlog) {
+    public List<GraphCurve> setGraphCurveFileName(FileModel file, FileEntity fileEntity, Backlog backlog) {
         String fileId = fileEntity.getDataId();
         List<GraphCurve> graphCurvesNamed = new ArrayList<>();
         GraphCurve graphCurve;

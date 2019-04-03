@@ -20,12 +20,14 @@ public class ResultMath {
     }
 
     public Double averageTwo(Double first, Double second) {
+        System.out.println("Elements: " + "[1: " + first + " | 2: " + second + "]");
         double result = (first + second) / 2;
         double ceil = Math.ceil(result);
         return ceil;
     }
 
     public double averageThree(double first, double second, double third) {
+        System.out.println("Elements: " + "[1: " + first + " | 2: " + second + " | 3: " + third + "]");
         double result = (first + second + third) / 3;
         Math.ceil(result);
         double ceil = Math.ceil(result);
@@ -141,7 +143,7 @@ public class ResultMath {
     }
 
     public Double sumsq(List<Double> values) {
-        double result  = values
+        double result = values
                 .parallelStream()
                 .mapToDouble(element -> Math.pow(element, 2))
                 .sum();

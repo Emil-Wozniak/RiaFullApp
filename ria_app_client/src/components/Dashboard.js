@@ -9,7 +9,6 @@ import Paper from "@material-ui/core/Paper";
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 import FileEntity from "./layout/fileEntity/FileEntity";
 import UploadFile from "../components/layout/requests/upload/UploadFile";
-import FileTable from "./layout/fileEntity/FileTable";
 
 const theme = createMuiTheme({
   typography: {

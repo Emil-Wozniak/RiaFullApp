@@ -136,6 +136,11 @@
             <version>16.0.2</version>
             <scope>compile</scope>
         </dependency>
+		<dependency>
+			<groupId>com.oath.cyclops</groupId>
+			<artifactId>cyclops</artifactId>
+			<version>10.0.4</version>
+		</dependency>
     </dependencies>
 
 	<dependencyManagement>

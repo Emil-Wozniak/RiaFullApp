@@ -1,17 +1,13 @@
 package org.ria.ifzz.RiaApp.utils;
 
 import lombok.Getter;
+import org.ria.ifzz.RiaApp.domain.FileModel;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Provides methods needed to read and return List of String from uploaded file
@@ -24,56 +20,19 @@ public class CustomFileReader {
     @Getter
     private String positionRegex = "[\\w]";
 
-    /**
-     * reads file from "/upload" directory, set maximum limit of expected lines;
-     *
-     * @param file is upload to "/upload" directory
-     * @return list of String if file is not empty
-     * @throws IOException
-     */
-    public List<String> readStoredTxtFile(MultipartFile file) throws IOException {
-        List<String> list;
-        try (BufferedReader reader = Files.newBufferedReader(
-                Paths.get("upload-dir" + "/" + file.getOriginalFilename()))) {
-            list = reader.lines()
-                    .limit(500)
-                    .collect(Collectors.toList());
+    //TODO probably another way to handle file contents
+    public List<String> readFromStream(FileModel file) throws IOException {
+        List<String> fileManager = file.getContents().get();
+        List<String> lines = new ArrayList<>();
+        lines.add(fileManager.get(4));
+        for (String line : fileManager) {
+            if (!line.startsWith(" \tUnk")) {
+            } else {
+                lines.add(line);
+            }
         }
-        return list;
-    }
-
-    /**
-     * takes list of Strings from files stored in "/upload" directory
-     * and return lists of Strings which starts with char 'U';
-     *
-     * @param list comes from reading file;
-     * @return list of String if fulfills requirements, should include
-     * only lines which doesn't start with not expected letters,
-     * otherwise return exception
-     */
-    public List<String> removeUnnecessaryLineFromListedFile(List<String> list) {
-        try {
-            list.removeIf(line -> line.startsWith("R"));
-            list.removeIf(line -> line.startsWith("N"));
-            list.removeIf(line -> line.startsWith("*"));
-            list.removeIf(line -> line.startsWith("P"));
-            list.removeIf(line -> line.startsWith("C"));
-            list.removeIf(line -> line.startsWith("A"));
-            list.removeIf(line -> line.startsWith("E"));
-            list.removeIf(line -> line.startsWith("T"));
-            list.removeIf(line -> line.startsWith("="));
-            list.removeIf(line -> line.startsWith("B"));
-            list.removeIf(line -> line.startsWith("D"));
-            list.removeIf(line -> line.startsWith(" \t1"));
-            list.removeIf(item -> item == null || "".equals(item));
-            list.stream().filter(line -> line.startsWith(" \tUnk")).collect(Collectors.toList());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        System.out.println("\nCleaned List: ");
-        list.forEach(System.out::println);
-        return list;
+        lines.forEach(System.out::println);
+        return lines;
     }
 
     /**
@@ -86,9 +45,7 @@ public class CustomFileReader {
     public List<String> getMatchingStrings(List<String> list, Integer columnNumber) {
 
         List<String> matches = new ArrayList<>();
-        int a = 0;
         for (String added : list) {
-            int i = a++;
             List<String> wordInLine = Arrays.asList(added.split("\\t"));
             if (wordInLine.size() == 5) {
                 if (!wordInLine.isEmpty()) {
@@ -98,7 +55,7 @@ public class CustomFileReader {
                 matches.isEmpty();
             }
         }
-        matches.remove(0);
+//        matches.remove(0);
         return matches;
     }
 

@@ -1,22 +1,19 @@
 package org.ria.ifzz.RiaApp.service;
 
-import org.ria.ifzz.RiaApp.domain.Backlog;
-import org.ria.ifzz.RiaApp.domain.ControlCurve;
-import org.ria.ifzz.RiaApp.domain.FileEntity;
-import org.ria.ifzz.RiaApp.domain.Result;
+import org.ria.ifzz.RiaApp.domain.*;
 import org.ria.ifzz.RiaApp.exception.CurveException;
 import org.ria.ifzz.RiaApp.repository.ControlCurveRepository;
 import org.ria.ifzz.RiaApp.utils.CountResultUtil;
 import org.ria.ifzz.RiaApp.utils.CustomFileReader;
 import org.ria.ifzz.RiaApp.utils.FileUtils;
 import org.ria.ifzz.RiaApp.utils.Point;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.ria.ifzz.RiaApp.domain.HormonesPattern.CORTISOL_PATTERN;
 
@@ -40,17 +37,14 @@ public class ResultService {
     /**
      * takes file store in local disc space
      *
-     * @param file uploaded file
+     * @param model data from uploaded file
      * @return expected List of Strings
      * @throws IOException
      */
-    public List<String> getFileData(MultipartFile file) throws IOException {
+    public List<String> getFileData(FileModel model) throws IOException {
         System.out.println(customFileReader.getUploadComment());
-
-        List<String> fileLineList = customFileReader.readStoredTxtFile(file);
-        List<String> expectedLineList = customFileReader.removeUnnecessaryLineFromListedFile(fileLineList);
-        System.out.println("File has: " + expectedLineList.size() + " lines");
-        return expectedLineList;
+        List<String> streamRead = customFileReader.readFromStream(model);
+        return streamRead;
     }
 
     /**
@@ -61,12 +55,10 @@ public class ResultService {
      * @param file
      * @return Result entities
      */
-    public List<Result> setResultFromColumnsLength(List<String> list, @NotNull MultipartFile file, Backlog backlog, Result result) {
-        int i = 0;
+    public List<Result> setResultFromColumnsLength(List<String> list, @NotNull FileModel file, Backlog backlog, Result result) {
         List<Result> results = new ArrayList<>();
         for (String line : list) {
             if (line.startsWith(" \tUnk")) {
-                int a = i++;
                 result = new Result();
                 result.setFileName("row_" + list.indexOf(line) + "_" + fileUtils.setFileName(file));
                 result.setBacklog(backlog);
@@ -122,10 +114,9 @@ public class ResultService {
     }
 
     /**
-     *
-     * @param list contains data which will be assign to Result
+     * @param list             contains data which will be assign to Result
      * @param controlCurveList curve points
-     * @param results list of the Result entities with assigned data
+     * @param results          list of the Result entities with assigned data
      * @return list of Result entities with calculated mass of the hormone in nanograms
      */
     public List<Result> assignNgPerMl(List<String> list, List<ControlCurve> controlCurveList, List<Result> results) {
@@ -177,22 +168,22 @@ public class ResultService {
     }
 
     //TODO catch NonResultException
-    public List<Result> setDataToResult(@NotNull MultipartFile file, List<String> list, Backlog backlog, FileEntity fileEntity) {
+    public List<Result> setDataToResult(@NotNull FileModel file, List<String> list, Backlog backlog, FileEntity fileEntity) {
         Result newResult = new Result();
         List<Result> resultsWithData = new ArrayList<>();
         List<Result> resultListWithNg = new ArrayList<>();
         List<Result> results = setResultFromColumnsLength(list, file, backlog, newResult);
-        try{
+        try {
             resultsWithData = assignDataToResult(list, fileEntity, results);
-        }catch (Exception e){
-            System.out.println("Assign Data To Result"+e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Assign Data To Result" + e.getMessage());
         }
         List<ControlCurve> controlCurveList = controlCurveService.setControlCurveFromColumnsLength(list, file, backlog);
         List<ControlCurve> controlCurveListWithData = controlCurveService.setDataToControlCurve(list, fileEntity, controlCurveList);
         controlCurveRepository.saveAll(controlCurveListWithData);
-        try{
+        try {
             resultListWithNg = assignNgPerMl(list, controlCurveListWithData, resultsWithData);
-        } catch (Exception e){
+        } catch (Exception e) {
             System.out.println("Exception ng" + e.getMessage());
         }
 

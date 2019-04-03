@@ -3,6 +3,7 @@ package org.ria.ifzz.RiaApp.service;
 import org.ria.ifzz.RiaApp.domain.Backlog;
 import org.ria.ifzz.RiaApp.domain.ControlCurve;
 import org.ria.ifzz.RiaApp.domain.FileEntity;
+import org.ria.ifzz.RiaApp.domain.FileModel;
 import org.ria.ifzz.RiaApp.exception.FileEntityNotFoundException;
 import org.ria.ifzz.RiaApp.repository.ControlCurveRepository;
 import org.ria.ifzz.RiaApp.utils.CustomFileReader;
@@ -32,7 +33,7 @@ public class ControlCurveService {
         this.fileEntityService = fileEntityService;
     }
 
-    public List<ControlCurve> setControlCurveFromColumnsLength(List<String> list, @NotNull MultipartFile file, Backlog backlog) {
+    public List<ControlCurve> setControlCurveFromColumnsLength(List<String> list, @NotNull FileModel file, Backlog backlog) {
         List<ControlCurve> controlCurveList = new ArrayList<>();
         for (int i = 0; i < 25; i++) {
             String line = list.get(i);
@@ -77,9 +78,7 @@ public class ControlCurveService {
         //Check if NSBs or Zeros have too large spread and flag those which are
         if (!controlCurveList.isEmpty()) {
             isSpreadTooLarge(2, 3, 4, controlCurveList, 10);
-            System.out.println("isSpreadTooLarge good");
             isSpreadTooLarge(5, 6, 7, controlCurveList, 10);
-            System.out.println("isSpreadTooLarge good");
         }
 
         //Assign position to Result

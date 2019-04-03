@@ -60,28 +60,14 @@ public class FileEntityStorageService implements StorageService {
 
         String filename = StringUtils.cleanPath(file.getOriginalFilename());
 
-        try {
-            if (fileEntityRepository.findByFileName(filename) != null){
-                throw new StorageException("File already uploaded: " + filename);
-            }
-            if (file.isEmpty()) {
-                throw new StorageException("Failed to store empty file " + filename);
-            }
-            if (filename.contains("..")) {
-                // This is a security check
-                throw new StorageException(
-                        "Cannot store file with relative path outside current directory "
-                                + filename);
-            }
-            try (InputStream inputStream = file.getInputStream()) {
-                Files.copy(inputStream, this.rootLocation.resolve(filename),
-                        StandardCopyOption.REPLACE_EXISTING);
-                redirectAttributes.addFlashAttribute("message",
-                        "You successfully uploaded " + file.getOriginalFilename() + "!");
-            }
+        if (fileEntityRepository.findByFileName(filename) != null){
+            throw new StorageException("File already uploaded: " + filename);
         }
-        catch (IOException e) {
-            throw new StorageException("Failed to store file " + filename);
+        if (filename.contains("..")) {
+            // This is a security check
+            throw new StorageException(
+                    "Cannot store file with relative path outside current directory "
+                            + filename);
         }
         try{
             User user = userRepository.findByUsername(username);

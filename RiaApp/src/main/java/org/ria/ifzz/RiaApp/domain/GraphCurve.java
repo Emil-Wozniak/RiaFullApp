@@ -17,6 +17,7 @@ public class GraphCurve {
     private Double r;
     private String fileName;
     private String dataId;
+    private Double zeroBindingPercent;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="backlog_id", updatable = false, nullable = false)

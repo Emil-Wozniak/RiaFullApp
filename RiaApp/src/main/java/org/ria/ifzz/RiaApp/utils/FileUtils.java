@@ -1,13 +1,13 @@
 package org.ria.ifzz.RiaApp.utils;
 
+import org.ria.ifzz.RiaApp.domain.FileModel;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class FileUtils {
 
-    public String setFileName(MultipartFile file) {
-        String fileName = file.getOriginalFilename();
+    public String setFileName(FileModel file) {
+        String fileName = file.getFileName();
         return fileName;
     }
 }
