@@ -128,7 +128,9 @@ public class ResultService {
         List<Point> points = new ArrayList<>();
 
         // get standard pattern
-        countResultUtil.logDose(CORTISOL_PATTERN);
+        if (list.get(0).equals("Name: COPY_OF_H-3_KORTYZOL_5_MIN")){
+            countResultUtil.logDose(CORTISOL_PATTERN);
+        }
 
         //set ccmp values to control curve points
         try {
