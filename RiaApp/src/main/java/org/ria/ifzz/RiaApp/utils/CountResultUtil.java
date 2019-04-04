@@ -102,6 +102,7 @@ public class CountResultUtil {
 
     //Standard storing CMP and Flag
     //tableC && tableG -> Control Curve CCMP
+
     /**
      * * @param controlCurve array of CMP of hormone standardized pattern e.g CORTISOL_PATTERN
      *
@@ -253,7 +254,7 @@ public class CountResultUtil {
         System.out.println("CMP: " + CMP);
         System.out.println("Zero: " + zero);
         System.out.println("NSB: " + nsb);
-        System.out.println("Binding: "+ binding);
+        System.out.println("Binding: " + binding);
         Double firstPart = ((Math.log10((CMP - zero) * 100 / binding / (100 - (CMP - zero) * 100 / binding)) - regressionParameterA) / regressionParameterB);
         Double power = Math.pow(10, firstPart);
         power = Precision.round(power, 2);
@@ -275,6 +276,10 @@ public class CountResultUtil {
         return correlationPow;
     }
 
-
+    public double setZeroBindingPercent() {
+        double zeroBindingPercent = binding*100/total;
+        zeroBindingPercent = Precision.round(zeroBindingPercent, 2);
+        return zeroBindingPercent;
+    }
 }
 

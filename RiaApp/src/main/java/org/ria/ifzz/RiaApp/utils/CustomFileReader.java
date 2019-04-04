@@ -16,7 +16,7 @@ import java.util.List;
 public class CustomFileReader {
 
     @Getter
-    private String uploadComment = "File content:\n========================================================";
+    private String uploadComment = "File content:\n";
     @Getter
     private String positionRegex = "[\\w]";
 
@@ -24,7 +24,9 @@ public class CustomFileReader {
     public List<String> readFromStream(FileModel file) throws IOException {
         List<String> fileManager = file.getContents().get();
         List<String> lines = new ArrayList<>();
-        lines.add(fileManager.get(4));
+        String pattern = fileManager.get(4);
+        pattern = pattern.replace("Name: COPY_OF_H-3_", "");
+        lines.add(pattern);
         for (String line : fileManager) {
             if (!line.startsWith(" \tUnk")) {
             } else {

@@ -86,7 +86,6 @@ public class ResultService {
             String ccmpString = CCMP.get(i).toString();
             Double ccmpInteger = Double.parseDouble(ccmpString);
             result.setCcpm(ccmpInteger);
-            System.out.println(" \tResult CCMP value: " + result.getCcpm() + " in position " + i);
             resultsWithData.add(result);
         }
 
@@ -128,7 +127,9 @@ public class ResultService {
         List<Point> points = new ArrayList<>();
 
         // get standard pattern
-        if (list.get(0).equals("Name: COPY_OF_H-3_KORTYZOL_5_MIN")){
+        System.out.println("Pattern detected:");
+        if (list.get(0).equals("KORTYZOL_5_MIN")){
+            System.out.println(list.get(0));
             countResultUtil.logDose(CORTISOL_PATTERN);
         }
 
@@ -174,11 +175,12 @@ public class ResultService {
         Result newResult = new Result();
         List<Result> resultsWithData = new ArrayList<>();
         List<Result> resultListWithNg = new ArrayList<>();
+
         List<Result> results = setResultFromColumnsLength(list, file, backlog, newResult);
         try {
             resultsWithData = assignDataToResult(list, fileEntity, results);
         } catch (Exception e) {
-            System.out.println("Assign Data To Result" + e.getMessage());
+            System.out.println("Assign Data To Result: "  + e.getMessage() + " | " + e.getCause());
         }
         List<ControlCurve> controlCurveList = controlCurveService.setControlCurveFromColumnsLength(list, file, backlog);
         List<ControlCurve> controlCurveListWithData = controlCurveService.setDataToControlCurve(list, fileEntity, controlCurveList);
@@ -186,7 +188,7 @@ public class ResultService {
         try {
             resultListWithNg = assignNgPerMl(list, controlCurveListWithData, resultsWithData);
         } catch (Exception e) {
-            System.out.println("Exception ng" + e.getMessage());
+            System.out.println("Exception ng: " + e.getMessage() + " | " + e.getCause());
         }
 
         return resultListWithNg;

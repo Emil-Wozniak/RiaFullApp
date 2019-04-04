@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import ChartistGraph from "react-chartist";
 import Chartist from "chartist";
+import { Table } from "reactstrap";
 
 class GraphCurvesContainer extends Component {
   render() {
@@ -56,8 +57,7 @@ class GraphCurvesContainer extends Component {
     for (let i = 0; i < varY1.length; i++) {
       let middle = varY2[i] + varY1[i];
       middle = middle / 2;
-        varAverage.push(middle);
-      
+      varAverage.push(middle);
     }
 
     let varControl = [];
@@ -67,12 +67,23 @@ class GraphCurvesContainer extends Component {
       varControl.push(graph_curves_prop[13].y);
     }
 
+    let varBinding = [];
+    if (graph_curves_prop.length > 0) {
+      graph_curves_prop.sortAttr("id");
+      varBinding.push(graph_curves_prop[0].zeroBindingPercent);
+      varBinding.push(graph_curves_prop[13].zeroBindingPercent);
+    }
+
     var lineChartData = {
       labels: varX,
-      series: [varY1, varY2, {
-        name: 'series-3',
-        data: varAverage
-      }]
+      series: [
+        varY1,
+        varY2,
+        {
+          name: "series-3",
+          data: varAverage
+        }
+      ]
     };
 
     var lineChartOptions = {
@@ -91,8 +102,8 @@ class GraphCurvesContainer extends Component {
       lineSmooth: Chartist.Interpolation.cardinal({
         fillHoles: true
       }),
-      series:{
-        'series-3':{
+      series: {
+        "series-3": {
           showLine: true,
           showPoint: false
         }
@@ -101,7 +112,27 @@ class GraphCurvesContainer extends Component {
 
     return (
       <React.Fragment>
-        <div>Correlation: {r[1]}</div>
+        <div>
+          <Table>
+            <thead>
+              <tr>
+                <th>Correlation</th>
+                <th>%:</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{r[1]}</td>
+                <td> {varBinding[1]}</td>
+              </tr>
+            </tbody>
+          </Table>
+        </div>
+
+        <div>
+          <p> </p>
+        </div>
+        <div />
         <ChartistGraph
           data={lineChartData}
           options={lineChartOptions}

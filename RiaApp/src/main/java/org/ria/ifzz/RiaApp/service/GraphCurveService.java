@@ -68,6 +68,7 @@ public class GraphCurveService {
             graphCurve.setDataId(fileId);
             graphCurvesNamed.add(graphCurve);
             graphCurve.setR(countResultUtil.setCorrelation());
+            graphCurve.setZeroBindingPercent(countResultUtil.setZeroBindingPercent());
         }
         return graphCurvesNamed;
     }
