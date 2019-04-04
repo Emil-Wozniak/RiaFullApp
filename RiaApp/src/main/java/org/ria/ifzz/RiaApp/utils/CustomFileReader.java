@@ -20,7 +20,7 @@ public class CustomFileReader {
     @Getter
     private String positionRegex = "[\\w]";
 
-    //TODO probably another way to handle file contents
+    //TODO docs are necessary
     public List<String> readFromStream(FileModel file) throws IOException {
         List<String> fileManager = file.getContents().get();
         List<String> lines = new ArrayList<>();

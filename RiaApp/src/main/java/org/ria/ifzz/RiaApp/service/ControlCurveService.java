@@ -144,13 +144,14 @@ public class ControlCurveService {
      * @param controlCurveList list of flagged curve point
      * @param percentage       not accepted percentage difference between the points
      */
-    private void isSpreadTooLarge(int first, int second, int third, @org.jetbrains.annotations.NotNull List<ControlCurve> controlCurveList, int percentage) {
+    private void isSpreadTooLarge(int first, int second, int third, List<ControlCurve> controlCurveList, int percentage) {
         ControlCurve controlCurve1 = controlCurveList.get(first);
         ControlCurve controlCurve2 = controlCurveList.get(second);
         ControlCurve controlCurve3 = controlCurveList.get(third);
         setFlag(controlCurve1, controlCurve2, controlCurve3, percentage);
     }
 
+    //TODO handle inverse situations (when a < b)
     /**
      * takes absolute values of 3 of NSBs or Zeros curve points and checks if one of them is greater than acceptable percent value,
      * if it is flagged with value "true"
@@ -161,15 +162,25 @@ public class ControlCurveService {
      * @param percent not accepted percentage difference between the points
      */
     public void setFlag(ControlCurve first, ControlCurve second, ControlCurve third, int percent) {
-        if (Math.abs(first.getCcpm() - second.getCcpm()) > (first.getCcpm() / percent)) {
-            System.out.println(first.getCcpm() + " is greater than " + percent + "% of " + second.getCcpm());
-            first.setFlagged(true);
-        } else if (Math.abs(second.getCcpm() - third.getCcpm()) > (second.getCcpm() / percent)) {
-            System.out.println(second.getCcpm() + " is greater than " + percent + "% of " + third.getCcpm());
-            second.setFlagged(true);
-        } else if (Math.abs(third.getCcpm() - first.getCcpm()) > (third.getCcpm() / percent)) {
-            System.out.println(third.getCcpm() + " is greater than " + percent + "% of " + first.getCcpm());
-            third.setFlagged(true);
+        if (first.getCcpm() != second.getCcpm()) {
+            moreOrLess(first, second, percent);
+        } else if (second.getCcpm() != third.getCcpm()) {
+            moreOrLess(second, third, percent);
+        } else if (third.getCcpm() != first.getCcpm()) {
+            moreOrLess(third,first,percent);
+        }
+    }
+
+    private void moreOrLess(ControlCurve factor1, ControlCurve factor2, int percent) {
+        if (Math.abs(factor1.getCcpm() - factor2.getCcpm()) == 0){
+            System.out.println(factor1.getCcpm() + " and " + factor2.getCcpm() + " are equals " );
+        }
+        else if (Math.abs(factor1.getCcpm() - factor2.getCcpm()) > (factor1.getCcpm() / percent)){
+            System.out.println(factor1.getCcpm() + " is greater than " + percent + "% of " + factor2.getCcpm());
+            factor1.setFlagged(true);
+        } else if (Math.abs(factor1.getCcpm() - factor2.getCcpm()) < (factor1.getCcpm() / percent)){
+            System.out.println(factor1.getCcpm() + " is less than " + percent + "% of " + factor2.getCcpm());
+            factor2.setFlagged(true);
         }
     }
 

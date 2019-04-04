@@ -149,7 +149,6 @@ public class ResultService {
 
         countResultUtil.setControlCurveCpmWithFlag(points);
         countResultUtil.setStandardsCpmWithFlags(points);
-
         countResultUtil.bindingPercent();
         countResultUtil.logarithmRealZero();
         countResultUtil.countRegressionParameterB();
@@ -170,7 +169,7 @@ public class ResultService {
         return countedResults;
     }
 
-    //TODO catch NonResultException
+    //TODO handle that file has less than 26 points
     public List<Result> setDataToResult(@NotNull FileModel file, List<String> list, Backlog backlog, FileEntity fileEntity) {
         Result newResult = new Result();
         List<Result> resultsWithData = new ArrayList<>();
