@@ -8,7 +8,6 @@ import org.ria.ifzz.RiaApp.utils.CustomFileReader;
 import org.ria.ifzz.RiaApp.utils.FileUtils;
 import org.ria.ifzz.RiaApp.utils.Point;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
 import java.io.IOException;

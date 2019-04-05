@@ -9,7 +9,6 @@ import org.ria.ifzz.RiaApp.repository.ControlCurveRepository;
 import org.ria.ifzz.RiaApp.utils.CustomFileReader;
 import org.ria.ifzz.RiaApp.utils.FileUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
 import java.io.FileNotFoundException;
@@ -77,8 +76,10 @@ public class ControlCurveService {
 
         //Check if NSBs or Zeros have too large spread and flag those which are
         if (!controlCurveList.isEmpty()) {
-            isSpreadTooLarge(2, 3, 4, controlCurveList, 10);
-            isSpreadTooLarge(5, 6, 7, controlCurveList, 10);
+            System.out.println("Check: " + controlCurveList.size());
+            isNSBsZEROsSpreadTooLarge(2, 3, 4, controlCurveList, 10);
+            isNSBsZEROsSpreadTooLarge(5, 6, 7, controlCurveList, 10);
+            isPatternPointsSpreadTooLarge(controlCurveList);
         }
 
         //Assign position to Result
@@ -135,8 +136,9 @@ public class ControlCurveService {
         return controlCurveList;
     }
 
+
     /**
-     * takes 3 of NSBs or Zeros curve points and performs setFlag method on them
+     * takes 3 of NSBs or Zeros curve points and performs setNSBsZerosFlag method on them
      *
      * @param first            curve point
      * @param second           curve point
@@ -144,45 +146,62 @@ public class ControlCurveService {
      * @param controlCurveList list of flagged curve point
      * @param percentage       not accepted percentage difference between the points
      */
-    private void isSpreadTooLarge(int first, int second, int third, List<ControlCurve> controlCurveList, int percentage) {
+    private void isNSBsZEROsSpreadTooLarge(int first, int second, int third, List<ControlCurve> controlCurveList, int percentage) {
         ControlCurve controlCurve1 = controlCurveList.get(first);
         ControlCurve controlCurve2 = controlCurveList.get(second);
         ControlCurve controlCurve3 = controlCurveList.get(third);
-        setFlag(controlCurve1, controlCurve2, controlCurve3, percentage);
+        setNSBsZerosFlag(controlCurve1, controlCurve2, controlCurve3, percentage);
     }
 
-    //TODO handle inverse situations (when a < b)
+    private void isPatternPointsSpreadTooLarge(List<ControlCurve> controlCurveList) {
+        setPatternFlag(controlCurveList);
+    }
+
+    //TODO elaborate
+
+    /**
+     * @param controlCurveList list of Control Curve points
+     */
+    private void setPatternFlag(List<ControlCurve> controlCurveList) {
+        double nsb1 = controlCurveList.get(5).getCcpm();
+        double nsb2 = controlCurveList.get(6).getCcpm();
+        double nsb3 = controlCurveList.get(7).getCcpm();
+        for (int i = 8; i < controlCurveList.size(); i++) {
+            ControlCurve point = controlCurveList.get(i);
+            double pointCpm = point.getCcpm();
+            if (pointCpm > nsb1 || pointCpm > nsb2 || pointCpm > nsb3) point.setFlagged(true);
+        }
+    }
+
     /**
      * takes absolute values of 3 of NSBs or Zeros curve points and checks if one of them is greater than acceptable percent value,
      * if it is flagged with value "true"
+     * <p>
      *
      * @param first   curve point
      * @param second  curve point
      * @param third   curve point
      * @param percent not accepted percentage difference between the points
      */
-    public void setFlag(ControlCurve first, ControlCurve second, ControlCurve third, int percent) {
-        if (first.getCcpm() != second.getCcpm()) {
-            moreOrLess(first, second, percent);
-        } else if (second.getCcpm() != third.getCcpm()) {
-            moreOrLess(second, third, percent);
-        } else if (third.getCcpm() != first.getCcpm()) {
-            moreOrLess(third,first,percent);
+    public void setNSBsZerosFlag(ControlCurve first, ControlCurve second, ControlCurve third, int percent) {
+        double a = first.getCcpm();
+        double b = second.getCcpm();
+        double c = third.getCcpm();
+
+        if (a - b != 0 || b - c != 0 || c - a != 0) {
+            if ((a - b) > (b / percent) || (a - c) > (c / percent)) {
+                first.setFlagged(true);
+                System.out.println("a - b != 0 " + a + " flagged " + first.isFlagged());
+            } else if ((b - a) > (a / percent) || (b - c) > (c / percent)) {
+                second.setFlagged(true);
+                System.out.println("a - b != 0 " + b + " flagged " + second.isFlagged());
+            } else if ((c - b) > (b / percent) || (c - a) > (a / percent)) {
+                third.setFlagged(true);
+                System.out.println("b - c != 0 " + c + " flagged " + third.isFlagged());
+            }
         }
     }
 
-    private void moreOrLess(ControlCurve factor1, ControlCurve factor2, int percent) {
-        if (Math.abs(factor1.getCcpm() - factor2.getCcpm()) == 0){
-            System.out.println(factor1.getCcpm() + " and " + factor2.getCcpm() + " are equals " );
-        }
-        else if (Math.abs(factor1.getCcpm() - factor2.getCcpm()) > (factor1.getCcpm() / percent)){
-            System.out.println(factor1.getCcpm() + " is greater than " + percent + "% of " + factor2.getCcpm());
-            factor1.setFlagged(true);
-        } else if (Math.abs(factor1.getCcpm() - factor2.getCcpm()) < (factor1.getCcpm() / percent)){
-            System.out.println(factor1.getCcpm() + " is less than " + percent + "% of " + factor2.getCcpm());
-            factor2.setFlagged(true);
-        }
-    }
 
     public Iterable<ControlCurve> findCCBacklogByDataId(String dataId) throws FileNotFoundException {
         fileEntityService.findFileEntityByDataId(dataId);
