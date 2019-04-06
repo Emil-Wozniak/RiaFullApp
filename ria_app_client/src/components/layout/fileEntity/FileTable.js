@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import compose from "recompose/compose";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
+import { createMuiTheme } from "@material-ui/core/styles";
 import { getFiles } from "../../../actions/filesActions";
 import { withStyles } from "@material-ui/core/styles";
 import IconButton from "@material-ui/core/IconButton";

@@ -1,12 +1,10 @@
 package org.ria.ifzz.RiaApp.web;
 
 import org.ria.ifzz.RiaApp.domain.*;
-import org.ria.ifzz.RiaApp.repository.GraphCurveRepository;
-import org.ria.ifzz.RiaApp.service.FileValidator;
 import org.ria.ifzz.RiaApp.repository.FileEntityRepository;
+import org.ria.ifzz.RiaApp.repository.GraphCurveRepository;
 import org.ria.ifzz.RiaApp.repository.ResultRepository;
 import org.ria.ifzz.RiaApp.service.*;
-import org.ria.ifzz.RiaApp.utils.CustomFileReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -19,13 +17,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.function.Supplier;
 
 @RestController
 @RequestMapping("/api/files")

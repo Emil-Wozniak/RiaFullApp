@@ -157,7 +157,7 @@ public class ControlCurveService {
         setPatternFlag(controlCurveList);
     }
 
-    //TODO elaborate
+    //TODO elaborate it
 
     /**
      * @param controlCurveList list of Control Curve points
@@ -191,13 +191,13 @@ public class ControlCurveService {
         if (a - b != 0 || b - c != 0 || c - a != 0) {
             if ((a - b) > (b / percent) || (a - c) > (c / percent)) {
                 first.setFlagged(true);
-                System.out.println("a - b != 0 " + a + " flagged " + first.isFlagged());
+                System.out.println(a + " flagged " + first.isFlagged());
             } else if ((b - a) > (a / percent) || (b - c) > (c / percent)) {
                 second.setFlagged(true);
-                System.out.println("a - b != 0 " + b + " flagged " + second.isFlagged());
+                System.out.println(b + " flagged " + second.isFlagged());
             } else if ((c - b) > (b / percent) || (c - a) > (a / percent)) {
                 third.setFlagged(true);
-                System.out.println("b - c != 0 " + c + " flagged " + third.isFlagged());
+                System.out.println(c + " flagged " + third.isFlagged());
             }
         }
     }

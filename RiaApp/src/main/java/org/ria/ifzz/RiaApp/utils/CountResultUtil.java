@@ -24,11 +24,9 @@ public class CountResultUtil {
     private List<Point> standardsCpmFlagged;
     @Getter
     private List<Double> logDoseList;
-    private double[] logDoseListArray;
     private List<Double> bindingPercent;
     @Getter
     private List<Double> logarithmRealZeroTable;
-    private double[] logarithmRealZeroArray;
     private Double regressionParameterB;
     private Double regressionParameterA;
 
@@ -249,7 +247,7 @@ public class CountResultUtil {
      * @return the value of hormone nanograms in the sample
      */
     public Double countResult(Double CMP) {
-        System.out.println("\n\nCount Result:" +
+        System.out.println("Count Result:" +
                 "\n======================================================");
         System.out.println("CMP: " + CMP);
         System.out.println("Zero: " + zero);
@@ -263,9 +261,9 @@ public class CountResultUtil {
 
     public double setCorrelation() {
         Double correlation;
-        logDoseListArray = new double[logDoseList.size()];
+        double[] logDoseListArray = new double[logDoseList.size()];
         for (int i = 0; i < logDoseList.size(); i++) logDoseListArray[i] = logDoseList.get(i);
-        logarithmRealZeroArray = new double[logarithmRealZeroTable.size()];
+        double[] logarithmRealZeroArray = new double[logarithmRealZeroTable.size()];
         for (int i = 0; i < logarithmRealZeroTable.size(); i++)
             logarithmRealZeroArray[i] = logarithmRealZeroTable.get(i);
         PearsonsCorrelation pearsonsCorrelation = new PearsonsCorrelation();
