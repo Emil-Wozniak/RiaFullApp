@@ -17,12 +17,10 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 
 @RestController
 public class FileEntityStorageService implements StorageService {
@@ -47,12 +45,11 @@ public class FileEntityStorageService implements StorageService {
      * @param file uploaded
      * @param redirectAttributes page response
      * @param username user credentials
-     * @param setId file id
      * @return file_entity object with all necessary contents
      * @throws IOException if upload is not successful
      */
     @Override
-    public FileEntity storeAndSaveFileEntity(MultipartFile file, RedirectAttributes redirectAttributes, String username, int setId) throws IOException {
+    public FileEntity storeAndSaveFileEntity(MultipartFile file, RedirectAttributes redirectAttributes, String username) throws IOException {
         FileEntity fileEntity = new FileEntity(
                 file.getOriginalFilename(),
                 file.getContentType(),
@@ -73,7 +70,7 @@ public class FileEntityStorageService implements StorageService {
             User user = userRepository.findByUsername(username);
             fileEntity.setUser(user);
             fileEntity.setFileOwner(user.getUsername());
-            fileEntity.setDataId(fileEntity.getFileName() + "_" + setId);
+            fileEntity.setDataId(fileEntity.getFileName());
             if (fileEntity.getId() == null){
                 fileEntity.setBacklog(backlogService.setBacklog(fileEntity));
             }

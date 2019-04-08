@@ -38,7 +38,7 @@ public class ControlCurveService {
             String line = list.get(i);
             if (line.startsWith(" \tUnk")) {
                 ControlCurve controlCurvePoint = new ControlCurve();
-                controlCurvePoint.setFileName("row_" + i + "_" + fileUtils.setFileName(file));
+                controlCurvePoint.setFileName(i + "_" + fileUtils.setFileName(file));
                 controlCurvePoint.setBacklog(backlog);
                 controlCurveList.add(controlCurvePoint);
             }

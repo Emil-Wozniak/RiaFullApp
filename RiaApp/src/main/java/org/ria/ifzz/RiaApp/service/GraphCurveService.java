@@ -87,18 +87,18 @@ public class GraphCurveService {
         return graphCurveRepository.findByDataIdOrderByFileName(dataId);
     }
 
-    public GraphCurve findGraphCurveByDataId(String dataId, String fileName) throws FileNotFoundException {
-        fileEntityService.findFileEntityByDataId(dataId);
-
-        GraphCurve graphCurve = graphCurveRepository.findByFileName(fileName);
-        if (graphCurve == null) {
-            throw new FileEntityNotFoundException("File with ID: '" + fileName + "' not found");
-        }
-        if (!graphCurve.getDataId().equals(dataId)) {
-            throw new FileEntityNotFoundException("Graph '" + fileName + "' does not exist: '" + dataId);
-        }
-        return graphCurve;
-    }
+//    public GraphCurve findGraphCurveByDataId(String dataId, String fileName) throws FileNotFoundException {
+//        fileEntityService.findFileEntityByDataId(dataId);
+//
+//        GraphCurve graphCurve = graphCurveRepository.findByFileName(fileName);
+//        if (graphCurve == null) {
+//            throw new FileEntityNotFoundException("File with ID: '" + fileName + "' not found");
+//        }
+//        if (!graphCurve.getDataId().equals(dataId)) {
+//            throw new FileEntityNotFoundException("Graph '" + fileName + "' does not exist: '" + dataId);
+//        }
+//        return graphCurve;
+//    }
 
     public Optional<GraphCurveLines> findResultForCoordinatesByDataId(String dataId, String fileName, Long id) throws FileNotFoundException {
         fileEntityService.findFileEntityByDataId(dataId);

@@ -14,7 +14,7 @@ public interface StorageService {
     void init();
 
 
-    FileEntity storeAndSaveFileEntity(MultipartFile file, RedirectAttributes redirectAttributes, String username, int setId) throws IOException;
+    FileEntity storeAndSaveFileEntity(MultipartFile file, RedirectAttributes redirectAttributes, String username) throws IOException;
 
     Iterable<FileEntity> loadAll();
 

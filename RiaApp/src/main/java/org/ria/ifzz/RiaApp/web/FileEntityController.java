@@ -131,18 +131,18 @@ public class FileEntityController {
                                               BindingResult result,
                                               RedirectAttributes redirectAttributes,
                                               Principal principal) throws IOException {
-        int newId = 0;
+
         ResponseEntity<?> errorMap = errorService.MapValidationService(result);
         if (errorMap != null) return errorMap;
 
-        FileEntity fileEntity = storageService.storeAndSaveFileEntity(file.getFile(), redirectAttributes, principal.getName(), newId);
+        FileEntity fileEntity = storageService.storeAndSaveFileEntity(file.getFile(), redirectAttributes, principal.getName());
         Backlog currentBacklog = fileEntity.getBacklog();
 
         // Get data from uploaded file
-        List<String> cleanedList = resultService.getFileData(file);
+        List<String> serviceFileData = resultService.getFileData(file);
 
         // Result
-        List<Result> results = resultService.setDataToResult(file, cleanedList, currentBacklog, fileEntity);
+        List<Result> results = resultService.setDataToResult(file, serviceFileData, currentBacklog, fileEntity);
         resultRepository.saveAll(results);
 
         // Graph Curve
