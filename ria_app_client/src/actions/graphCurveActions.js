@@ -26,6 +26,6 @@ export const getGraphCurve = dataId => async dispatch => {
         payload: data
       });
     } catch (err) {
-      history.push("/dashboard");
+      history.push("/login");
     }
   };

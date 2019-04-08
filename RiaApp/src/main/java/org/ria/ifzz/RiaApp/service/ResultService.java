@@ -75,15 +75,15 @@ public class ResultService {
      */
     public List<Result> assignDataToResult(List<String> list, FileEntity fileEntity, List<Result> results) {
         String fileId = fileEntity.getDataId();
-        List<Result> resultsWithData = new ArrayList<>();
+        List<Result> resultsWithData;
         List<Result> resultList = new ArrayList<>();
 
-        resultsWithData = dataAssigner.setCpm(list, fileId, results);
+        resultsWithData = dataAssigner.setCpm(list, results);
         for (int i = 0; i < resultsWithData.size(); i++) {
             Result result = resultsWithData.get(i);
             resultList.add(result);
         }
-        resultsWithData = dataAssigner.setPosition(list, fileId, results);
+        resultsWithData = dataAssigner.setPosition(list, results);
         for (int i = 0; i < resultsWithData.size(); i++) {
             Result result = resultsWithData.get(i);
             resultList.add(result);
@@ -205,6 +205,5 @@ public class ResultService {
         System.out.println("isAbove: " + isAbove);
         return isAbove;
     }
-
 }
 

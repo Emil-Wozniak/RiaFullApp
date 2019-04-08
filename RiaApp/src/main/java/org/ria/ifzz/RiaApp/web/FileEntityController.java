@@ -2,6 +2,7 @@ package org.ria.ifzz.RiaApp.web;
 
 import org.ria.ifzz.RiaApp.domain.*;
 import org.ria.ifzz.RiaApp.repository.FileEntityRepository;
+import org.ria.ifzz.RiaApp.repository.GraphCurveLinesRepository;
 import org.ria.ifzz.RiaApp.repository.GraphCurveRepository;
 import org.ria.ifzz.RiaApp.repository.ResultRepository;
 import org.ria.ifzz.RiaApp.service.*;
@@ -36,6 +37,7 @@ public class FileEntityController {
     private final FileValidator fileValidator;
     private final MapValidationErrorService errorService;
     private final GraphCurveRepository graphCurveRepository;
+    private final GraphCurveLinesRepository graphCurveLinesRepository;
 
     @Autowired
     public FileEntityController(StorageService storageService,
@@ -45,7 +47,7 @@ public class FileEntityController {
                                 GraphCurveService graphCurveService,
                                 FileValidator fileValidator,
                                 MapValidationErrorService errorService,
-                                GraphCurveRepository graphCurveRepository) {
+                                GraphCurveRepository graphCurveRepository, GraphCurveLinesRepository graphCurveLinesRepository) {
 
         this.storageService = storageService;
         this.fileEntityRepository = fileEntityRepository;
@@ -55,6 +57,7 @@ public class FileEntityController {
         this.fileValidator = fileValidator;
         this.errorService = errorService;
         this.graphCurveRepository = graphCurveRepository;
+        this.graphCurveLinesRepository = graphCurveLinesRepository;
     }
 
     @InitBinder
@@ -138,12 +141,17 @@ public class FileEntityController {
         // Get data from uploaded file
         List<String> cleanedList = resultService.getFileData(file);
 
-        // Result && Graph Curve
+        // Result
         List<Result> results = resultService.setDataToResult(file, cleanedList, currentBacklog, fileEntity);
         resultRepository.saveAll(results);
 
-        List<GraphCurve> graphCurveList = graphCurveService.setGraphCurveFileName(file, fileEntity, currentBacklog);
-        graphCurveRepository.saveAll(graphCurveList);
+        // Graph Curve
+        GraphCurve graphCurve = graphCurveService.setGraphCurveFileName(file, fileEntity, currentBacklog);
+        graphCurveRepository.save(graphCurve);
+
+        // Coordinates
+        List<GraphCurveLines> graphCurveLinesList = graphCurveService.setCoordinates(graphCurve, currentBacklog);
+        graphCurveLinesRepository.saveAll(graphCurveLinesList);
         return new ResponseEntity<>(fileEntity, HttpStatus.CREATED);
     }
 

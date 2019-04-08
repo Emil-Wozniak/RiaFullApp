@@ -157,9 +157,8 @@ public class ControlCurveService {
         setPatternFlag(controlCurveList);
     }
 
-    //TODO elaborate it
-
     /**
+     * takes list elements and define if any of them has CPM value above any of NSBs CPM
      * @param controlCurveList list of Control Curve points
      */
     private void setPatternFlag(List<ControlCurve> controlCurveList) {

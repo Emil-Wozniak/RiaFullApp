@@ -15,7 +15,7 @@ public class DataAssigner {
         this.customFileReader = customFileReader;
     }
 
-    public List<Result> setCpm(List<String> list, String fileId, List<Result> results) {
+    public List<Result> setCpm(List<String> list, List<Result> results) {
         List<Result> resultsWithData = new ArrayList<>();
 
         //Assign CCMP to Result
@@ -30,7 +30,7 @@ public class DataAssigner {
         return resultsWithData;
     }
 
-    public List<Result> setPosition(List<String> list, String fileId, List<Result> results) {
+    public List<Result> setPosition(List<String> list, List<Result> results) {
         List<Result> resultsWithData = new ArrayList<>();
         //Assign position to Result
         for (int i = 24; i < list.size() - 1; i++) {

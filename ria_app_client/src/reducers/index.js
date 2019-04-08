@@ -3,7 +3,7 @@ import errorReducer from "./errorReducer";
 import fileEntityReducer from "./fileEntityReducer";
 import backlogReducer from "./backlogReducer";
 import graphCurveReducer from "./graphCurveReducer";
-import securityReducer from "./securityReducer"
+import securityReducer from "./securityReducer";
 
 export default combineReducers({
   errors: errorReducer,
