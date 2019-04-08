@@ -1,7 +1,23 @@
 import React, { Component } from "react";
 import ChartistGraph from "react-chartist";
 import Chartist from "chartist";
-import { Table } from "reactstrap";
+import { Container, Table } from "reactstrap";
+import Paper from "@material-ui/core/Paper";
+
+var thStyle = {
+  fontSize: "12px",
+  textAlign: "center",
+  margin: "0px",
+  padding: "1",
+  borderRadius: "50%"
+};
+
+var tdStyle = {
+  fontSize: "14px",
+  margin: "1px",
+  padding: "2",
+  borderRadius: "10px"
+};
 
 class GraphCurvesContainer extends Component {
   render() {
@@ -28,18 +44,18 @@ class GraphCurvesContainer extends Component {
     let varY1 = [];
     let varY2 = [];
     let varAverage = [];
-    
+
     for (let i = 0; i < graph_curves_prop.length; i++) {
       graph_coordinates = graph_curves_prop[i].graphCurveLines;
     }
 
-      for (let i = 0; i < graph_coordinates.length; i++) {
-        graph_coordinates.sortAttr("id");
+    for (let i = 0; i < graph_coordinates.length; i++) {
+      graph_coordinates.sortAttr("id");
       if (graph_coordinates[i].id % 2) {
         varX.push(graph_coordinates[i].x);
       }
     }
- 
+
     for (let i = 0; i < graph_coordinates.length; i++) {
       graph_coordinates.sortAttr("id");
       if (graph_coordinates[i].id % 2) {
@@ -58,15 +74,7 @@ class GraphCurvesContainer extends Component {
       varAverage.push(middle);
     }
 
-    // let varControl = [];
-    // if (graph_curves_prop.length > 0) {
-    //   graph_curves_prop.sortAttr("id");
-    //   varControl.push(graph_curves_prop[0].y);
-    //   varControl.push(graph_curves_prop[13].y);
-    // }
-
     let varBinding = [];
-
     if (graph_curves_prop.length > 0) {
       graph_curves_prop.sortAttr("id");
       r.push(graph_curves_prop[0].r);
@@ -112,38 +120,53 @@ class GraphCurvesContainer extends Component {
       }
     };
 
-   
+    const isGraphPresent = graph_curves_prop => {
+      if (graph_curves_prop.length < 1 || graph_curves_prop[0].r === null) {
+        return (
+          <div className="alert alert-danger text-center" role="alert">
+            No curve
+          </div>
+        );
+      } else {
+        return (
+          <React.Fragment>
+            <ChartistGraph
+              data={lineChartData}
+              options={lineChartOptions}
+              type={"Line"}
+            />
+            <Table className="table table-sm" striped>
+              <thead>
+                <tr>
+                  <th width="60">
+                    <p style={thStyle}>Correlation:</p>
+                  </th>
+                  <th width="60">
+                    <p style={thStyle}>%:</p>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <p style={tdStyle}>{r[0]}</p>
+                  </td>
+                  <td>
+                    <p style={tdStyle}>{varBinding[0]}</p>
+                  </td>
+                </tr>
+              </tbody>
+            </Table>
+          </React.Fragment>
+        );
+      }
+    };
 
+    const GraphAlgorithm = isGraphPresent(graph_curves_prop);
 
     return (
       <React.Fragment>
-        <div>
-          <Table>
-            <thead>
-              <tr>
-                <th>Correlation</th>
-                <th>%:</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-              <td>{r[0]}</td>
-              <td> {varBinding[0]}</td>
-              </tr>
-            </tbody>
-          </Table>
-        </div>
-
-        <div>
-          <p> </p>
-        </div>
-        <div />
-         <ChartistGraph
-          data={lineChartData}
-          options={lineChartOptions}
-          type={"Line"}
-        />
-      
+        <Paper classes={{ paper: "paper" }}>{GraphAlgorithm}</Paper>
       </React.Fragment>
     );
   }

@@ -118,18 +118,14 @@ public class ResultService {
             countResultUtil.logDose(CORTISOL_PATTERN);
         }
 
-        //set ccmp values to control curve points
-        try {
-            for (int i = 0; i < 24; i++) {
-                controlCurve = controlCurveList.get(i);
-                Double pointValue = controlCurve.getCcpm();
-                Boolean flag = controlCurve.isFlagged();
-                curve.add(pointValue);
-                Point point = new Point(pointValue, flag);
-                points.add(point);
-            }
-        } catch (Exception exception) {
-            throw new CurveException("\nFile " + curve.toString() + " doesn't have a proper size; \nIt must contain at least 24 line for curve and 2 line of results;\n" + exception.getCause());
+        //set cpm values to control curve points
+        for (int i = 0; i < 24; i++) {
+            controlCurve = controlCurveList.get(i);
+            Double pointValue = controlCurve.getCcpm();
+            Boolean flag = controlCurve.isFlagged();
+            curve.add(pointValue);
+            Point point = new Point(pointValue, flag);
+            points.add(point);
         }
 
         countResultUtil.setControlCurveCpmWithFlag(points);
@@ -142,8 +138,6 @@ public class ResultService {
         System.out.println("\nAssign list size: " + list.size());
         List<Double> countedList = new ArrayList<>();
         for (int i = 25; i < list.size(); i++) {
-            int index = i + 25;
-            System.out.println("\n======================================================\n" + index);
             result = results.get(i);
             double point = result.getCcpm();
             System.out.println("Point CPM: " + point);

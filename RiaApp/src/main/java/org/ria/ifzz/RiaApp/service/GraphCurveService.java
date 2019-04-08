@@ -100,10 +100,6 @@ public class GraphCurveService {
         return graphCurve;
     }
 
-    public Iterable<GraphCurveLines> findBacklogForCoordinatesByDataId(String dataId, GraphCurve graphCurve) throws FileNotFoundException {
-        return graphCurveLinesRepository.findByDataIdOrderByGraphCurve(graphCurve);
-    }
-
     public Optional<GraphCurveLines> findResultForCoordinatesByDataId(String dataId, String fileName, Long id) throws FileNotFoundException {
         fileEntityService.findFileEntityByDataId(dataId);
 

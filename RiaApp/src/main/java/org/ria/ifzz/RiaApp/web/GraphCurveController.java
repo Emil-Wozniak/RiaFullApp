@@ -28,17 +28,11 @@ public class GraphCurveController {
         return graphCurveService.findBacklogByDataId(dataId);
     }
 
-    @GetMapping("/{dataId}/{fileName}")
-    public ResponseEntity<?> getGraphCurvePoint(@PathVariable String dataId, @PathVariable String fileName) throws FileNotFoundException {
-
-        GraphCurve graphCurve = graphCurveService.findGraphCurveByDataId(dataId, fileName);
-        return new ResponseEntity<>(graphCurve, HttpStatus.OK);
-    }
-
-//    @GetMapping("/{dataId}/{fileName}/coordinates/{dataId}")
-//    public Iterable<GraphCurveLines> getFileEntityBacklogGCC(@PathVariable String dataId, @PathVariable String fileName) throws FileNotFoundException {
+//    @GetMapping("/{dataId}/{fileName}")
+//    public ResponseEntity<?> getGraphCurvePoint(@PathVariable String dataId, @PathVariable String fileName) throws FileNotFoundException {
+//
 //        GraphCurve graphCurve = graphCurveService.findGraphCurveByDataId(dataId, fileName);
-//        return graphCurveService.findBacklogForCoordinatesByDataId(dataId, graphCurve);
+//        return new ResponseEntity<>(graphCurve, HttpStatus.OK);
 //    }
 
     @GetMapping("/{dataId}/{fileName}/coordinates/{id}")
