@@ -67,17 +67,20 @@ public class GraphCurveService {
      * @param file upload file
      * @return list of point for graphical curve, each point has set id(fileName) and set points x, y
      */
-    public GraphCurve setGraphCurveFileName(FileModel file, FileEntity fileEntity, Backlog backlog) {
+    public GraphCurve setGraphCurve(FileModel file, FileEntity fileEntity, Backlog backlog) {
         GraphCurve graphCurve = new GraphCurve();
         try {
             String fileId = fileEntity.getDataId();
-            graphCurve.setFileName(fileUtils.setFileName(file) + "_" + 0);
+            graphCurve.setFileName(fileUtils.setFileName(file));
             graphCurve.setDataId(fileId);
             graphCurve.setBacklog(backlog);
-            graphCurve.setR(countResultUtil.setCorrelation());
-            graphCurve.setZeroBindingPercent(countResultUtil.setZeroBindingPercent());
+            //TODO depends on List<Point> but is not use it need to be change
+            Double r = countResultUtil.setCorrelation();
+            graphCurve.setR(r);
+            Double binding = countResultUtil.setZeroBindingPercent();
+            graphCurve.setZeroBindingPercent(binding);
         } catch (Exception e) {
-            System.out.println("setGraphCurveFileName(): " + e.getMessage() + " | Cause: " + e.getCause());
+            System.out.println("setGraphCurve(): " + e.getMessage() + " | Cause: " + e.getCause());
         }
         return graphCurve;
     }
@@ -86,19 +89,6 @@ public class GraphCurveService {
         fileEntityService.findFileEntityByDataId(dataId);
         return graphCurveRepository.findByDataIdOrderByFileName(dataId);
     }
-
-//    public GraphCurve findGraphCurveByDataId(String dataId, String fileName) throws FileNotFoundException {
-//        fileEntityService.findFileEntityByDataId(dataId);
-//
-//        GraphCurve graphCurve = graphCurveRepository.findByFileName(fileName);
-//        if (graphCurve == null) {
-//            throw new FileEntityNotFoundException("File with ID: '" + fileName + "' not found");
-//        }
-//        if (!graphCurve.getDataId().equals(dataId)) {
-//            throw new FileEntityNotFoundException("Graph '" + fileName + "' does not exist: '" + dataId);
-//        }
-//        return graphCurve;
-//    }
 
     public Optional<GraphCurveLines> findResultForCoordinatesByDataId(String dataId, String fileName, Long id) throws FileNotFoundException {
         fileEntityService.findFileEntityByDataId(dataId);

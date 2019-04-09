@@ -32,10 +32,12 @@ public class ControlCurveService {
         this.fileEntityService = fileEntityService;
     }
 
-    public List<ControlCurve> setControlCurveFromColumnsLength(List<String> list, @NotNull FileModel file, Backlog backlog) {
+    public List<ControlCurve> setControlCurveFromFileData(List<String> fileData,
+                                                          @NotNull FileModel file,
+                                                          Backlog backlog) {
         List<ControlCurve> controlCurveList = new ArrayList<>();
         for (int i = 0; i < 25; i++) {
-            String line = list.get(i);
+            String line = fileData.get(i);
             if (line.startsWith(" \tUnk")) {
                 ControlCurve controlCurvePoint = new ControlCurve();
                 controlCurvePoint.setFileName(i + "_" + fileUtils.setFileName(file));
@@ -49,28 +51,28 @@ public class ControlCurveService {
     /**
      * assigns data from list to ControlCurve object
      *
-     * @param list contains data
+     * @param fileData contains data
      * @return list of all control curve points
      */
-    public List<ControlCurve> setDataToControlCurve(List<String> list, FileEntity fileEntity, List<ControlCurve> curveList) {
+    public List<ControlCurve> setDataToControlCurve(List<String> fileData,
+                                                    FileEntity fileEntity,
+                                                    List<ControlCurve> curveList) {
 
         List<ControlCurve> controlCurveList = new ArrayList<>();
         String fileId = fileEntity.getDataId();
-        int index = 0;
         ControlCurve controlCurve;
 
-        //Assign CCMP to Result
+        //Assign CPM to Result
         for (int i = 0; i < 24; i++) {
-            List CCMP = customFileReader.getMatchingStrings(list, 3);
+            List<String> CPMs = customFileReader.getMatchingStrings(fileData, 3);
 
-            index = i;
-            controlCurve = curveList.get(index);
+            controlCurve = curveList.get(i);
 
-            // convert String value of CCMP to Integer
-            String ccmpString = CCMP.get(i).toString();
-            Double ccmpInteger = Double.parseDouble(ccmpString);
-            controlCurve.setCcpm(ccmpInteger);
-            System.out.println(" \tControl Curve CCMP value: " + controlCurve.getCcpm());
+            // convert String value of CPM to Integer
+            String cpmString = CPMs.get(i).toString();
+            Double cpmInteger = Double.parseDouble(cpmString);
+            controlCurve.setCcpm(cpmInteger);
+            System.out.println(" \tControl Curve CPM value: " + controlCurve.getCcpm());
             controlCurveList.add(controlCurve);
         }
 
@@ -84,7 +86,7 @@ public class ControlCurveService {
 
         //Assign position to Result
         for (int i = 0; i < 24; i++) {
-            List position = customFileReader.getMatchingStrings(list, 2);
+            List position = customFileReader.getMatchingStrings(fileData, 2);
 
             controlCurve = curveList.get(i);
 
@@ -127,8 +129,7 @@ public class ControlCurveService {
 
         //Assign samples to Result
         for (int i = 0; i < 25 - 1; i++) {
-            index = i;
-            controlCurve = curveList.get(index);
+            controlCurve = curveList.get(i);
             controlCurve.setDataId(fileId);
             controlCurve.setSamples(i);
             controlCurveList.add(controlCurve);

@@ -275,7 +275,7 @@ public class CountResultUtil {
     }
 
     public double setZeroBindingPercent() {
-        double zeroBindingPercent = binding*100/total;
+        double zeroBindingPercent = binding * 100 / total;
         zeroBindingPercent = Precision.round(zeroBindingPercent, 2);
         return zeroBindingPercent;
     }

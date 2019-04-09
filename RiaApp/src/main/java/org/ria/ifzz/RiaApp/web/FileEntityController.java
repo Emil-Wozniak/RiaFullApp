@@ -146,7 +146,7 @@ public class FileEntityController {
         resultRepository.saveAll(results);
 
         // Graph Curve
-        GraphCurve graphCurve = graphCurveService.setGraphCurveFileName(file, fileEntity, currentBacklog);
+        GraphCurve graphCurve = graphCurveService.setGraphCurve(file, fileEntity, currentBacklog);
         graphCurveRepository.save(graphCurve);
 
         // Coordinates
