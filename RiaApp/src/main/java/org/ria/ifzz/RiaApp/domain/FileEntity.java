@@ -20,7 +20,6 @@ public class FileEntity {
     private String fileName;
     private String contentType;
     private String dataId;
-
     private String fileOwner;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "fileEntity", orphanRemoval = true)

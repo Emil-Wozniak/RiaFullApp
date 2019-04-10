@@ -38,7 +38,7 @@ public class ResultService {
      * @return expected List of Strings
      * @throws IOException
      */
-    public List<String> getFileData(FileModel model) throws IOException {
+    public List<String> getFileData(DataFileMetadata model) throws IOException {
         System.out.println(customFileReader.getUploadComment());
         List<String> streamRead = customFileReader.readFromStream(model);
         return streamRead;
@@ -53,7 +53,7 @@ public class ResultService {
      * @return Result entities
      */
     public List<Result> setResultFromColumnsLength(List<String> fileData,
-                                                   @NotNull FileModel file,
+                                                   @NotNull DataFileMetadata file,
                                                    Backlog backlog) {
 
         Result result = new Result();
@@ -80,7 +80,7 @@ public class ResultService {
                                            FileEntity fileEntity,
                                            List<Result> results) {
         String fileId = fileEntity.getDataId();
-        List<Result> resultsWithData;
+        List<Result> resultsWithData = new ArrayList<>();
         List<Result> resultList = new ArrayList<>();
 
         resultsWithData = dataAssigner.setCpm(fileData, results);
@@ -88,17 +88,19 @@ public class ResultService {
             Result result = resultsWithData.get(i);
             resultList.add(result);
         }
+
         resultsWithData = dataAssigner.setPosition(fileData, results);
         for (int i = 0; i < resultsWithData.size(); i++) {
             Result result = resultsWithData.get(i);
             resultList.add(result);
         }
+
         resultsWithData = dataAssigner.setSamples(fileData, fileId, results);
         for (int i = 0; i < resultsWithData.size(); i++) {
             Result result = resultsWithData.get(i);
             resultList.add(result);
         }
-        System.out.println("resultsWithData size: " + resultList.size());
+            System.out.println("resultsWithData size: " + resultList.size());
         return resultList;
     }
 
@@ -119,7 +121,7 @@ public class ResultService {
     }
 
     /**
-     * @param fileData             contains data which will be assign to Result
+     * @param fileData         contains data which will be assign to Result
      * @param controlCurveList curve points
      * @param results          list of the Result entities with assigned data
      * @return list of Result entities with calculated mass of the hormone in nanograms
@@ -139,11 +141,10 @@ public class ResultService {
     }
 
     private List<Result> getCountedResults(List<String> list, List<Result> results) {
-        Result result;
         List<Result> countedResults = new ArrayList<>();
         for (int i = 25; i < list.size(); i++) {
-            result = results.get(i);
-            double point = result.getCcpm();
+            Result result = results.get(i);
+            double point = result.getCpm();
             System.out.println("Point CPM: " + point);
             double counted = countResultUtil.countResult(point);
             if (Double.isNaN(counted)) {
@@ -155,39 +156,33 @@ public class ResultService {
         return countedResults;
     }
 
-    //TODO set in setDataToResult()
-    private List<Point> setControlPointsFromControlCurve(List<ControlCurve> controlCurveList,
-                                                         List<Double> curve,
-                                                         List<Point> points ) {
+    private void setControlPointsFromControlCurve(List<ControlCurve> controlCurveList,
+                                                  List<Double> curve,
+                                                  List<Point> points) {
         ControlCurve controlCurve;
-
         //set cpm values to control curve points
         for (int i = 0; i < 24; i++) {
             controlCurve = controlCurveList.get(i);
-            Double pointValue = controlCurve.getCcpm();
+            Double pointValue = controlCurve.getCpm();
             Boolean flag = controlCurve.isFlagged();
             curve.add(pointValue);
             Point point = new Point(pointValue, flag);
             points.add(point);
         }
-        return points;
     }
 
 
-
-    //TODO handle that file has less than 26 points
-    public List<Result> setDataToResult(@NotNull FileModel file,
+    public List<Result> setDataToResult(@NotNull DataFileMetadata file,
                                         List<String> fileData,
                                         Backlog backlog,
                                         FileEntity fileEntity) {
 
-        List<Point> points = new ArrayList<>();
-        List<Double> curve = new ArrayList<>();
         List<Result> resultsWithData = new ArrayList<>();
         List<Result> resultListWithNg = new ArrayList<>();
-        List<ControlCurve> controlCurveList = new ArrayList<>();
-        List<ControlCurve> controlCurveListWithData = new ArrayList<>();
+        List<ControlCurve> controlCurveList;
+        List<ControlCurve> controlCurveListWithData;
         List<Result> results = setResultFromColumnsLength(fileData, file, backlog);
+
         if (fileData.size() > 24) {
             try {
                 resultsWithData = assignDataToResult(fileData, fileEntity, results);
@@ -200,35 +195,44 @@ public class ResultService {
 
         //Check if any of standard points are above Zeros points
         if (isStandardCpmAboveZero(controlCurveListWithData)) {
+            List<Point> points = new ArrayList<>();
+            List<Double> curve = new ArrayList<>();
             setBindingPercent(curve, points, controlCurveList);
+            countResultUtil.logarithmRealZero();
             controlCurveRepository.saveAll(controlCurveListWithData);
             return resultsWithData;
         }
         //is they aren't ng will be set to results
         else {
-            controlCurveRepository.saveAll(controlCurveListWithData);
+
             try {
                 resultListWithNg = assignNgPerMl(fileData, controlCurveListWithData, resultsWithData);
             } catch (Exception e) {
                 System.out.println("Exception ng: " + e.getMessage() + " with cause: " + e.getCause());
             }
+            controlCurveRepository.saveAll(controlCurveListWithData);
             return resultListWithNg;
         }
     }
 
-    private boolean isStandardCpmAboveZero(List<ControlCurve> fileData) {
+    /**
+     * @param controlCurves list of curve points
+     * @return false if any controlCurve points is not flagged (is false),
+     * and true if any from those are flagged
+     */
+    private boolean isStandardCpmAboveZero(List<ControlCurve> controlCurves) {
         boolean checker = false;
         boolean isAbove;
-        ControlCurve controlCurve =  new ControlCurve();
+        new ControlCurve();
+        ControlCurve controlCurve;
         for (int i = 8; i < 21; i++) {
-            controlCurve = fileData.get(i);
+            controlCurve = controlCurves.get(i);
             if (controlCurve.isFlagged()) {
                 checker = true;
-                System.out.println("Standard Cpm are above zero");
+                System.out.println("Standard point with ID: " + controlCurve.getId() + " with CPM value " + controlCurve.getCpm() + " are above zero ");
             }
         }
         isAbove = checker;
-        System.out.println("isAbove: " + isAbove);
         return isAbove;
     }
 }

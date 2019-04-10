@@ -41,10 +41,9 @@ public class FileEntityStorageService implements StorageService {
     }
 
     /**
-     *
-     * @param file uploaded
+     * @param file               uploaded
      * @param redirectAttributes page response
-     * @param username user credentials
+     * @param username           user credentials
      * @return file_entity object with all necessary contents
      * @throws IOException if upload is not successful
      */
@@ -57,7 +56,7 @@ public class FileEntityStorageService implements StorageService {
 
         String filename = StringUtils.cleanPath(file.getOriginalFilename());
 
-        if (fileEntityRepository.findByFileName(filename) != null){
+        if (fileEntityRepository.findByFileName(filename) != null) {
             throw new StorageException("File already uploaded: " + filename);
         }
         if (filename.contains("..")) {
@@ -66,16 +65,16 @@ public class FileEntityStorageService implements StorageService {
                     "Cannot store file with relative path outside current directory "
                             + filename);
         }
-        try{
+        try {
             User user = userRepository.findByUsername(username);
             fileEntity.setUser(user);
             fileEntity.setFileOwner(user.getUsername());
             fileEntity.setDataId(fileEntity.getFileName());
-            if (fileEntity.getId() == null){
+            if (fileEntity.getId() == null) {
                 fileEntity.setBacklog(backlogService.setBacklog(fileEntity));
             }
-           return fileEntityRepository.save(fileEntity);
-        } catch (Exception exception){
+            return fileEntityRepository.save(fileEntity);
+        } catch (Exception exception) {
             throw new StorageException("File already uploaded: " + filename);
         }
     }
@@ -97,13 +96,11 @@ public class FileEntityStorageService implements StorageService {
             Resource resource = new UrlResource(file.toUri());
             if (resource.exists() || resource.isReadable()) {
                 return resource;
-            }
-            else {
+            } else {
                 throw new StorageFileNotFoundException(
                         "Could not read file: " + filename);
             }
-        }
-        catch (MalformedURLException e) {
+        } catch (MalformedURLException e) {
             throw new StorageFileNotFoundException("Could not read file: " + filename);
         }
     }
@@ -136,8 +133,7 @@ public class FileEntityStorageService implements StorageService {
     public void init() {
         try {
             Files.createDirectories(rootLocation);
-        }
-        catch (IOException exception) {
+        } catch (IOException exception) {
             throw new StorageException("Could not initialize storage");
         }
     }

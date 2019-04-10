@@ -15,26 +15,32 @@ public class DataAssigner {
         this.customFileReader = customFileReader;
     }
 
-    public List<Result> setCpm(List<String> list, List<Result> results) {
+    /**
+     *
+     * @param fileData data from uploaded file
+     * @param results List of
+     * @return
+     */
+    public List<Result> setCpm(List<String> fileData, List<Result> results) {
         List<Result> resultsWithData = new ArrayList<>();
 
-        //Assign CCMP to Result
-        for (int i = 24; i < list.size() - 1; i++) {
-            List CPM = customFileReader.getMatchingStrings(list, 3);
+        //Assign CPM to Result
+        for (int i = 24; i < fileData.size() - 1; i++) {
+            List CPM = customFileReader.getMatchingStrings(fileData, 3);
             Result result = results.get(i);
             String cpmString = CPM.get(i).toString();
             Double cpmInteger = Double.parseDouble(cpmString);
-            result.setCcpm(cpmInteger);
+            result.setCpm(cpmInteger);
             resultsWithData.add(result);
         }
         return resultsWithData;
     }
 
-    public List<Result> setPosition(List<String> list, List<Result> results) {
+    public List<Result> setPosition(List<String> fileData, List<Result> results) {
         List<Result> resultsWithData = new ArrayList<>();
         //Assign position to Result
-        for (int i = 24; i < list.size() - 1; i++) {
-            List position = customFileReader.getMatchingStrings(list, 2);
+        for (int i = 24; i < fileData.size() - 1; i++) {
+            List position = customFileReader.getMatchingStrings(fileData, 2);
             Result result = results.get(i);
             result.setPosition(position.get(i).toString());
             resultsWithData.add(result);
@@ -42,11 +48,11 @@ public class DataAssigner {
         return resultsWithData;
     }
 
-    public List<Result> setSamples(List<String> list, String fileId, List<Result> results) {
+    public List<Result> setSamples(List<String> fileData, String fileId, List<Result> results) {
         List<Result> resultsWithData = new ArrayList<>();
         //Assign samples to Result
-        for (int i = 24; i < list.size() - 1; i++) {
-            List Samples = customFileReader.getMatchingStrings(list, 1);
+        for (int i = 24; i < fileData.size() - 1; i++) {
+            List Samples = customFileReader.getMatchingStrings(fileData, 1);
             Result result = results.get(i);
             result.setDataId(fileId);
 

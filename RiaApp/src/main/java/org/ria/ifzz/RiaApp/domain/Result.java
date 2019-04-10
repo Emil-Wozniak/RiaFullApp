@@ -16,7 +16,7 @@ public class Result {
     Long id = null;
     Integer samples = null;
     String position = "";
-    Double ccpm = null;
+    Double cpm = null;
     String fileName = "";
     String dataId = "";
     private Double ng;

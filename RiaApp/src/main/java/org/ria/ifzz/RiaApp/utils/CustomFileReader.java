@@ -1,7 +1,7 @@
 package org.ria.ifzz.RiaApp.utils;
 
 import lombok.Getter;
-import org.ria.ifzz.RiaApp.domain.FileModel;
+import org.ria.ifzz.RiaApp.domain.DataFileMetadata;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -21,7 +21,7 @@ public class CustomFileReader {
     private String positionRegex = "[\\w]";
 
     //TODO docs are necessary
-    public List<String> readFromStream(FileModel file) throws IOException {
+    public List<String> readFromStream(DataFileMetadata file) throws IOException {
         List<String> fileManager = file.getContents().get();
         List<String> lines = new ArrayList<>();
         String pattern = fileManager.get(4);

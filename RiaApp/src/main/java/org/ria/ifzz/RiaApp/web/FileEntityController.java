@@ -127,7 +127,7 @@ public class FileEntityController {
      * @throws IOException
      */
     @PostMapping
-    public ResponseEntity<?> handleFileUpload(@Valid FileModel file,
+    public ResponseEntity<?> handleFileUpload(@Valid DataFileMetadata file,
                                               BindingResult result,
                                               RedirectAttributes redirectAttributes,
                                               Principal principal) throws IOException {
@@ -152,6 +152,7 @@ public class FileEntityController {
         // Coordinates
         List<GraphCurveLines> graphCurveLinesList = graphCurveService.setCoordinates(graphCurve, currentBacklog);
         graphCurveLinesRepository.saveAll(graphCurveLinesList);
+
         return new ResponseEntity<>(fileEntity, HttpStatus.CREATED);
     }
 

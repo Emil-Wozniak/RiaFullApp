@@ -19,7 +19,7 @@ public class ControlCurve  {
     private Long id = null;
     private Integer samples = null;
     private String position = "";
-    private Double ccpm = null;
+    private Double cpm = null;
     private String fileName = "";
     private String dataId = "";
     private boolean flagged = false;

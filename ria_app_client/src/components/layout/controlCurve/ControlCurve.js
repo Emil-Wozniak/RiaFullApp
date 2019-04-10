@@ -18,7 +18,7 @@ class ControlCurve extends Component {
               className="mx-auto"
               style={{ color: condition ? "green" : "red" }}
             >
-              {control_curve.ccpm}
+              {control_curve.cpm}
             </td>
             <td>
               {condition ? <CheckBoxOutlineBlank /> : <CheckBoxOutlined />}

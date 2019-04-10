@@ -17,7 +17,7 @@ import java.util.Optional;
 @Service
 public class GraphCurveService {
 
-    List<GraphCurveLines> graphCurveLinesList = new ArrayList<>();
+    private List<GraphCurveLines> graphCurveLinesList = new ArrayList<>();
 
     private final GraphCurveRepository graphCurveRepository;
     private final FileEntityService fileEntityService;
@@ -67,7 +67,7 @@ public class GraphCurveService {
      * @param file upload file
      * @return list of point for graphical curve, each point has set id(fileName) and set points x, y
      */
-    public GraphCurve setGraphCurve(FileModel file, FileEntity fileEntity, Backlog backlog) {
+    public GraphCurve setGraphCurve(DataFileMetadata file, FileEntity fileEntity, Backlog backlog) {
         GraphCurve graphCurve = new GraphCurve();
         try {
             String fileId = fileEntity.getDataId();
@@ -75,7 +75,8 @@ public class GraphCurveService {
             graphCurve.setDataId(fileId);
             graphCurve.setBacklog(backlog);
             //TODO depends on List<Point> but is not use it need to be change
-            Double r = countResultUtil.setCorrelation();
+            Double r;
+            r = countResultUtil.setCorrelation();
             graphCurve.setR(r);
             Double binding = countResultUtil.setZeroBindingPercent();
             graphCurve.setZeroBindingPercent(binding);

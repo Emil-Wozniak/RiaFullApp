@@ -9,7 +9,6 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-//TODO GraphCurveLines has to take x and y Lists of value
 @Entity
 @Data
 public class GraphCurve {
@@ -17,10 +16,10 @@ public class GraphCurve {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Double r; // Correlation
+    private Double r = null; // Correlation
     private String fileName;
     private String dataId;
-    private Double zeroBindingPercent;
+    private Double zeroBindingPercent = null;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="backlog_id", updatable = false, nullable = false)

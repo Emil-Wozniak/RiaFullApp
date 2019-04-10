@@ -3,7 +3,7 @@ package org.ria.ifzz.RiaApp.service;
 import org.ria.ifzz.RiaApp.domain.Backlog;
 import org.ria.ifzz.RiaApp.domain.ControlCurve;
 import org.ria.ifzz.RiaApp.domain.FileEntity;
-import org.ria.ifzz.RiaApp.domain.FileModel;
+import org.ria.ifzz.RiaApp.domain.DataFileMetadata;
 import org.ria.ifzz.RiaApp.exception.FileEntityNotFoundException;
 import org.ria.ifzz.RiaApp.repository.ControlCurveRepository;
 import org.ria.ifzz.RiaApp.utils.CustomFileReader;
@@ -33,7 +33,7 @@ public class ControlCurveService {
     }
 
     public List<ControlCurve> setControlCurveFromFileData(List<String> fileData,
-                                                          @NotNull FileModel file,
+                                                          @NotNull DataFileMetadata file,
                                                           Backlog backlog) {
         List<ControlCurve> controlCurveList = new ArrayList<>();
         for (int i = 0; i < 25; i++) {
@@ -71,8 +71,8 @@ public class ControlCurveService {
             // convert String value of CPM to Integer
             String cpmString = CPMs.get(i).toString();
             Double cpmInteger = Double.parseDouble(cpmString);
-            controlCurve.setCcpm(cpmInteger);
-            System.out.println(" \tControl Curve CPM value: " + controlCurve.getCcpm());
+            controlCurve.setCpm(cpmInteger);
+            System.out.println(" \tControl Curve CPM value: " + controlCurve.getCpm());
             controlCurveList.add(controlCurve);
         }
 
@@ -163,12 +163,12 @@ public class ControlCurveService {
      * @param controlCurveList list of Control Curve points
      */
     private void setPatternFlag(List<ControlCurve> controlCurveList) {
-        double nsb1 = controlCurveList.get(5).getCcpm();
-        double nsb2 = controlCurveList.get(6).getCcpm();
-        double nsb3 = controlCurveList.get(7).getCcpm();
+        double nsb1 = controlCurveList.get(5).getCpm();
+        double nsb2 = controlCurveList.get(6).getCpm();
+        double nsb3 = controlCurveList.get(7).getCpm();
         for (int i = 8; i < controlCurveList.size(); i++) {
             ControlCurve point = controlCurveList.get(i);
-            double pointCpm = point.getCcpm();
+            double pointCpm = point.getCpm();
             if (pointCpm > nsb1 || pointCpm > nsb2 || pointCpm > nsb3) point.setFlagged(true);
         }
     }
@@ -184,9 +184,9 @@ public class ControlCurveService {
      * @param percent not accepted percentage difference between the points
      */
     public void setNSBsZerosFlag(ControlCurve first, ControlCurve second, ControlCurve third, int percent) {
-        double a = first.getCcpm();
-        double b = second.getCcpm();
-        double c = third.getCcpm();
+        double a = first.getCpm();
+        double b = second.getCpm();
+        double c = third.getCpm();
 
         if (a - b != 0 || b - c != 0 || c - a != 0) {
             if ((a - b) > (b / percent) || (a - c) > (c / percent)) {

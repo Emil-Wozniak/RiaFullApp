@@ -17,20 +17,20 @@ public class CountResultUtil {
     private Double binding;
 
     @Getter
-    private List<Double> standardsCMP;
+    private List<Double> standardsCPM;
     @Getter
     private List<Point> curveFlagged;
     @Getter
     private List<Point> standardsCpmFlagged;
     @Getter
-    private List<Double> logDoseList;
-    private List<Double> bindingPercent;
+    private List<Double> logDoseList = new ArrayList<>();
+    private List<Double> bindingPercent = new ArrayList<>();
     @Getter
-    private List<Double> logarithmRealZeroTable;
+    private List<Double> logarithmRealZeroTable = new ArrayList<>();
     private Double regressionParameterB;
     private Double regressionParameterA;
 
-    ResultMath resultMath = new ResultMath();
+    private ResultMath resultMath = new ResultMath();
 
     /**
      * @param points list containing CMPs and flags
@@ -106,20 +106,19 @@ public class CountResultUtil {
      *
      * @return array of CMP of hormone standardized pattern e.g CORTISOL_PATTERN
      */
-    public List<Double> setStandardsCpmWithFlags(List<Point> points) {
+    public void setStandardsCpmWithFlags(List<Point> points) {
         standardsCpmFlagged = new ArrayList<>();
-        standardsCMP = new ArrayList<>();
+        standardsCPM = new ArrayList<>();
 
         if (standardsCpmFlagged.size() < 8) {
             System.out.println("\nStandard CPM_FLAG: ");
             for (int i = 8; i < points.size() - 2; i++) {
                 Point point = points.get(i);
                 Double pointValue = point.getValue();
-                standardsCMP.add(pointValue);
+                standardsCPM.add(pointValue);
                 System.out.println(pointValue + " | " + point.isFlag());
             }
         }
-        return standardsCMP;
     }
 
     //table M == table I
@@ -131,14 +130,13 @@ public class CountResultUtil {
      * @param results array of hormone standardized pattern e.g CORTISOL_PATTERN
      * @return Double List
      */
-    public List<Double> logDose(double[] results) {
+    public void logDose(double[] results) {
         List<Double> standardPattern = new ArrayList<>();
         System.out.println("\n\nStandard points:" + "\n======================================================");
         for (double point : results) {
             standardPattern.add(point);
         }
         logDoseList = resultMath.logarithmTable2(standardPattern);
-        return logDoseList;
     }
 
     // Table H == %(N-O)
@@ -150,30 +148,33 @@ public class CountResultUtil {
      *
      * @return
      */
-    public List<Double> bindingPercent() {
+    public void bindingPercent() {
         System.out.println("\n\nbinding percent" + "\n======================================================");
-        List<Double> subtraction = resultMath.subtractTablesElement(standardsCMP, zero);
+        List<Double> subtraction = resultMath.subtractTablesElement(standardsCPM, zero);
         List<Double> multiplication = resultMath.multiplyList(100.0, subtraction);
         List<Double> result = resultMath.divideTableCeilElements(binding, multiplication); // %Bo-Bg
         System.out.println("\nBinding percent:");
         result.forEach(System.out::println);
         bindingPercent = result;
-        return bindingPercent;
     }
 
     /*
     Table J
     =LOG(H23/(100-H23))
      */
-    public List<Double> logarithmRealZero() {
+    public void logarithmRealZero() {
         System.out.println("\n\nLogarithm Real Zero:" + "\n======================================================");
-        List<Double> subtractPercentNO = resultMath.subtractTableElements(100.0, bindingPercent);
-        List<Double> divideTable = resultMath.divisionTable(bindingPercent, subtractPercentNO);
-        List<Double> logTable = resultMath.logarithmTable2(divideTable);
+        List<Double> logTable = null;
+        try {
+            List<Double> subtractPercentNO = resultMath.subtractTableElements(100.0, bindingPercent);
+            List<Double> divideTable = resultMath.divisionTable(bindingPercent, subtractPercentNO);
+            logTable = resultMath.logarithmTable2(divideTable);
+        } catch (Exception e){
+            System.out.println( e.getMessage() + " " + e.getCause());
+        }
         System.out.println("\nLogarithm Real Zero: ");
-        logTable.forEach(System.out::println);
+//        logTable.forEach(System.out::println);
         logarithmRealZeroTable = logTable;
-        return logarithmRealZeroTable;
     }
 
     /*
@@ -182,7 +183,7 @@ public class CountResultUtil {
     var N25:N40 => logarithmRealZero
     * = sum(N25:N40)/ count(M25:M40)- N19 => regressionParameterB* sum(M25:M40) / count(M25:M40)
     */
-    public Double countRegressionParameterA() {
+    public void countRegressionParameterA() {
         System.out.println("\n\ncountRegressionParameterA:" +
                 "\n======================================================");
         Double sumLogRealZero = resultMath.sum(logarithmRealZeroTable);
@@ -191,7 +192,6 @@ public class CountResultUtil {
         Double sumLogDose = resultMath.sum(logDoseList);
         regressionParameterA = sumLogRealZero / countLogDose - regressionParameterB * sumLogDose / countLogDose;
         System.out.println("Regression Parameter A = " + regressionParameterA);
-        return regressionParameterA;
     }
 
     /* Excel version:
@@ -201,7 +201,7 @@ public class CountResultUtil {
     *
     * =(COUNT(M25:M40) *SUMPRODUCT(M25:M40;N25:N40) -SUM(M25:M40)*SUM(N25:N40))/(COUNT(M25:M40)*SUMSQ(M25:M40)-(SUM(M25:M40))^2)
      */
-    public Double countRegressionParameterB() {
+    public void countRegressionParameterB() {
         List<Double> LRZ1 = resultMath.logarithmTable1(logarithmRealZeroTable);
 
         System.out.println("\n\nregressionParameterB:" +
@@ -221,7 +221,7 @@ public class CountResultUtil {
         System.out.println("\nSecond factor");
         Double countSecond = resultMath.count(logDoseList);
         Double sumsqSecondFactor = resultMath.sumsq(logDoseList);
-        Double sqr = resultMath.sum(logDoseList);
+        double sqr = resultMath.sum(logDoseList);
         sqr = Math.pow(sqr, 2);
         System.out.println("Powered: " + sqr);
 
@@ -232,7 +232,6 @@ public class CountResultUtil {
         Double roundResult = Precision.round(resultSum, 4);
         regressionParameterB = roundResult;
         System.out.println("regressionParameterB result: " + regressionParameterB);
-        return regressionParameterB;
     }
 
     /* Excel version:
@@ -243,33 +242,32 @@ public class CountResultUtil {
      * calculates the value of hormone nanograms by formula:
      * { 10^(( LOG((cmp-zero) *100 / binding / (100-(cmp-zero) *100 / binding)) - regressionParameterA) / regressionParameterB)}
      *
-     * @param CMP ccmp value from file
+     * @param CPM ccmp value from file
      * @return the value of hormone nanograms in the sample
      */
-    public Double countResult(Double CMP) {
+    public Double countResult(Double CPM) {
         System.out.println("Count Result:" +
                 "\n======================================================");
-        System.out.println("CMP: " + CMP);
+        System.out.println("CMP: " + CPM);
         System.out.println("Zero: " + zero);
         System.out.println("NSB: " + nsb);
         System.out.println("Binding: " + binding);
-        Double firstPart = ((Math.log10((CMP - zero) * 100 / binding / (100 - (CMP - zero) * 100 / binding)) - regressionParameterA) / regressionParameterB);
-        Double power = Math.pow(10, firstPart);
+        Double firstPart = ((Math.log10((CPM - zero) * 100 / binding / (100 - (CPM - zero) * 100 / binding)) - regressionParameterA) / regressionParameterB);
+        double power = Math.pow(10, firstPart);
         power = Precision.round(power, 2);
         return power;
     }
 
     public double setCorrelation() {
-        Double correlation;
         double[] logDoseListArray = new double[logDoseList.size()];
         for (int i = 0; i < logDoseList.size(); i++) logDoseListArray[i] = logDoseList.get(i);
         double[] logarithmRealZeroArray = new double[logarithmRealZeroTable.size()];
         for (int i = 0; i < logarithmRealZeroTable.size(); i++)
             logarithmRealZeroArray[i] = logarithmRealZeroTable.get(i);
         PearsonsCorrelation pearsonsCorrelation = new PearsonsCorrelation();
-        correlation = pearsonsCorrelation.correlation(logDoseListArray, logarithmRealZeroArray);
+        double correlation = pearsonsCorrelation.correlation(logDoseListArray, logarithmRealZeroArray);
         correlation = Precision.round(correlation, 4);
-        Double correlationPow = Math.pow(correlation, 2);
+        double correlationPow = Math.pow(correlation, 2);
         System.out.println("Correlation: " + correlationPow);
         return correlationPow;
     }

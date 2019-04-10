@@ -16,13 +16,12 @@ import java.util.function.Supplier;
 
 @Getter
 @Setter
-public class FileModel {
+public class DataFileMetadata {
 
     private Long customerId;
     private MultipartFile file;
-    private String fileName;
-
-    private Supplier<List<String>> contents = Eval.later(this::loadContents);
+    private String fileName ;
+    private final Supplier<List<String>> contents = Eval.later(this::loadContents);
 
     private List<String> loadContents() {
         try {

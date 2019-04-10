@@ -12,7 +12,7 @@ public class FileManager {
     @Getter
     private Map<Long, Supplier<List<String>>> dataTable = new HashMap<>();
 
-    public void process(FileModel metadata){
+    public void process(DataFileMetadata metadata){
         dataTable.put(metadata.getCustomerId(), metadata.getContents());
     }
 }
