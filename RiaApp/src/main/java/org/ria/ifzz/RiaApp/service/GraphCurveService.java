@@ -74,7 +74,6 @@ public class GraphCurveService {
             graphCurve.setFileName(fileUtils.setFileName(file));
             graphCurve.setDataId(fileId);
             graphCurve.setBacklog(backlog);
-            //TODO depends on List<Point> but is not use it need to be change
             Double r;
             r = countResultUtil.setCorrelation();
             graphCurve.setR(r);

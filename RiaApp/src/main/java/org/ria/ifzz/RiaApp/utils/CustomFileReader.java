@@ -9,32 +9,40 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.ria.ifzz.RiaApp.domain.DomainConstants.*;
+
 /**
  * Provides methods needed to read and return List of String from uploaded file
  */
 @Service
 public class CustomFileReader {
 
+    private List<String> examinationResult = new ArrayList<>();
+
     @Getter
     private String uploadComment = "File content:\n";
     @Getter
     private String positionRegex = "[\\w]";
 
-    //TODO docs are necessary
-    public List<String> readFromStream(DataFileMetadata file) throws IOException {
-        List<String> fileManager = file.getContents().get();
-        List<String> lines = new ArrayList<>();
-        String pattern = fileManager.get(4);
-        pattern = pattern.replace("Name: COPY_OF_H-3_", "");
-        lines.add(pattern);
-        for (String line : fileManager) {
-            if (!line.startsWith(" \tUnk")) {
+    /**
+     * takes metadata from uploaded file and
+     * @param metadata uploaded file
+     * @return Strings containing data for
+     * @throws IOException
+     */
+    public List<String> readFromStream(DataFileMetadata metadata) throws IOException {
+        List<String> streamMetadata = metadata.getContents().get();
+        String hormonePattern = streamMetadata.get(HORMONE_PATTERN);
+        hormonePattern = hormonePattern.replace(HORMONE_PATTERN_UNNECESSARY_PART, "");
+        examinationResult.add(hormonePattern);
+        for (String metadataLine : streamMetadata) {
+            if (!metadataLine.startsWith(METADATA_TARGET_POINT)) {
             } else {
-                lines.add(line);
+                examinationResult.add(metadataLine);
             }
         }
-        lines.forEach(System.out::println);
-        return lines;
+        examinationResult.forEach(System.out::println);
+        return examinationResult;
     }
 
     /**

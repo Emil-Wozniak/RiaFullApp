@@ -14,13 +14,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
+import static org.ria.ifzz.RiaApp.domain.DomainConstants.FILENAME_LINE;
+import static org.ria.ifzz.RiaApp.domain.DomainConstants.FILENAME_UNNECESSARY_PART;
+
 @Getter
 @Setter
 public class DataFileMetadata {
 
     private Long customerId;
     private MultipartFile file;
-    private String fileName ;
+    private String fileName;
     private final Supplier<List<String>> contents = Eval.later(this::loadContents);
 
     private List<String> loadContents() {
@@ -32,21 +35,20 @@ public class DataFileMetadata {
     }
 
     private List<String> loadFromFile() throws IOException {
-        BufferedReader bufferedReader;
-        List<String> result = new ArrayList<>();
+        List<String> metadata = new ArrayList<>();
         try {
             String line;
             InputStream inputStream = file.getInputStream();
-            bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
             while ((line = bufferedReader.readLine()) != null) {
-                result.add(line);
+                metadata.add(line);
             }
-        } catch (IOException e) {
-            System.err.println(e.getMessage());
+        } catch (IOException ioException) {
+            System.err.println(ioException.getMessage());
         }
-        fileName = result.get(0).replace("C:\\mbw\\results\\","");
+        fileName = metadata.get(FILENAME_LINE).replace(FILENAME_UNNECESSARY_PART, "");
         System.out.println(fileName);
-        return result;
+        return metadata;
     }
 
 }
