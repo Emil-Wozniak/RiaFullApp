@@ -122,12 +122,12 @@ public class FileEntityController {
      * it is responsible for handle a file upload and generate database tables,
      * then assign values from file to appropriate variables.
      *
-     * @param file               which will be handle
+     * @param data               which will be handle
      * @param redirectAttributes message shown if upload goes well
      * @throws IOException
      */
     @PostMapping
-    public ResponseEntity<?> handleFileUpload(@Valid DataFileMetadata file,
+    public ResponseEntity<?> handleFileUpload(@Valid DataFileMetadata data,
                                               BindingResult result,
                                               RedirectAttributes redirectAttributes,
                                               Principal principal) throws IOException {
@@ -135,18 +135,18 @@ public class FileEntityController {
         ResponseEntity<?> errorMap = errorService.MapValidationService(result);
         if (errorMap != null) return errorMap;
 
-        FileEntity fileEntity = storageService.storeAndSaveFileEntity(file.getFile(), redirectAttributes, principal.getName());
+        FileEntity fileEntity = storageService.storeAndSaveFileEntity(data.getFile(), redirectAttributes, principal.getName());
         Backlog currentBacklog = fileEntity.getBacklog();
 
         // Get data from uploaded file
-        List<String> serviceFileData = resultService.getFileData(file);
+        List<String> serviceFileData = resultService.getFileData(data);
 
         // Result
-        List<Result> results = resultService.setDataToResult(file, serviceFileData, currentBacklog, fileEntity);
+        List<Result> results = resultService.setDataToResult(data, serviceFileData, currentBacklog, fileEntity);
         resultRepository.saveAll(results);
 
         // Graph Curve
-        GraphCurve graphCurve = graphCurveService.setGraphCurve(file, fileEntity, currentBacklog);
+        GraphCurve graphCurve = graphCurveService.setGraphCurve(data, fileEntity, currentBacklog);
         graphCurveRepository.save(graphCurve);
 
         // Coordinates

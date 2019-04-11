@@ -34,14 +34,13 @@ public class ResultService {
     /**
      * takes file store in local disc space
      *
-     * @param model data from uploaded file
+     * @param data data from uploaded file
      * @return expected List of Strings
      * @throws IOException
      */
-    public List<String> getFileData(DataFileMetadata model) throws IOException {
+    public List<String> getFileData(DataFileMetadata data) throws IOException {
         System.out.println(customFileReader.getUploadComment());
-        List<String> streamRead = customFileReader.readFromStream(model);
-        return streamRead;
+        return customFileReader.readFromStream(data);
     }
 
     /**
@@ -173,7 +172,7 @@ public class ResultService {
 
 
     public List<Result> setDataToResult(@NotNull DataFileMetadata file,
-                                        List<String> fileData,
+                                        List<String> data,
                                         Backlog backlog,
                                         FileEntity fileEntity) {
 
@@ -181,17 +180,17 @@ public class ResultService {
         List<Result> resultListWithNg = new ArrayList<>();
         List<ControlCurve> controlCurveList;
         List<ControlCurve> controlCurveListWithData;
-        List<Result> results = setResultFromColumnsLength(fileData, file, backlog);
+        List<Result> results = setResultFromColumnsLength(data, file, backlog);
 
-        if (fileData.size() > 24) {
+        if (data.size() > 24) {
             try {
-                resultsWithData = assignDataToResult(fileData, fileEntity, results);
+                resultsWithData = assignDataToResult(data, fileEntity, results);
             } catch (Exception e) {
                 System.out.println("Assign Data To Result: " + e.getMessage() + " | " + e.getCause());
             }
         }
-        controlCurveList = controlCurveService.setControlCurveFromFileData(fileData, file, backlog);
-        controlCurveListWithData = controlCurveService.setDataToControlCurve(fileData, fileEntity, controlCurveList);
+        controlCurveList = controlCurveService.setControlCurveFromFileData(data, file, backlog);
+        controlCurveListWithData = controlCurveService.setDataToControlCurve(data, fileEntity, controlCurveList);
 
         //Check if any of standard points are above Zeros points
         if (isStandardCpmAboveZero(controlCurveListWithData)) {
@@ -206,7 +205,7 @@ public class ResultService {
         else {
 
             try {
-                resultListWithNg = assignNgPerMl(fileData, controlCurveListWithData, resultsWithData);
+                resultListWithNg = assignNgPerMl(data, controlCurveListWithData, resultsWithData);
             } catch (Exception e) {
                 System.out.println("Exception ng: " + e.getMessage() + " with cause: " + e.getCause());
             }

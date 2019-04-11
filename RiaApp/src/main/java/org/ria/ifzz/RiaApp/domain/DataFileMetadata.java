@@ -36,10 +36,11 @@ public class DataFileMetadata {
 
     private List<String> loadFromFile() throws IOException {
         List<String> metadata = new ArrayList<>();
+        BufferedReader bufferedReader;
         try {
             String line;
             InputStream inputStream = file.getInputStream();
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+            bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
             while ((line = bufferedReader.readLine()) != null) {
                 metadata.add(line);
             }

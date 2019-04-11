@@ -17,8 +17,6 @@ import static org.ria.ifzz.RiaApp.domain.DomainConstants.*;
 @Service
 public class CustomFileReader {
 
-    private List<String> examinationResult = new ArrayList<>();
-
     @Getter
     private String uploadComment = "File content:\n";
     @Getter
@@ -26,13 +24,13 @@ public class CustomFileReader {
 
     /**
      * takes metadata from uploaded file and
-     *
-     * @param data uploaded file
+     * @param metadata uploaded file
      * @return Strings containing data for
      * @throws IOException
      */
-    public List<String> readFromStream(DataFileMetadata data) throws IOException {
-        List<String> streamMetadata = data.getContents().get();
+    public List<String> readFromStream(DataFileMetadata metadata) throws IOException {
+        List<String> examinationResult = new ArrayList<>();
+        List<String> streamMetadata = metadata.getContents().get();
         String hormonePattern = streamMetadata.get(HORMONE_PATTERN);
         hormonePattern = hormonePattern.replace(HORMONE_PATTERN_UNNECESSARY_PART, "");
         examinationResult.add(hormonePattern);
@@ -49,25 +47,23 @@ public class CustomFileReader {
     /**
      * Finds the all word in all entries in the list that matches with the column number
      *
-     * @param data             The list of strings to check
-     * @param columnNumberInData The targeted column to use
+     * @param list         The list of strings to check
+     * @param columnNumber The targeted column to use
      * @return list containing the words of all matching entries
      */
-    public List<String> getMatchingStrings(List<String> data, Integer columnNumberInData) {
+    public List<String> getMatchingStrings(List<String> list, Integer columnNumber) {
+
         List<String> matches = new ArrayList<>();
-        for (String matchData : data) {
-            List<String> dataInLine = Arrays.asList(matchData.split("\\t"));
-            if (dataInLine.size() == 5) {
-                matches.add(dataInLine.get(columnNumberInData));
+        for (String added : list) {
+            List<String> wordInLine = Arrays.asList(added.split("\\t"));
+            if (wordInLine.size() == 5) {
+                if (!wordInLine.isEmpty()) {
+                    matches.add(wordInLine.get(columnNumber));
+                }
             } else {
                 matches.isEmpty();
             }
         }
-        return matches;
-    }
-
-    public List<String> getIndex(List<String> list, Integer columnNumber) {
-        List<String> matches = getMatchingStrings(list, columnNumber);
         return matches;
     }
 }
