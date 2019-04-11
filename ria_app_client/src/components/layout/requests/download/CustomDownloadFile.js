@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { FileService } from "../service/FileService";
-import { getFiles } from "../../actions/filesActions";
+import { getFiles } from "../../../../actions/filesActions";
 import { saveAs } from "file-saver";
 import IconButton from "@material-ui/core/IconButton";
 import { CloudDownloadSharp } from "@material-ui/icons";

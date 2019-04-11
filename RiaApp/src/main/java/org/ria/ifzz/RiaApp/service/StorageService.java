@@ -6,15 +6,15 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Path;
 
 public interface StorageService {
 
     void init();
 
-//    void store(MultipartFile file);
 
-    void store(MultipartFile file, RedirectAttributes redirectAttributes);
+    FileEntity storeAndSaveFileEntity(MultipartFile file, RedirectAttributes redirectAttributes, String username) throws IOException;
 
     Iterable<FileEntity> loadAll();
 
@@ -27,4 +27,5 @@ public interface StorageService {
     FileEntity getByDataId(String dataId) throws FileNotFoundException;
 
     void delete(Long id);
+
 }

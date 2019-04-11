@@ -27,7 +27,7 @@ class Result extends Component {
           <tr>
             <td>{result.samples}</td>
             <td>{result.position}</td>
-            <td>{result.ccpm}</td>
+            <td>{result.cpm}</td>
             <td
               className="mx-auto"
               style={{ backgroundColor: condition ? "#B00020" : "striped" }}

@@ -5,19 +5,26 @@ import { createMuiTheme } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
-import Loading from "../../components/layout/ui/Loading";
+import Loading from "../../ui/Loading";
+import { addFile } from "../../../../actions/addFile";
+import { getFiles } from "../../../../actions/filesActions";
+import compose from "recompose/compose";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import classnames from "classnames";
 
-const styles = theme => createMuiTheme({
-   typography: {
-      useNextVariants: true,
+const styles = theme =>
+  createMuiTheme({
+    typography: {
+      useNextVariants: true
     },
-  root: {
-    flexGrow: 1,
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "flex-end"
-  },
-});
+    root: {
+      flexGrow: 1,
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "flex-end"
+    }
+  });
 
 function TabContainer(props) {
   const { children } = props;
@@ -44,7 +51,6 @@ class AddFile extends Component {
     };
   }
 
-
   handleChange = key => (event, value) => {
     this.setState({
       [key]: value,
@@ -54,9 +60,7 @@ class AddFile extends Component {
 
   uploadFile = event => {
     event.preventDefault();
-
     this.setState({ error: "", msg: "" });
-
     if (!this.state.file) {
       this.setState({ error: "Please upload a file." });
       return;
@@ -69,26 +73,8 @@ class AddFile extends Component {
         image: true
       });
     }
-
-    let data = new FormData();
-    data.append("file", this.state.file);
-    data.append("name", this.state.file.name);
-    console.log(data);
-    fetch("http://localhost:8080/api/files/", {
-      method: "POST",
-      body: data
-    })
-      .then(response => {
-        this.setState({
-          error: "",
-          msg: "Successfully uploaded file",
-          image: false
-        });
-        window.location.reload();
-      })
-      .catch(err => {
-        this.setState({ error: err });
-      });
+    addFile(this.state.file);
+    window.location.reload();
   };
 
   onFileChange = event => {
@@ -99,13 +85,20 @@ class AddFile extends Component {
 
   render() {
     const { theme } = this.props;
+    const { errors } = this.state;
 
     return (
       <Container>
         <br />
         <Paper>
           <TabContainer dir={theme.direction}>
-            <input onChange={this.onFileChange} type="file" />
+            <input
+              className={classnames({
+                "is-invalid": errors
+              })}
+              onChange={this.onFileChange}
+              type="file"
+            />
             <Button
               variant="contained"
               color="default"
@@ -129,6 +122,17 @@ class AddFile extends Component {
   }
 }
 
+AddFile.propTypes = {
+  errors: PropTypes.object.isRequired
+};
+const mapStateToProps = state => ({
+  errors: state.errors
+});
 
-export default
-  withStyles(styles, { withTheme: true })(AddFile);
+export default compose(
+  withStyles(styles, { withTheme: true }),
+  connect(
+    mapStateToProps,
+    { getFiles }
+  )
+)(AddFile);

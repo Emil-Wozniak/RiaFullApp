@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { deleteFileEntity } from "../../../actions/filesActions";
-import CustomDownloadFile from "../../../requests/download/CustomDownloadFile";
+import CustomDownloadFile from "../requests/download/CustomDownloadFile";
 import { Link } from "react-router-dom";
 import Avatar from "@material-ui/core/Avatar";
 import FolderIcon from "@material-ui/icons/Folder";
@@ -36,7 +36,6 @@ class FileEntity extends Component {
               </Link>
             </td>
             <td>{file_entity.contentType}</td>
-            <td>{file_entity.created_date}</td>
             <td>
               <CustomDownloadFile />
               <IconButton

@@ -20,7 +20,6 @@ public class Backlog {
     private Long id;
     private String fileName;
     private String contentType;
-
     private String dataId;
 
     @OneToOne(fetch = FetchType.EAGER)
@@ -35,5 +34,9 @@ public class Backlog {
     @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(cascade = CascadeType.REFRESH, mappedBy = "backlog", orphanRemoval = true)
     private List<ControlCurve> controlCurves = new ArrayList<>();
+
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @OneToMany(cascade = CascadeType.REFRESH, mappedBy = "backlog", orphanRemoval = true)
+    private List<GraphCurve> graphCurveList = new ArrayList<>();
 
 }

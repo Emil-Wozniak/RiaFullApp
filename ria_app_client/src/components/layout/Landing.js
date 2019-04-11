@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { TextFieldsTwoTone } from "@material-ui/icons";
 import IconButton from "@material-ui/core/IconButton";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
@@ -23,7 +22,6 @@ const styles = theme => ({
 
 class Landing extends Component {
   render() {
-    const { classes } = this.props;
     return (
       <div className="landing">
         <div className="container">
@@ -34,7 +32,7 @@ class Landing extends Component {
             color="default"
             href="/dashboard"
           >
-            <TextFieldsTwoTone className={classes.iconHover} style={{ fontSize: 120 }} alt="txt" />
+          <img src={require('./images/pe-trilux.jpeg')} style={{width: '100px', height: '100px'}} alt="pe-trilux"/>
           </IconButton>
         </div>
       </div>

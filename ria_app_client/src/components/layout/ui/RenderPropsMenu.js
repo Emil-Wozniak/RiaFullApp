@@ -1,11 +1,13 @@
-import React from 'react';
-import Button from '@material-ui/core/Button';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import toRenderProps from 'recompose/toRenderProps';
-import withState from 'recompose/withState';
+import React from "react";
+import Button from "@material-ui/core/Button";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
+import toRenderProps from "recompose/toRenderProps";
+import withState from "recompose/withState";
+import { logout } from "../../../actions/securityActions";
+import store from "../../../store";
 
-const WithState = toRenderProps(withState('anchorEl', 'updateAnchorEl', null));
+const WithState = toRenderProps(withState("anchorEl", "updateAnchorEl", null));
 
 function RenderPropsMenu() {
   return (
@@ -15,11 +17,19 @@ function RenderPropsMenu() {
         const handleClose = () => {
           updateAnchorEl(null);
         };
+        const handleRegister = () => {
+          window.location.href = "/register";
+        };
+
+        const handleLogout = () => {
+          store.dispatch(logout());
+          window.location.href = "/";
+        };
 
         return (
           <React.Fragment>
             <Button
-              aria-owns={open ? 'render-props-menu' : undefined}
+              aria-owns={open ? "render-props-menu" : undefined}
               aria-haspopup="true"
               onClick={event => {
                 updateAnchorEl(event.currentTarget);
@@ -27,10 +37,14 @@ function RenderPropsMenu() {
             >
               User
             </Button>
-            <Menu id="render-props-menu" anchorEl={anchorEl} open={open} onClose={handleClose}>
-              <MenuItem onClick={handleClose}>Profile</MenuItem>
-              <MenuItem onClick={handleClose}>My account</MenuItem>
-              <MenuItem onClick={handleClose}>Logout</MenuItem>
+            <Menu
+              id="render-props-menu"
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleClose}
+            >
+              <MenuItem onClick={handleRegister}>Register</MenuItem>
+              <MenuItem onClick={handleLogout}>Logout</MenuItem>
             </Menu>
           </React.Fragment>
         );

@@ -2,7 +2,7 @@ import * as types from "../actions/types";
 
 const initialState = {
   graph_curves: [],
-  graph_curve: {}
+  graph_curve: {},
 };
 
 export default function(state = initialState, action) {

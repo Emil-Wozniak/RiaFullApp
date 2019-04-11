@@ -3,29 +3,26 @@ import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { deleteFileEntity } from "../../../actions/filesActions";
-import { withStyles } from "@material-ui/core/styles";
-const styles = theme => ({
-  root: {
-    flexGrow: 1
-  },
-  paper: {
-    padding: theme.spacing.unit * 2,
-    textAlign: "center",
-    color: theme.palette.text.secondary
-  }
-});
+import { CheckBoxOutlined, CheckBoxOutlineBlank } from "@material-ui/icons";
 
 class ControlCurve extends Component {
   render() {
     const { control_curve } = this.props;
-
+    const condition = control_curve.flagged === false;
     return (
       <React.Fragment>
         <tbody>
           <tr>
-            <td>{control_curve.samples}</td>
             <td>{control_curve.position}</td>
-            <td>{control_curve.ccpm}</td>
+            <td
+              className="mx-auto"
+              style={{ color: condition ? "green" : "red" }}
+            >
+              {control_curve.cpm}
+            </td>
+            <td>
+              {condition ? <CheckBoxOutlineBlank /> : <CheckBoxOutlined />}
+            </td>
             <td />
           </tr>
         </tbody>
@@ -41,7 +38,6 @@ ControlCurve.propTypes = {
 };
 
 export default compose(
-  withStyles(styles),
   connect(
     null,
     { deleteFileEntity }

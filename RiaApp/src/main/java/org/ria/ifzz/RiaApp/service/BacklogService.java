@@ -1,9 +1,10 @@
 package org.ria.ifzz.RiaApp.service;
 
+import org.ria.ifzz.RiaApp.domain.Backlog;
+import org.ria.ifzz.RiaApp.domain.FileEntity;
 import org.ria.ifzz.RiaApp.domain.Result;
 import org.ria.ifzz.RiaApp.exception.FileEntityNotFoundException;
 import org.ria.ifzz.RiaApp.repository.ResultRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.FileNotFoundException;
@@ -11,14 +12,24 @@ import java.io.FileNotFoundException;
 @Service
 public class BacklogService {
 
-    @Autowired
-    private FileEntityService fileEntityService;
+    private final FileEntityService fileEntityService;
+    private final ResultRepository resultRepository;
 
-    @Autowired
-    private ResultRepository resultRepository;
+    public BacklogService(FileEntityService fileEntityService, ResultRepository resultRepository) {
+        this.fileEntityService = fileEntityService;
+        this.resultRepository = resultRepository;
+    }
+
+    public Backlog setBacklog(FileEntity fileEntity) {
+        Backlog backlog = new Backlog();
+        backlog.setFileEntity(fileEntity);
+        backlog.setFileName(fileEntity.getFileName());
+        backlog.setDataId(fileEntity.getDataId());
+        backlog.setContentType(fileEntity.getContentType());
+        return backlog;
+    }
 
     /**
-     *
      * @param dataId unique identifier
      * @return Result from repository if exists
      * @throws FileNotFoundException

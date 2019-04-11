@@ -1,10 +1,12 @@
 package org.ria.ifzz.RiaApp.service;
 
 import org.ria.ifzz.RiaApp.domain.FileEntity;
+import org.ria.ifzz.RiaApp.domain.User;
 import org.ria.ifzz.RiaApp.exception.FileEntityNotFoundException;
 import org.ria.ifzz.RiaApp.exception.StorageException;
 import org.ria.ifzz.RiaApp.exception.StorageFileNotFoundException;
 import org.ria.ifzz.RiaApp.repository.FileEntityRepository;
+import org.ria.ifzz.RiaApp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -15,54 +17,66 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 
 @RestController
 public class FileEntityStorageService implements StorageService {
 
     private final Path rootLocation;
     private final FileEntityRepository fileEntityRepository;
+    private final BacklogService backlogService;
 
     @Autowired
-    public FileEntityStorageService(StorageProperties properties, FileEntityRepository fileEntityRepository) {
+    private UserRepository userRepository;
+
+    @Autowired
+    public FileEntityStorageService(StorageProperties properties, FileEntityRepository fileEntityRepository, BacklogService backlogService, UserRepository userRepository) {
         this.rootLocation = Paths.get(properties.getLocation());
         this.fileEntityRepository = fileEntityRepository;
+        this.backlogService = backlogService;
+        this.userRepository = userRepository;
     }
 
+    /**
+     * @param file               uploaded
+     * @param redirectAttributes page response
+     * @param username           user credentials
+     * @return file_entity object with all necessary contents
+     * @throws IOException if upload is not successful
+     */
     @Override
-    public void store(MultipartFile file, RedirectAttributes redirectAttributes) {
+    public FileEntity storeAndSaveFileEntity(MultipartFile file, RedirectAttributes redirectAttributes, String username) throws IOException {
+        FileEntity fileEntity = new FileEntity(
+                file.getOriginalFilename(),
+                file.getContentType(),
+                file.getBytes());
 
         String filename = StringUtils.cleanPath(file.getOriginalFilename());
+
+        if (fileEntityRepository.findByFileName(filename) != null) {
+            throw new StorageException("File already uploaded: " + filename);
+        }
+        if (filename.contains("..")) {
+            // This is a security check
+            throw new StorageException(
+                    "Cannot store file with relative path outside current directory "
+                            + filename);
+        }
         try {
-            if (fileEntityRepository.findByFileName(filename) != null){
-                throw new StorageException("File already uploaded: " + filename);
+            User user = userRepository.findByUsername(username);
+            fileEntity.setUser(user);
+            fileEntity.setFileOwner(user.getUsername());
+            fileEntity.setDataId(fileEntity.getFileName());
+            if (fileEntity.getId() == null) {
+                fileEntity.setBacklog(backlogService.setBacklog(fileEntity));
             }
-            if (file.isEmpty()) {
-                throw new StorageException("Failed to store empty file " + filename);
-            }
-            if (filename.contains("..")) {
-                // This is a security check
-                throw new StorageException(
-                        "Cannot store file with relative path outside current directory "
-                                + filename);
-            }
-            try (InputStream inputStream = file.getInputStream()) {
-                Files.copy(inputStream, this.rootLocation.resolve(filename),
-                    StandardCopyOption.REPLACE_EXISTING);
-                redirectAttributes.addFlashAttribute("message",
-                        "You successfully uploaded " + file.getOriginalFilename() + "!");
-            }
+            return fileEntityRepository.save(fileEntity);
+        } catch (Exception exception) {
+            throw new StorageException("File already uploaded: " + filename);
         }
-        catch (IOException e) {
-            throw new StorageException("Failed to store file " + filename);
-        }
-        redirectAttributes.addAttribute("message",
-                "File already uploaded: " + filename + "!");
     }
 
     @Override
@@ -82,13 +96,11 @@ public class FileEntityStorageService implements StorageService {
             Resource resource = new UrlResource(file.toUri());
             if (resource.exists() || resource.isReadable()) {
                 return resource;
-            }
-            else {
+            } else {
                 throw new StorageFileNotFoundException(
                         "Could not read file: " + filename);
             }
-        }
-        catch (MalformedURLException e) {
+        } catch (MalformedURLException e) {
             throw new StorageFileNotFoundException("Could not read file: " + filename);
         }
     }
@@ -114,13 +126,14 @@ public class FileEntityStorageService implements StorageService {
         fileEntityRepository.delete(fileEntity);
     }
 
+    /**
+     * Generate directory for uploaded files
+     */
     @Override
     public void init() {
-
         try {
             Files.createDirectories(rootLocation);
-        }
-        catch (IOException exception) {
+        } catch (IOException exception) {
             throw new StorageException("Could not initialize storage");
         }
     }
