@@ -6,4 +6,7 @@ public class DomainConstants {
     public final static String DATA_TARGET_POINT = " \tUnk";
     final static String FILENAME_UNNECESSARY_PART ="C:\\mbw\\results\\";
     final static int FILENAME_LINE = 0;
+    public final static String FILE_CONTENT = "File content:\n";
+    public final static String POSITION_REGEX = "[\\w]";
+    public final static String RESULT_POINTER = " \tUnk";
 }

@@ -3,13 +3,18 @@ package org.ria.ifzz.RiaApp.utils;
 import lombok.Getter;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 import org.apache.commons.math3.util.Precision;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
 public class CountResultUtil {
+
+    protected Logger logger = LoggerFactory.getLogger(getClass());
 
     private Double total;
     private Double zero;
@@ -66,8 +71,7 @@ public class CountResultUtil {
             zero = isControlCurveHasFlag(zero1, zero2, zero3);
 
             binding = nsb - zero;
-            System.out.println("CurveFlagged:");
-            System.out.println("Flagged T: " + total + " | Zero: " + zero + " | NSB: " + nsb + " ==> N - O = " + binding);
+            logger.info("T: " + total + " | Zero: " + zero + " | NSB: " + nsb + " | N - O: " + binding);
         }
         return curveFlagged;
     }
@@ -111,12 +115,10 @@ public class CountResultUtil {
         standardsCPM = new ArrayList<>();
 
         if (standardsCpmFlagged.size() < 8) {
-            System.out.println("\nStandard CPM_FLAG: ");
             for (int i = 8; i < points.size() - 2; i++) {
                 Point point = points.get(i);
                 Double pointValue = point.getValue();
                 standardsCPM.add(pointValue);
-                System.out.println(pointValue + " | " + point.isFlag());
             }
         }
     }
@@ -132,11 +134,11 @@ public class CountResultUtil {
      */
     public void logDose(double[] results) {
         List<Double> standardPattern = new ArrayList<>();
-        System.out.println("\n\nStandard points:" + "\n======================================================");
         for (double point : results) {
             standardPattern.add(point);
         }
         logDoseList = resultMath.logarithmTable2(standardPattern);
+        logger.info("Standard points:" + Arrays.toString(results));
     }
 
     // Table H == %(N-O)
@@ -149,12 +151,20 @@ public class CountResultUtil {
      * @return
      */
     public void bindingPercent() {
-        System.out.println("\n\nbinding percent" + "\n======================================================");
         List<Double> subtraction = resultMath.subtractTablesElement(standardsCPM, zero);
         List<Double> multiplication = resultMath.multiplyList(100.0, subtraction);
         List<Double> result = resultMath.divideTableCeilElements(binding, multiplication); // %Bo-Bg
-        System.out.println("\nBinding percent:");
-        result.forEach(System.out::println);
+        if (result!=null) {
+            for (int i = 0; i < result.size(); i++) {
+                Double pointer;
+                pointer = result.get(i);
+                if (pointer.isNaN() || pointer.isInfinite()) {
+                    logger.warn("Binding percent has infinite or NaN points;");
+                } else {
+                    logger.info("Binding percent: " + i + ": " + pointer);
+                }
+            }
+        }
         bindingPercent = result;
     }
 
@@ -163,17 +173,23 @@ public class CountResultUtil {
     =LOG(H23/(100-H23))
      */
     public void logarithmRealZero() {
-        System.out.println("\n\nLogarithm Real Zero:" + "\n======================================================");
         List<Double> logTable = null;
         try {
             List<Double> subtractPercentNO = resultMath.subtractTableElements(100.0, bindingPercent);
             List<Double> divideTable = resultMath.divisionTable(bindingPercent, subtractPercentNO);
             logTable = resultMath.logarithmTable2(divideTable);
-        } catch (Exception e){
-            System.out.println( e.getMessage() + " " + e.getCause());
+        } catch (Exception e) {
+            System.out.println(e.getMessage() + " " + e.getCause());
         }
-        System.out.println("\nLogarithm Real Zero: ");
-//        logTable.forEach(System.out::println);
+        if (logTable!=null) {
+            for (int i = 0; i < logTable.size(); i++) {
+                if (logTable.get(i).isNaN() || logTable.get(i).isInfinite()) {
+                    logger.warn("Logarithm Real Zero has infinite or NaN points;");
+                } else {
+                    logger.info("Logarithm Real Zero: " + i + ": " + logTable.get(i));
+                }
+            }
+        }
         logarithmRealZeroTable = logTable;
     }
 
@@ -184,14 +200,11 @@ public class CountResultUtil {
     * = sum(N25:N40)/ count(M25:M40)- N19 => regressionParameterB* sum(M25:M40) / count(M25:M40)
     */
     public void countRegressionParameterA() {
-        System.out.println("\n\ncountRegressionParameterA:" +
-                "\n======================================================");
         Double sumLogRealZero = resultMath.sum(logarithmRealZeroTable);
         Double countLogDose = resultMath.count(logDoseList);
-        System.out.println("regressionParameterB: " + regressionParameterB);
         Double sumLogDose = resultMath.sum(logDoseList);
         regressionParameterA = sumLogRealZero / countLogDose - regressionParameterB * sumLogDose / countLogDose;
-        System.out.println("Regression Parameter A = " + regressionParameterA);
+        logger.info("Regression Parameter A = " + regressionParameterA);
     }
 
     /* Excel version:
@@ -202,36 +215,29 @@ public class CountResultUtil {
     * =(COUNT(M25:M40) *SUMPRODUCT(M25:M40;N25:N40) -SUM(M25:M40)*SUM(N25:N40))/(COUNT(M25:M40)*SUMSQ(M25:M40)-(SUM(M25:M40))^2)
      */
     public void countRegressionParameterB() {
-        List<Double> LRZ1 = resultMath.logarithmTable1(logarithmRealZeroTable);
-
-        System.out.println("\n\nregressionParameterB:" +
-                "\n======================================================");
-        Double firstFactor;
-        Double secondFactor;
-        System.out.println("\nFirst factor");
+        List<Double> realZeroPrecision1 = resultMath.logarithmTable1(logarithmRealZeroTable);
+        double firstFactor;
+        double secondFactor;
         Double logDoseCount = resultMath.count(logDoseList);
-        Double sum = resultMath.sumProduct(logDoseList, LRZ1); // logarithmRealZeroTable in this place have to be in first flouting point
+        Double sum = resultMath.sumProduct(logDoseList, realZeroPrecision1); // logarithmRealZeroTable in this place have to be in first flouting point
         Double sumLogDose = resultMath.sum(logDoseList);
         Double sumLogRealZero = resultMath.sum(logarithmRealZeroTable);
-
         firstFactor = (logDoseCount * sum) - (sumLogDose * sumLogRealZero);
-        Double firstFactor2 = Precision.round(firstFactor, 2);
-        System.out.println("First " + firstFactor2);
+        double firstFactorInPrecision2 = Precision.round(firstFactor, 2);
 
-        System.out.println("\nSecond factor");
         Double countSecond = resultMath.count(logDoseList);
         Double sumsqSecondFactor = resultMath.sumsq(logDoseList);
         double sqr = resultMath.sum(logDoseList);
         sqr = Math.pow(sqr, 2);
-        System.out.println("Powered: " + sqr);
 
         secondFactor = countSecond * sumsqSecondFactor - sqr;
-        System.out.println("Second " + secondFactor + "\n");
 
         Double resultSum = firstFactor / secondFactor;
         Double roundResult = Precision.round(resultSum, 4);
         regressionParameterB = roundResult;
-        System.out.println("regressionParameterB result: " + regressionParameterB);
+        logger.info("Regression Parameter B = " + regressionParameterB);
+        logger.info("First factor " + firstFactorInPrecision2 + "\t[count: " + logDoseCount + "\t|sumproduct:  " + sum + "\t\t|sumLogDose: " + sumLogDose + "\t\t|sumLogRealZero: " + sumLogRealZero + "\t]");
+        logger.info("Second factor: " + secondFactor + "\t[count logDose: " + countSecond + "\t|sumsq logDose: " + sumsqSecondFactor + "\t|square logDose: " + sqr + "\t]");
     }
 
     /* Excel version:
@@ -246,15 +252,14 @@ public class CountResultUtil {
      * @return the value of hormone nanograms in the sample
      */
     public Double countResult(Double CPM) {
-        System.out.println("Count Result:" +
-                "\n======================================================");
-        System.out.println("CMP: " + CPM);
-        System.out.println("Zero: " + zero);
-        System.out.println("NSB: " + nsb);
-        System.out.println("Binding: " + binding);
         Double firstPart = ((Math.log10((CPM - zero) * 100 / binding / (100 - (CPM - zero) * 100 / binding)) - regressionParameterA) / regressionParameterB);
         double power = Math.pow(10, firstPart);
         power = Precision.round(power, 2);
+        if (!Double.isNaN(power)) {
+            logger.info("Count Result: [CPM: " + CPM + "\t|\t" + power + " ng\t]");
+        } else {
+            logger.warn("Count Result: [CPM: " + CPM + "\t|\t" + power + " ng\t]");
+        }
         return power;
     }
 
@@ -268,13 +273,14 @@ public class CountResultUtil {
         double correlation = pearsonsCorrelation.correlation(logDoseListArray, logarithmRealZeroArray);
         correlation = Precision.round(correlation, 4);
         double correlationPow = Math.pow(correlation, 2);
-        System.out.println("Correlation: " + correlationPow);
+        logger.info("Correlation: " + correlationPow);
         return correlationPow;
     }
 
     public double setZeroBindingPercent() {
         double zeroBindingPercent = binding * 100 / total;
         zeroBindingPercent = Precision.round(zeroBindingPercent, 2);
+        logger.info("Zero binding percent: " + zeroBindingPercent);
         return zeroBindingPercent;
     }
 }

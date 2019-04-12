@@ -3,6 +3,8 @@ package org.ria.ifzz.RiaApp.service;
 import org.ria.ifzz.RiaApp.domain.*;
 import org.ria.ifzz.RiaApp.repository.ControlCurveRepository;
 import org.ria.ifzz.RiaApp.utils.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.constraints.NotNull;
@@ -10,6 +12,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.ria.ifzz.RiaApp.domain.DomainConstants.FILE_CONTENT;
+import static org.ria.ifzz.RiaApp.domain.DomainConstants.RESULT_POINTER;
 import static org.ria.ifzz.RiaApp.domain.HormonesPattern.CORTISOL_PATTERN;
 
 @RestController
@@ -31,6 +35,8 @@ public class ResultService {
         this.dataAssigner = dataAssigner;
     }
 
+    protected Logger logger = LoggerFactory.getLogger(getClass());
+
     /**
      * takes file store in local disc space
      *
@@ -39,7 +45,7 @@ public class ResultService {
      * @throws IOException
      */
     public List<String> getFileData(DataFileMetadata data) throws IOException {
-        System.out.println(customFileReader.getUploadComment());
+        System.out.println(FILE_CONTENT);
         return customFileReader.readFromStream(data);
     }
 
@@ -47,20 +53,21 @@ public class ResultService {
      * takes fileName of upload file and set specific id for each entities
      * reads given Strings List and create Result entity for each lines of given,
      *
-     * @param fileData pre-cleaned list
+     * @param data pre-cleaned list
      * @param file
      * @return Result entities
      */
-    public List<Result> setResultFromColumnsLength(List<String> fileData,
+    public List<Result> setResultFromColumnsLength(List<String> data,
                                                    @NotNull DataFileMetadata file,
                                                    Backlog backlog) {
 
-        Result result = new Result();
+        new Result();
+        Result result;
         List<Result> results = new ArrayList<>();
-        for (String line : fileData) {
-            if (line.startsWith(" \tUnk")) {
+        for (String dataLine : data) {
+            if (dataLine.startsWith(RESULT_POINTER)) {
                 result = new Result();
-                result.setFileName(fileData.indexOf(line) + "_" + fileUtils.setFileName(file));
+                result.setFileName(data.indexOf(dataLine) + "_" + fileUtils.setFileName(file));
                 result.setBacklog(backlog);
                 results.add(result);
             }
@@ -80,34 +87,34 @@ public class ResultService {
                                            List<Result> results) {
         String fileId = fileEntity.getDataId();
         List<Result> resultsWithData = new ArrayList<>();
-        List<Result> resultList = new ArrayList<>();
+        List<Result> assignedResults = new ArrayList<>();
 
         resultsWithData = dataAssigner.setCpm(fileData, results);
         for (int i = 0; i < resultsWithData.size(); i++) {
             Result result = resultsWithData.get(i);
-            resultList.add(result);
+            assignedResults.add(result);
         }
 
         resultsWithData = dataAssigner.setPosition(fileData, results);
         for (int i = 0; i < resultsWithData.size(); i++) {
             Result result = resultsWithData.get(i);
-            resultList.add(result);
+            assignedResults.add(result);
         }
 
         resultsWithData = dataAssigner.setSamples(fileData, fileId, results);
         for (int i = 0; i < resultsWithData.size(); i++) {
             Result result = resultsWithData.get(i);
-            resultList.add(result);
+            assignedResults.add(result);
         }
-            System.out.println("resultsWithData size: " + resultList.size());
-        return resultList;
+
+        String assignedResultsSize = String.valueOf(assignedResults.size());
+        logger.info("ResultService.assignedResults.size(): "+ assignedResultsSize);
+        return assignedResults;
     }
 
     private void setStandardPattern(List<String> fileData) {
-        // get standard pattern
-        System.out.println("Pattern detected:");
         if (fileData.get(0).equals("KORTYZOL_5_MIN")) {
-            System.out.println(fileData.get(0));
+            logger.info("Pattern detected: " + fileData.get(0));
             countResultUtil.logDose(CORTISOL_PATTERN);
         }
     }
@@ -144,7 +151,6 @@ public class ResultService {
         for (int i = 25; i < list.size(); i++) {
             Result result = results.get(i);
             double point = result.getCpm();
-            System.out.println("Point CPM: " + point);
             double counted = countResultUtil.countResult(point);
             if (Double.isNaN(counted)) {
                 counted = 0.0;

@@ -18,8 +18,6 @@ import static org.ria.ifzz.RiaApp.domain.DomainConstants.*;
 public class CustomFileReader {
 
     @Getter
-    private String uploadComment = "File content:\n";
-    @Getter
     private String positionRegex = "[\\w]";
 
     /**
