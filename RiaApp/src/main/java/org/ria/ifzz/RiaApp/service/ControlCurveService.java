@@ -8,6 +8,8 @@ import org.ria.ifzz.RiaApp.exception.FileEntityNotFoundException;
 import org.ria.ifzz.RiaApp.repository.ControlCurveRepository;
 import org.ria.ifzz.RiaApp.utils.CustomFileReader;
 import org.ria.ifzz.RiaApp.utils.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
@@ -31,6 +33,8 @@ public class ControlCurveService {
         this.fileUtils = fileUtils;
         this.fileEntityService = fileEntityService;
     }
+
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     public List<ControlCurve> setControlCurveFromFileData(List<String> fileData,
                                                           @NotNull DataFileMetadata file,
@@ -72,13 +76,12 @@ public class ControlCurveService {
             String cpmString = CPMs.get(i).toString();
             Double cpmInteger = Double.parseDouble(cpmString);
             controlCurve.setCpm(cpmInteger);
-            System.out.println(" \tControl Curve CPM value: " + controlCurve.getCpm());
+            logger.info("Control Curve CPM value: " + controlCurve.getCpm());
             controlCurveList.add(controlCurve);
         }
 
         //Check if NSBs or Zeros have too large spread and flag those which are
         if (!controlCurveList.isEmpty()) {
-            System.out.println("Check: " + controlCurveList.size());
             isNSBsZEROsSpreadTooLarge(2, 3, 4, controlCurveList, 10);
             isNSBsZEROsSpreadTooLarge(5, 6, 7, controlCurveList, 10);
             isPatternPointsSpreadTooLarge(controlCurveList);
@@ -160,6 +163,7 @@ public class ControlCurveService {
 
     /**
      * takes list elements and define if any of them has CPM value above any of NSBs CPM
+     *
      * @param controlCurveList list of Control Curve points
      */
     private void setPatternFlag(List<ControlCurve> controlCurveList) {
@@ -191,13 +195,13 @@ public class ControlCurveService {
         if (a - b != 0 || b - c != 0 || c - a != 0) {
             if ((a - b) > (b / percent) || (a - c) > (c / percent)) {
                 first.setFlagged(true);
-                System.out.println(a + " flagged " + first.isFlagged());
+                logger.warn(first.getCpm() + " flagged " + first.isFlagged());
             } else if ((b - a) > (a / percent) || (b - c) > (c / percent)) {
                 second.setFlagged(true);
-                System.out.println(b + " flagged " + second.isFlagged());
+                logger.warn(second.getCpm() + " flagged " + second.isFlagged());
             } else if ((c - b) > (b / percent) || (c - a) > (a / percent)) {
                 third.setFlagged(true);
-                System.out.println(c + " flagged " + third.isFlagged());
+                logger.warn(third.getCpm() + " flagged " + third.isFlagged());
             }
         }
     }

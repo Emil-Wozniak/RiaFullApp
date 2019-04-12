@@ -35,7 +35,7 @@ public class ResultService {
         this.dataAssigner = dataAssigner;
     }
 
-    protected Logger logger = LoggerFactory.getLogger(getClass());
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
      * takes file store in local disc space
@@ -176,7 +176,6 @@ public class ResultService {
         }
     }
 
-
     public List<Result> setDataToResult(@NotNull DataFileMetadata file,
                                         List<String> data,
                                         Backlog backlog,
@@ -192,7 +191,7 @@ public class ResultService {
             try {
                 resultsWithData = assignDataToResult(data, fileEntity, results);
             } catch (Exception e) {
-                System.out.println("Assign Data To Result: " + e.getMessage() + " | " + e.getCause());
+                logger.error("Assign Data To Result: " + e.getMessage() + " | " + e.getCause());
             }
         }
         controlCurveList = controlCurveService.setControlCurveFromFileData(data, file, backlog);
@@ -213,7 +212,7 @@ public class ResultService {
             try {
                 resultListWithNg = assignNgPerMl(data, controlCurveListWithData, resultsWithData);
             } catch (Exception e) {
-                System.out.println("Exception ng: " + e.getMessage() + " with cause: " + e.getCause());
+                logger.error("Exception ng: " + e.getMessage() + " with cause: " + e.getCause());
             }
             controlCurveRepository.saveAll(controlCurveListWithData);
             return resultListWithNg;
@@ -234,7 +233,7 @@ public class ResultService {
             controlCurve = controlCurves.get(i);
             if (controlCurve.isFlagged()) {
                 checker = true;
-                System.out.println("Standard point with ID: " + controlCurve.getId() + " with CPM value " + controlCurve.getCpm() + " are above zero ");
+                logger.warn("Standard point with CPM value " + controlCurve.getCpm() + " are above zero ");
             }
         }
         isAbove = checker;

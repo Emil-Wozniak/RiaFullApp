@@ -6,6 +6,8 @@ import org.ria.ifzz.RiaApp.repository.GraphCurveLinesRepository;
 import org.ria.ifzz.RiaApp.repository.GraphCurveRepository;
 import org.ria.ifzz.RiaApp.utils.CountResultUtil;
 import org.ria.ifzz.RiaApp.utils.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +36,8 @@ public class GraphCurveService {
         this.graphCurveLinesRepository = graphCurveLinesRepository;
     }
 
+    private Logger logger = LoggerFactory.getLogger(getClass());
+
     /**
      * //     * @param listX      logDose list
      * //     * @param listY      Logarithm Real Zero list
@@ -58,7 +62,7 @@ public class GraphCurveService {
                 graphCurveLinesList.add(graphCurveLines);
             }
         } catch (Exception e) {
-            System.out.println("setCoordinates(): " + e.getMessage() + " | Cause: " + e.getCause());
+            logger.error(GraphCurveService.class.getName()+".setGraphCurve() msg:" + e.getMessage() + " and cause: " + e.getCause());
         }
         return graphCurveLinesList;
     }
@@ -80,7 +84,7 @@ public class GraphCurveService {
             Double binding = countResultUtil.setZeroBindingPercent();
             graphCurve.setZeroBindingPercent(binding);
         } catch (Exception e) {
-            System.out.println("setGraphCurve(): " + e.getMessage() + " | Cause: " + e.getCause());
+            logger.error(GraphCurveService.class.getName()+".setGraphCurve() msg: " + e.getMessage() + " and cause: " + e.getCause());
         }
         return graphCurve;
     }
