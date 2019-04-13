@@ -16,7 +16,7 @@ public class GraphCurve {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Double r = null; // Correlation
+    private Double correlation = null;
     private String fileName;
     private String dataId;
     private Double zeroBindingPercent = null;

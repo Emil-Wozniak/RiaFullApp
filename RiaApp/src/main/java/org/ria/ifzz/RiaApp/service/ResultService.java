@@ -94,21 +94,19 @@ public class ResultService {
             Result result = resultsWithData.get(i);
             assignedResults.add(result);
         }
-
-        resultsWithData = dataAssigner.setPosition(fileData, results);
-        for (int i = 0; i < resultsWithData.size(); i++) {
-            Result result = resultsWithData.get(i);
-            assignedResults.add(result);
-        }
-
         resultsWithData = dataAssigner.setSamples(fileData, fileId, results);
         for (int i = 0; i < resultsWithData.size(); i++) {
             Result result = resultsWithData.get(i);
             assignedResults.add(result);
         }
 
+        resultsWithData = dataAssigner.setPosition(fileData, results);
+        for (int i = 0; i < resultsWithData.size(); i++) {
+            Result result = resultsWithData.get(i);
+            assignedResults.add(result);
+        }
         String assignedResultsSize = String.valueOf(assignedResults.size());
-        logger.info("ResultService.assignedResults.size(): "+ assignedResultsSize);
+        logger.info("ResultService.assignedResults.size(): " + assignedResultsSize);
         return assignedResults;
     }
 
@@ -194,6 +192,7 @@ public class ResultService {
                 logger.error("Assign Data To Result: " + e.getMessage() + " | " + e.getCause());
             }
         }
+
         controlCurveList = controlCurveService.setControlCurveFromFileData(data, file, backlog);
         controlCurveListWithData = controlCurveService.setDataToControlCurve(data, fileEntity, controlCurveList);
 
@@ -208,13 +207,17 @@ public class ResultService {
         }
         //is they aren't ng will be set to results
         else {
-
             try {
                 resultListWithNg = assignNgPerMl(data, controlCurveListWithData, resultsWithData);
             } catch (Exception e) {
                 logger.error("Exception ng: " + e.getMessage() + " with cause: " + e.getCause());
             }
             controlCurveRepository.saveAll(controlCurveListWithData);
+//            try{
+                dataAssigner.setHormoneAverage(resultListWithNg);
+//            } catch (Exception e) {
+//                logger.error("Exception average: " + e.getMessage() + " with cause: " + e.getCause());
+//            }
             return resultListWithNg;
         }
     }

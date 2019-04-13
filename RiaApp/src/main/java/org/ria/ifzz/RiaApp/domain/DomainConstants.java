@@ -9,4 +9,5 @@ public class DomainConstants {
     public final static String FILE_CONTENT = "File content:\n";
     public final static String POSITION_REGEX = "[\\w]";
     public final static String RESULT_POINTER = " \tUnk";
+    public final static int FILEDATA_RESULT_LINE_POINTER = 24;
 }

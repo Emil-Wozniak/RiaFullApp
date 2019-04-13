@@ -38,12 +38,6 @@ public class GraphCurveService {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    /**
-     * //     * @param listX      logDose list
-     * //     * @param listY      Logarithm Real Zero list
-     *
-     * @param graphCurve
-     */
     public List<GraphCurveLines> setCoordinates(GraphCurve graphCurve, Backlog backlog) {
         List<Double> listX = countResultUtil.getLogDoseList();
         List<Double> listY = countResultUtil.getLogarithmRealZeroTable();
@@ -62,15 +56,11 @@ public class GraphCurveService {
                 graphCurveLinesList.add(graphCurveLines);
             }
         } catch (Exception e) {
-            logger.error(GraphCurveService.class.getName()+".setGraphCurve() msg:" + e.getMessage() + " and cause: " + e.getCause());
+            logger.error(GraphCurveService.class.getName() + ".setGraphCurve() msg:" + e.getMessage() + " and cause: " + e.getCause());
         }
         return graphCurveLinesList;
     }
 
-    /**
-     * @param file upload file
-     * @return list of point for graphical curve, each point has set id(fileName) and set points x, y
-     */
     public GraphCurve setGraphCurve(DataFileMetadata file, FileEntity fileEntity, Backlog backlog) {
         GraphCurve graphCurve = new GraphCurve();
         try {
@@ -78,13 +68,13 @@ public class GraphCurveService {
             graphCurve.setFileName(fileUtils.setFileName(file));
             graphCurve.setDataId(fileId);
             graphCurve.setBacklog(backlog);
-            Double r;
-            r = countResultUtil.setCorrelation();
-            graphCurve.setR(r);
+            Double correlation;
+            correlation = countResultUtil.setCorrelation();
+            graphCurve.setCorrelation(correlation);
             Double binding = countResultUtil.setZeroBindingPercent();
             graphCurve.setZeroBindingPercent(binding);
         } catch (Exception e) {
-            logger.error(GraphCurveService.class.getName()+".setGraphCurve() msg: " + e.getMessage() + " and cause: " + e.getCause());
+            logger.error(GraphCurveService.class.getName() + ".setGraphCurve() msg: " + e.getMessage() + " and cause: " + e.getCause());
         }
         return graphCurve;
     }

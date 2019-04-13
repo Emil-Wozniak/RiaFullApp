@@ -13,16 +13,18 @@ public class Result {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id = null;
-    Integer samples = null;
-    String position = "";
-    Double cpm = null;
-    String fileName = "";
-    String dataId = "";
+    private Long id = null;
+    private Integer samples = null;
+    private String position = "";
+    private Double cpm = null;
+    private String fileName = "";
+    private String dataId = "";
     private Double ng;
+    private Double hormoneAverage = null;
+
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="backlog_id", updatable = false, nullable = false)
+    @JoinColumn(name = "backlog_id", updatable = false, nullable = false)
     @JsonIgnore
     private Backlog backlog;
 }
