@@ -271,8 +271,8 @@ public class CountResultUtil {
             logarithmRealZeroArray[i] = logarithmRealZeroTable.get(i);
         PearsonsCorrelation pearsonsCorrelation = new PearsonsCorrelation();
         double correlation = pearsonsCorrelation.correlation(logDoseListArray, logarithmRealZeroArray);
-        correlation = Precision.round(correlation, 4);
         double correlationPow = Math.pow(correlation, 2);
+        correlationPow = Precision.round(correlationPow, 6);
         logger.info("Correlation: " + correlationPow);
         return correlationPow;
     }

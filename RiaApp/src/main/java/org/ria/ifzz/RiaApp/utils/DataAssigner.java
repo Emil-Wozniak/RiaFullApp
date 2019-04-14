@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.ria.ifzz.RiaApp.domain.DomainConstants.FILEDATA_RESULT_LINE_POINTER;
 import static org.ria.ifzz.RiaApp.utils.EvenOdd.isOdd;
@@ -79,15 +81,16 @@ public class DataAssigner {
     }
 
     public List<Result> setHormoneAverage(List<Result> results) {
+        List<Result> resultSorted;
         List<Result> averageResults = new ArrayList<>();
         Result[] currentCalculatedResults = new Result[2];
         double ngAverage;
         double positionA = 0.0;
         double positionB;
 
+        resultSorted = results.stream().sorted(Comparator.comparing(Result::getSamples)).collect(Collectors.toList());
         for (int currentResult = 0; currentResult < results.size() - 1; currentResult++) {
-
-            Result result = results.get(currentResult);
+            Result result = resultSorted.get(currentResult);
             if (currentCalculatedResults[0] == null) {
                 currentCalculatedResults[0] = result;
                 positionA = currentCalculatedResults[0].getNg();
@@ -96,7 +99,9 @@ public class DataAssigner {
                 positionB = currentCalculatedResults[1].getNg();
                 ngAverage = (positionA + positionB) / 2;
                 ngAverage = Precision.round(ngAverage, 4);
-                System.out.println("(A: "+positionA + " + B: " + positionB + ") / 2 = " + ngAverage);
+                if (!isNgAverageCorrect(ngAverage, positionA, positionB)){
+                    logger.warn("(A: " + positionA + " + B: " + positionB + ") / 2 = " + ngAverage);
+                }
                 currentCalculatedResults[0].setHormoneAverage(ngAverage);
                 currentCalculatedResults[1].setHormoneAverage(ngAverage);
                 averageResults.add(currentCalculatedResults[0]);
@@ -106,5 +111,10 @@ public class DataAssigner {
             }
         }
         return averageResults;
+    }
+
+    private boolean isNgAverageCorrect(double ngAverage, double positionA, double positionB) {
+        double checking = (positionA + positionB);
+        return checking > ngAverage /10;
     }
 }

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import ChartistGraph from "react-chartist";
 import Chartist from "chartist";
-import { Container, Table } from "reactstrap";
+import { Table } from "reactstrap";
 import Paper from "@material-ui/core/Paper";
 
 var thStyle = {
@@ -38,7 +38,7 @@ class GraphCurvesContainer extends Component {
 
     const { graph_curves_prop } = this.props;
 
-    var r = [];
+    var correlation = [];
     var graph_coordinates = [];
     let varX = [];
     let varY1 = [];
@@ -77,7 +77,7 @@ class GraphCurvesContainer extends Component {
     let varBinding = [];
     if (graph_curves_prop.length > 0) {
       graph_curves_prop.sortAttr("id");
-      r.push(graph_curves_prop[0].r);
+      correlation.push(graph_curves_prop[0].correlation);
     }
     if (graph_curves_prop.length > 0) {
       graph_curves_prop.sortAttr("id");
@@ -121,7 +121,11 @@ class GraphCurvesContainer extends Component {
     };
 
     const isGraphPresent = graph_curves_prop => {
-      if (graph_curves_prop.length < 1 || graph_curves_prop[0].r === null) {
+      if (
+        graph_curves_prop.length < 1 ||
+        graph_curves_prop[0].correlation === null ||
+        graph_curves_prop[0].zeroBindingPercent === null
+      ) {
         return (
           <div className="alert alert-danger text-center" role="alert">
             No curve
@@ -149,7 +153,7 @@ class GraphCurvesContainer extends Component {
               <tbody>
                 <tr>
                   <td>
-                    <p style={tdStyle}>{r[0]}</p>
+                    <p style={tdStyle}>{correlation[0]}</p>
                   </td>
                   <td>
                     <p style={tdStyle}>{varBinding[0]}</p>

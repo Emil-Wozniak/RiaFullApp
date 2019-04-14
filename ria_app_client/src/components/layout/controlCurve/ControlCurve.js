@@ -23,7 +23,8 @@ class ControlCurve extends Component {
             <td>
               {condition ? <CheckBoxOutlineBlank /> : <CheckBoxOutlined />}
             </td>
-            <td />
+            <td/>
+            <td/>
           </tr>
         </tbody>
       </React.Fragment>

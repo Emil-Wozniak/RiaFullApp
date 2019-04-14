@@ -13,27 +13,97 @@ const styles = theme => ({
     padding: theme.spacing.unit * 2,
     textAlign: "center",
     color: theme.palette.text.secondary
-  }
+  },
 });
 
 class Result extends Component {
   render() {
     const { result } = this.props;
     const condition = result.ng === 0;
+    const positionCondition = result.position % 2 === 0;
+
+    let isConditionTrue;
+    let isOdd;
+
+    const position = (result)=>{
+      if (condition) {
+        return (
+          <td
+          className="mx-auto" 
+          style={{ backgroundColor: condition ? "#f05545" : "striped" }}
+        >
+          {result.ng}
+        </td>
+        )
+      } else{
+        return(
+          <td
+              className="mx-auto"
+              style={{
+                backgroundColor: positionCondition ? "#e5ffff" : "#fbfffc"
+              }}
+            >
+              {result.ng}
+            </td>
+        )
+      }
+    }
+
+    const odd = (result) => {
+      if(result.samples%2 === 1){
+        return(
+          <td
+            className="mx-auto"
+            style={{
+              backgroundColor: positionCondition ? "#e5ffff" : "#fbfffc"
+            }}
+          >{result.hormoneAverage}</td>
+        )
+      } else{
+        return(
+          <td
+            className="mx-auto"
+            style={{
+              backgroundColor: positionCondition ? "#e5ffff" : "#fbfffc"
+            }}
+          ></td>
+        )
+      }
+    }
+
+    isConditionTrue = position(result);
+    isOdd = odd(result);
 
     return (
       <React.Fragment>
         <tbody>
           <tr>
-            <td>{result.samples}</td>
-            <td>{result.position}</td>
-            <td>{result.cpm}</td>
             <td
               className="mx-auto"
-              style={{ backgroundColor: condition ? "#B00020" : "striped" }}
+              style={{
+                backgroundColor: positionCondition ? "#e5ffff" : "#fbfffc"
+              }}
             >
-              {result.ng}
+              {result.samples}
             </td>
+            <td
+              className="mx-auto"
+              style={{
+                backgroundColor: positionCondition ? "#e5ffff" : "#fbfffc"
+              }}
+            >
+              {result.position}
+            </td>
+            <td
+              className="mx-auto"
+              style={{
+                backgroundColor: positionCondition ? "#e5ffff" : "#fbfffc"
+              }}
+            >
+              {result.cpm}
+            </td>
+            {isConditionTrue}
+            {isOdd}
           </tr>
         </tbody>
       </React.Fragment>

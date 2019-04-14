@@ -56,19 +56,16 @@ Array.prototype.sortAttr = function(attr, reverse) {
 };
 
 class Backlog extends Component {
-
   render() {
     const { control_curves_prop } = this.props;
     const { results_prop } = this.props;
 
     control_curves_prop.sortAttr("id");
     results_prop.sortAttr("id");
-    
-    const control_curves = control_curves_prop
-      // .sort((a, b) => a.samples > b.samples)
-      .map(control_curve => (
-        <ControlCurve key={control_curve} control_curve={control_curve} />
-      ));
+
+    const control_curves = control_curves_prop.map(control_curve => (
+      <ControlCurve key={control_curve} control_curve={control_curve} />
+    ));
 
     const results = results_prop
       .sort((a, b) => a.samples > b.samples)
@@ -92,12 +89,14 @@ class Backlog extends Component {
             </Row>
           </Container>
           <Table striped id="file_data">
-            <h4>Control Curve:</h4>
+            <br />
+            <h5>Control Curve:</h5>
             <thead>
               <tr>
                 <th>position</th>
-                <th>CPM:</th>
-                <th>Flagged:</th>
+                <th>cpm</th>
+                <th>flag</th>
+                <th />
                 <th />
               </tr>
             </thead>
@@ -106,10 +105,11 @@ class Backlog extends Component {
             <h5>Results:</h5>
             <thead>
               <tr>
-                <th>sample:</th>
-                <th>position</th>
-                <th>CPM:</th>
-                <th>ng</th>
+                <th>sample</th>
+                <th>&#8470;</th>
+                <th>cpm</th>
+                <th>&micro;g</th>
+                <th>x&#772;</th>
               </tr>
             </thead>
             {results}
