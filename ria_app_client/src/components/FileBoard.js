@@ -57,6 +57,7 @@ class FileBoard extends Component {
             <Backlog
               results_prop={results}
               control_curves_prop={control_curves}
+              graph_curves_prop={graph_curves} 
             />
           </React.Fragment>
         );

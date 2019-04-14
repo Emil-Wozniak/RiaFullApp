@@ -9,9 +9,29 @@ class ControlCurve extends Component {
   render() {
     const { control_curve } = this.props;
     const condition = control_curve.flagged === false;
-    return (
-      <React.Fragment>
-        <tbody>
+    const { graph_curves } = this.props;
+
+    const isCorrelationPresent = graph_curves => {
+      if (graph_curves[0].correlation === null) {
+        return (
+          <tbody>
+          <tr>
+            <td>{control_curve.position}</td>
+            <td
+              className="mx-auto"
+              style={{ color: condition ? "green" : "red" }}
+            >
+              {control_curve.cpm}
+            </td>
+            <td>
+              {condition ? <CheckBoxOutlineBlank /> : <CheckBoxOutlined />}
+            </td>
+          </tr>
+        </tbody>
+        );
+      } else {
+        return (
+          <tbody>
           <tr>
             <td>{control_curve.position}</td>
             <td
@@ -27,6 +47,16 @@ class ControlCurve extends Component {
             <td/>
           </tr>
         </tbody>
+        );
+      }
+    };
+
+    const present = isCorrelationPresent(graph_curves);
+
+    return (
+      <React.Fragment>
+      {present}
+       
       </React.Fragment>
     );
   }

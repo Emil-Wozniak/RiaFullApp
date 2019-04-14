@@ -13,7 +13,7 @@ const styles = theme => ({
     padding: theme.spacing.unit * 2,
     textAlign: "center",
     color: theme.palette.text.secondary
-  },
+  }
 });
 
 class Result extends Component {
@@ -22,92 +22,102 @@ class Result extends Component {
     const condition = result.ng === 0;
     const positionCondition = result.position % 2 === 0;
 
+    let positionConditionStyle = {
+      backgroundColor: positionCondition ? "#e5ffff" : "#fbfffc"
+    };
     let isConditionTrue;
     let isOdd;
+    let isCorrelationPresent;
 
-    const position = (result)=>{
+    const position = result => {
       if (condition) {
         return (
           <td
-          className="mx-auto" 
-          style={{ backgroundColor: condition ? "#f05545" : "striped" }}
-        >
-          {result.ng}
-        </td>
-        )
-      } else{
-        return(
-          <td
-              className="mx-auto"
-              style={{
-                backgroundColor: positionCondition ? "#e5ffff" : "#fbfffc"
-              }}
-            >
-              {result.ng}
-            </td>
-        )
-      }
-    }
-
-    const odd = (result) => {
-      if(result.samples%2 === 1){
-        return(
+            className="mx-auto"
+            style={{ backgroundColor: condition ? "#f05545" : "striped" }}
+          >
+            {result.ng}
+          </td>
+        );
+      } else {
+        return (
           <td
             className="mx-auto"
             style={{
               backgroundColor: positionCondition ? "#e5ffff" : "#fbfffc"
             }}
-          >{result.hormoneAverage}</td>
-        )
-      } else{
-        return(
+          >
+            {result.ng}
+          </td>
+        );
+      }
+    };
+
+    const odd = result => {
+      if (result.samples % 2 === 1) {
+        return (
+          <td className="mx-auto" style={positionConditionStyle}>
+            {result.hormoneAverage}
+          </td>
+        );
+      } else {
+        return (
           <td
             className="mx-auto"
             style={{
               backgroundColor: positionCondition ? "#e5ffff" : "#fbfffc"
             }}
-          ></td>
-        )
+          />
+        );
       }
-    }
-
+    };
     isConditionTrue = position(result);
     isOdd = odd(result);
 
-    return (
-      <React.Fragment>
-        <tbody>
-          <tr>
-            <td
-              className="mx-auto"
-              style={{
-                backgroundColor: positionCondition ? "#e5ffff" : "#fbfffc"
-              }}
-            >
-              {result.samples}
-            </td>
-            <td
-              className="mx-auto"
-              style={{
-                backgroundColor: positionCondition ? "#e5ffff" : "#fbfffc"
-              }}
-            >
-              {result.position}
-            </td>
-            <td
-              className="mx-auto"
-              style={{
-                backgroundColor: positionCondition ? "#e5ffff" : "#fbfffc"
-              }}
-            >
-              {result.cpm}
-            </td>
-            {isConditionTrue}
-            {isOdd}
-          </tr>
-        </tbody>
-      </React.Fragment>
-    );
+    const correlationPresent = result => {
+      if (result.ng === null) {
+        return (
+          <React.Fragment>
+            <tbody>
+              <tr>
+                <td className="mx-auto" style={positionConditionStyle}>
+                  {result.samples}
+                </td>
+                <td className="mx-auto" style={positionConditionStyle}>
+                  {result.position}
+                </td>
+                <td className="mx-auto" style={positionConditionStyle}>
+                  {result.cpm}
+                </td>
+              </tr>
+            </tbody>
+          </React.Fragment>
+        );
+      } else {
+        return (
+          <React.Fragment>
+            <tbody>
+              <tr>
+                <td className="mx-auto" style={positionConditionStyle}>
+                  {result.samples}
+                </td>
+                <td className="mx-auto" style={positionConditionStyle}>
+                  {result.position}
+                </td>
+                <td className="mx-auto" style={positionConditionStyle}>
+                  {result.cpm}
+                </td>
+                {isConditionTrue}
+                {isOdd}
+              </tr>
+            </tbody>
+          </React.Fragment>
+        );
+      }
+    };
+    isCorrelationPresent = correlationPresent(result);
+
+    return <React.Fragment>{isCorrelationPresent}</React.Fragment>;
   }
 }
 

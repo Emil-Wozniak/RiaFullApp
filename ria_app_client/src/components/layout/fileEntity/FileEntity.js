@@ -37,7 +37,6 @@ class FileEntity extends Component {
             </td>
             <td>{file_entity.contentType}</td>
             <td>
-              <CustomDownloadFile />
               <IconButton
                 onClick={this.onDeleteClick.bind(this, file_entity.id)}
               >

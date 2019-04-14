@@ -59,38 +59,49 @@ class Backlog extends Component {
   render() {
     const { control_curves_prop } = this.props;
     const { results_prop } = this.props;
+    const { graph_curves_prop } = this.props;
 
     control_curves_prop.sortAttr("id");
     results_prop.sortAttr("id");
 
     const control_curves = control_curves_prop.map(control_curve => (
-      <ControlCurve key={control_curve} control_curve={control_curve} />
+      <ControlCurve key={control_curve} control_curve={control_curve} graph_curves={graph_curves_prop} />
     ));
 
     const results = results_prop
       .sort((a, b) => a.samples > b.samples)
       .map((result, i) => <Result key={i} result={result} />);
 
-    return (
-      <MuiThemeProvider theme={theme}>
-        <Paper classes={{ paper: "paper" }}>
-          <Container>
-            <Row>
-              <IconButton href="/dashboard">
-                <ArrowBack />
-              </IconButton>
-              <ReactToExcel
-                className="fa fa-download fa-2x float-center"
-                table="file_data"
-                filename="file_data"
-                sheet="sheet 1"
-                buttonText=""
-              />
-            </Row>
-          </Container>
+    const isCorrelationPresent = graph_curves_prop => {
+      if (graph_curves_prop[0].correlation === null) {
+        return (
           <Table striped id="file_data">
             <br />
             <h5>Control Curve:</h5>
+            <thead>
+              <tr>
+                <th>position</th>
+                <th>cpm</th>
+                <th>flag</th>
+              </tr>
+            </thead>
+            {control_curves}
+            <br />
+            <h5>Results:</h5>
+            <thead>
+              <tr>
+                <th>sample</th>
+                <th>&#8470;</th>
+                <th>cpm</th>
+              </tr>
+            </thead>
+            {results}
+          </Table>
+        );
+      } else {
+        return (
+          <Table striped id="file_data">
+            <br/>
             <thead>
               <tr>
                 <th>position</th>
@@ -114,6 +125,29 @@ class Backlog extends Component {
             </thead>
             {results}
           </Table>
+        );
+      }
+    };
+
+    const isNgPresent = isCorrelationPresent(graph_curves_prop);
+    return (
+      <MuiThemeProvider theme={theme}>
+        <Paper classes={{ paper: "paper" }}>
+          <Container>
+            <Row>
+              <IconButton href="/dashboard">
+                <ArrowBack />
+              </IconButton>
+              <ReactToExcel
+                className="fa fa-download fa-2x float-center"
+                table="file_data"
+                filename="file_data"
+                sheet="sheet 1"
+                buttonText=""
+              />
+            </Row>
+          </Container>
+          {isNgPresent}
         </Paper>
       </MuiThemeProvider>
     );
