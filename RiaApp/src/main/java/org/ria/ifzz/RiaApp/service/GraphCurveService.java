@@ -15,6 +15,11 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
+
+import static org.ria.ifzz.RiaApp.domain.HormonesPattern.CORTISOL_PATTERN;
 
 @Service
 public class GraphCurveService {
@@ -38,14 +43,16 @@ public class GraphCurveService {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    public List<GraphCurveLines> setCoordinates(GraphCurve graphCurve, Backlog backlog) {
+    public List<GraphCurveLines> setCoordinates(GraphCurve graphCurve, Backlog backlog,List<String> fileData ) {
         List<Double> listX = countResultUtil.getLogDoseList();
         List<Double> listY = countResultUtil.getLogarithmRealZeroTable();
+        List<Double> patternPoints = setStandardPattern(fileData);
         try {
             graphCurveLinesList = new ArrayList<>();
             for (int i = 0; i < listX.size(); i++) {
                 double x = listX.get(i);
                 double y = listY.get(i);
+                double patternPoint = patternPoints.get(i);
                 GraphCurveLines graphCurveLines = new GraphCurveLines();
                 graphCurveLines.setX(x);
                 graphCurveLines.setY(y);
@@ -53,6 +60,7 @@ public class GraphCurveService {
                 graphCurveLines.setFileName(graphCurve.getFileName());
                 graphCurveLines.setBacklog(backlog);
                 graphCurveLines.setGraphCurve(graphCurve);
+                graphCurveLines.setStandard(patternPoint);
                 graphCurveLinesList.add(graphCurveLines);
             }
         } catch (Exception e) {
@@ -68,11 +76,12 @@ public class GraphCurveService {
             graphCurve.setFileName(fileUtils.setFileName(file));
             graphCurve.setDataId(fileId);
             graphCurve.setBacklog(backlog);
-            Double correlation;
-            correlation = countResultUtil.setCorrelation();
+            Double correlation = countResultUtil.setCorrelation();
             graphCurve.setCorrelation(correlation);
             Double binding = countResultUtil.setZeroBindingPercent();
             graphCurve.setZeroBindingPercent(binding);
+            Double regressionParameterB = countResultUtil.getRegressionParameterB();
+            graphCurve.setRegressionParameterB(regressionParameterB);
         } catch (Exception e) {
             logger.error(GraphCurveService.class.getName() + ".setGraphCurve() msg: " + e.getMessage() + " and cause: " + e.getCause());
         }
@@ -92,5 +101,16 @@ public class GraphCurveService {
             throw new FileEntityNotFoundException("File with ID: '" + fileName + "' not found");
         }
         return graphCurveLines;
+    }
+
+    private List<Double> setStandardPattern(List<String> fileData) {
+        List<Double> hormonePattern = new ArrayList<>();
+        if (fileData.get(0).equals("KORTYZOL_5_MIN")) {
+            logger.info("Pattern detected: " + fileData.get(0));
+            hormonePattern = DoubleStream.of(CORTISOL_PATTERN).boxed().collect(
+                    Collectors.toCollection(ArrayList::new));
+
+        }
+        return hormonePattern;
     }
 }

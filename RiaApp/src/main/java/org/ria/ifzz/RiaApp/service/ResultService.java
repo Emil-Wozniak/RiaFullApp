@@ -61,7 +61,6 @@ public class ResultService {
                                                    @NotNull DataFileMetadata file,
                                                    Backlog backlog) {
 
-        new Result();
         Result result;
         List<Result> results = new ArrayList<>();
         for (String dataLine : data) {

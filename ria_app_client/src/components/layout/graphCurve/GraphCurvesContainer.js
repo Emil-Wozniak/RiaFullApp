@@ -44,6 +44,11 @@ class GraphCurvesContainer extends Component {
     let varY1 = [];
     let varY2 = [];
     let varAverage = [];
+    let slope = [];
+
+    for (let i = 0; i < graph_curves_prop.length; i++) {
+      slope = graph_curves_prop[i].regressionParameterB;
+    }
 
     for (let i = 0; i < graph_curves_prop.length; i++) {
       graph_coordinates = graph_curves_prop[i].graphCurveLines;
@@ -123,8 +128,8 @@ class GraphCurvesContainer extends Component {
     const isGraphPresent = graph_curves_prop => {
       if (
         graph_curves_prop.length < 1 ||
-        graph_curves_prop[0].correlation === null ||
-        graph_curves_prop[0].zeroBindingPercent === null
+        correlation === null ||
+        varBinding === null
       ) {
         return (
           <div className="alert alert-danger text-center" role="alert">
@@ -148,15 +153,21 @@ class GraphCurvesContainer extends Component {
                   <th width="60">
                     <p style={thStyle}>%:</p>
                   </th>
+                  <th>
+                    <p style={thStyle}>\</p>
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
                   <td>
-                    <p style={tdStyle}>{correlation[0]}</p>
+                    <p style={tdStyle}>{correlation}</p>
                   </td>
                   <td>
-                    <p style={tdStyle}>{varBinding[0]}</p>
+                    <p style={tdStyle}>{varBinding}</p>
+                  </td>
+                  <td style={tdStyle}>
+                    <p>{slope}</p>
                   </td>
                 </tr>
               </tbody>

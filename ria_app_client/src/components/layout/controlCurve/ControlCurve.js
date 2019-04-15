@@ -12,7 +12,7 @@ class ControlCurve extends Component {
     const { graph_curves } = this.props;
 
     const isCorrelationPresent = graph_curves => {
-      if (graph_curves[0].correlation === null) {
+      if (graph_curves.correlation === null) {
         return (
           <tbody>
           <tr>

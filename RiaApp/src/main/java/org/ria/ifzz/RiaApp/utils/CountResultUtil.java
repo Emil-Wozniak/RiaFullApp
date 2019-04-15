@@ -32,6 +32,7 @@ public class CountResultUtil {
     private List<Double> bindingPercent = new ArrayList<>();
     @Getter
     private List<Double> logarithmRealZeroTable = new ArrayList<>();
+    @Getter
     private Double regressionParameterB;
     private Double regressionParameterA;
 

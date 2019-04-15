@@ -150,7 +150,7 @@ public class FileEntityController {
         graphCurveRepository.save(graphCurve);
 
         // Coordinates
-        List<GraphCurveLines> graphCurveLinesList = graphCurveService.setCoordinates(graphCurve, currentBacklog);
+        List<GraphCurveLines> graphCurveLinesList = graphCurveService.setCoordinates(graphCurve, currentBacklog, serviceFileData);
         graphCurveLinesRepository.saveAll(graphCurveLinesList);
 
         return new ResponseEntity<>(fileEntity, HttpStatus.CREATED);

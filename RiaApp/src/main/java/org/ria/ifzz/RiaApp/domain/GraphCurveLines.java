@@ -16,6 +16,8 @@ public class GraphCurveLines {
     private Double y = null;
     private String dataId ="";
     private String fileName ="";
+    private Double standard = null;
+    private Double meterReading = null;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="graphCurve_id", updatable = false, nullable = false)

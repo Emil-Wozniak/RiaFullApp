@@ -65,7 +65,11 @@ class Backlog extends Component {
     results_prop.sortAttr("id");
 
     const control_curves = control_curves_prop.map(control_curve => (
-      <ControlCurve key={control_curve} control_curve={control_curve} graph_curves={graph_curves_prop} />
+      <ControlCurve
+        key={control_curve}
+        control_curve={control_curve}
+        graph_curves={graph_curves_prop}
+      />
     ));
 
     const results = results_prop
@@ -73,7 +77,7 @@ class Backlog extends Component {
       .map((result, i) => <Result key={i} result={result} />);
 
     const isCorrelationPresent = graph_curves_prop => {
-      if (graph_curves_prop[0].correlation === null) {
+      if (graph_curves_prop.correlation === null) {
         return (
           <Table striped id="file_data">
             <br />
@@ -101,7 +105,7 @@ class Backlog extends Component {
       } else {
         return (
           <Table striped id="file_data">
-            <br/>
+            <br />
             <thead>
               <tr>
                 <th>position</th>
