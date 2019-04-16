@@ -45,6 +45,8 @@ class GraphCurvesContainer extends Component {
     let varY2 = [];
     let varAverage = [];
     let slope = [];
+    let standard = [];
+    let standardRead = [];
 
     for (let i = 0; i < graph_curves_prop.length; i++) {
       slope = graph_curves_prop[i].regressionParameterB;
@@ -67,17 +69,35 @@ class GraphCurvesContainer extends Component {
         varY1.push(graph_coordinates[i].y);
       }
     }
+
     for (let i = 0; i < graph_coordinates.length; i++) {
       graph_coordinates.sortAttr("id");
       if (!(graph_coordinates[i].id % 2)) {
         varY2.push(graph_coordinates[i].y);
       }
     }
+
     for (let i = 0; i < varY1.length; i++) {
       let middle = varY2[i] + varY1[i];
       middle = middle / 2;
       varAverage.push(middle);
     }
+
+    for (let i = 0; i < graph_coordinates.length; i++) {
+      graph_coordinates.sortAttr("id");
+      standard.push(graph_coordinates[i].standard);
+    }
+    for (let i = 0; i < graph_coordinates.length; i++) {
+      graph_coordinates.sortAttr("id");
+      standardRead.push(graph_coordinates[i].meterReading);
+    }
+    const standardPoint = standard.map(point => (
+        <p style={tdStyle}>{point}</p>
+    ));
+    const standardReadPoint = standardRead.map(standardReadPoint=>
+    
+          <p style={tdStyle}> {standardReadPoint}</p>
+    )
 
     let varBinding = [];
     if (graph_curves_prop.length > 0) {
@@ -153,7 +173,7 @@ class GraphCurvesContainer extends Component {
                   <th width="60">
                     <p style={thStyle}>%:</p>
                   </th>
-                  <th>
+                  <th width="60">
                     <p style={thStyle}>\</p>
                   </th>
                 </tr>
@@ -169,6 +189,24 @@ class GraphCurvesContainer extends Component {
                   <td style={tdStyle}>
                     <p>{slope}</p>
                   </td>
+                </tr>
+              </tbody>
+            </Table>
+            <Table className="table table-sm" striped>
+              <thead>
+                <tr>
+                  <th width="60">
+                    <p style={thStyle}>Standard:</p>
+                  </th>
+                  <th width="60">
+                    <p style={thStyle}>Standard read:</p>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>{standardPoint}</td>
+                  <td>{standardReadPoint}</td>
                 </tr>
               </tbody>
             </Table>

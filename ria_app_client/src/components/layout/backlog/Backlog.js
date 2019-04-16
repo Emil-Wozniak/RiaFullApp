@@ -123,7 +123,7 @@ class Backlog extends Component {
                 <th>sample</th>
                 <th>&#8470;</th>
                 <th>cpm</th>
-                <th>&micro;g</th>
+                <th>ng</th>
                 <th>x&#772;</th>
               </tr>
             </thead>

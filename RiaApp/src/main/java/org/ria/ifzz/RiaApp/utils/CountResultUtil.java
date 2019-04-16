@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CountResultUtil {
@@ -112,10 +113,10 @@ public class CountResultUtil {
      * @return array of CMP of hormone standardized pattern e.g CORTISOL_PATTERN
      */
     public void setStandardsCpmWithFlags(List<Point> points) {
-        standardsCpmFlagged = new ArrayList<>();
+//        standardsCpmFlagged = new ArrayList<>();
         standardsCPM = new ArrayList<>();
 
-        if (standardsCpmFlagged.size() < 8) {
+        if (standardsCPM.size() < 8) {
             for (int i = 8; i < points.size() - 2; i++) {
                 Point point = points.get(i);
                 Double pointValue = point.getValue();
@@ -155,7 +156,7 @@ public class CountResultUtil {
         List<Double> subtraction = resultMath.subtractTablesElement(standardsCPM, zero);
         List<Double> multiplication = resultMath.multiplyList(100.0, subtraction);
         List<Double> result = resultMath.divideTableCeilElements(binding, multiplication); // %Bo-Bg
-        if (result!=null) {
+        if (result != null) {
             for (int i = 0; i < result.size(); i++) {
                 Double pointer;
                 pointer = result.get(i);
@@ -182,7 +183,7 @@ public class CountResultUtil {
         } catch (Exception e) {
             System.out.println(e.getMessage() + " " + e.getCause());
         }
-        if (logTable!=null) {
+        if (logTable != null) {
             for (int i = 0; i < logTable.size(); i++) {
                 if (logTable.get(i).isNaN() || logTable.get(i).isInfinite()) {
                     logger.warn("Logarithm Real Zero has infinite or NaN points;");
@@ -283,6 +284,29 @@ public class CountResultUtil {
         zeroBindingPercent = Precision.round(zeroBindingPercent, 2);
         logger.info("Zero binding percent: " + zeroBindingPercent);
         return zeroBindingPercent;
+    }
+
+    // =10^(
+    // (
+    // LOG(
+    // (StandardCPMs-AverageZero)
+    // *100/
+    // Binding/
+    // (100-
+    // (StandardCPMs-AverageZero)
+    // *100
+    // /Binding)
+    // )-regressionParameterA
+    // )/regressionParameterB
+    // )
+    public List<Double> countMeterReading() {
+        List<Double> meterReading;
+        meterReading = standardsCPM.stream()
+                .map(point -> Precision
+                        .round((Math.pow(10, ((Math
+                                .log10((point - zero)* 100/ binding/ (100 - (point - zero) * 100 / binding))- regressionParameterA)/ regressionParameterB)
+                )), 4)).collect(Collectors.toList());
+        return meterReading;
     }
 }
 

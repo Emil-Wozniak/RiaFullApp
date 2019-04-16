@@ -53,6 +53,7 @@ public class GraphCurveService {
                 double x = listX.get(i);
                 double y = listY.get(i);
                 double patternPoint = patternPoints.get(i);
+                List<Double> meterReadingPg = countResultUtil.countMeterReading();
                 GraphCurveLines graphCurveLines = new GraphCurveLines();
                 graphCurveLines.setX(x);
                 graphCurveLines.setY(y);
@@ -61,6 +62,7 @@ public class GraphCurveService {
                 graphCurveLines.setBacklog(backlog);
                 graphCurveLines.setGraphCurve(graphCurve);
                 graphCurveLines.setStandard(patternPoint);
+                graphCurveLines.setMeterReading(meterReadingPg.get(i));
                 graphCurveLinesList.add(graphCurveLines);
             }
         } catch (Exception e) {
