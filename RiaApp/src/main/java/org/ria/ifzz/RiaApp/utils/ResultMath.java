@@ -25,8 +25,7 @@ public class ResultMath {
     public Double averageTwo(Double first, Double second) {
         logger.info("Elements: " + "[1: " + first + " | 2: " + second + "]");
         double result = (first + second) / 2;
-        double ceil = Math.ceil(result);
-        return ceil;
+        return Math.ceil(result);
     }
 
     public double averageThree(double first, double second, double third) {
@@ -57,12 +56,11 @@ public class ResultMath {
     }
 
     public List<Double> divideTableCeilElements(double factor, List<Double> values) {
-        List<Double> productTable = values
+        return values
                 .stream()
                 .map(element -> (element / factor))
                 .map(element -> round(element, 1))
                 .map(element -> Precision.round(element, 0)).collect(Collectors.toList());
-        return productTable;
     }
 
     public List<Double> logarithmTable2(List<Double> logarithmTable) {

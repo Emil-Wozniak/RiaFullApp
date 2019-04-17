@@ -212,11 +212,7 @@ public class ResultService {
                 logger.error("Exception ng: " + e.getMessage() + " with cause: " + e.getCause());
             }
             controlCurveRepository.saveAll(controlCurveListWithData);
-//            try{
             dataAssigner.setHormoneAverage(resultListWithNg);
-//            } catch (Exception e) {
-//                logger.error("Exception average: " + e.getMessage() + " with cause: " + e.getCause());
-//            }
             return resultListWithNg;
         }
     }

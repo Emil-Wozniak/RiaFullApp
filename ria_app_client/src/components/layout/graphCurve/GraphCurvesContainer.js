@@ -3,6 +3,7 @@ import ChartistGraph from "react-chartist";
 import Chartist from "chartist";
 import { Table } from "reactstrap";
 import Paper from "@material-ui/core/Paper";
+import StandardPoint from "./StandardPoint";
 
 var thStyle = {
   fontSize: "12px",
@@ -91,13 +92,12 @@ class GraphCurvesContainer extends Component {
       graph_coordinates.sortAttr("id");
       standardRead.push(graph_coordinates[i].meterReading);
     }
-    const standardPoint = standard.map(point => (
-        <p style={tdStyle}>{point}</p>
-    ));
-    const standardReadPoint = standardRead.map(standardReadPoint=>
-    
-          <p style={tdStyle}> {standardReadPoint}</p>
-    )
+
+    let standardPoint = graph_coordinates
+      .sort((a, b) => a.id > b.id)
+      .map((standardPoint, i) => (
+        <StandardPoint key={i} standardPoint={standardPoint} />
+      ));
 
     let varBinding = [];
     if (graph_curves_prop.length > 0) {
@@ -203,12 +203,7 @@ class GraphCurvesContainer extends Component {
                   </th>
                 </tr>
               </thead>
-              <tbody>
-                <tr>
-                  <td>{standardPoint}</td>
-                  <td>{standardReadPoint}</td>
-                </tr>
-              </tbody>
+              {standardPoint}
             </Table>
           </React.Fragment>
         );
