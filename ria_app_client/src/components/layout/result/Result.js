@@ -56,14 +56,14 @@ class Result extends Component {
     const odd = result => {
       if (result.samples % 2 === 1) {
         return (
-          <td className="mx-auto" style={positionConditionStyle}>
+          <td className="mx-auto resultAverage" style={positionConditionStyle}>
             {result.hormoneAverage}
           </td>
         );
       } else {
         return (
           <td
-            className="mx-auto"
+            className="mx-auto resultAverage"
             style={{
               backgroundColor: positionCondition ? "#e5ffff" : "#fbfffc"
             }}
@@ -101,7 +101,10 @@ class Result extends Component {
                 <td className="mx-auto" style={positionConditionStyle}>
                   {result.samples}
                 </td>
-                <td className="mx-auto" style={positionConditionStyle}>
+                <td
+                  className="mx-auto resultNumber"
+                  style={positionConditionStyle}
+                >
                   {result.position}
                 </td>
                 <td className="mx-auto" style={positionConditionStyle}>

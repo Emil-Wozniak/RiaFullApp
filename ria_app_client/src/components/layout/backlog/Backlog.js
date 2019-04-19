@@ -61,6 +61,11 @@ class Backlog extends Component {
     const { results_prop } = this.props;
     const { graph_curves_prop } = this.props;
 
+    let graph_coordinates = [];
+    for (let i = 0; i < graph_curves_prop.length; i++) {
+      graph_coordinates.push(graph_curves_prop[i]);
+    }
+
     control_curves_prop.sortAttr("id");
     results_prop.sortAttr("id");
 
@@ -138,12 +143,12 @@ class Backlog extends Component {
       <MuiThemeProvider theme={theme}>
         <Paper classes={{ paper: "paper" }}>
           <Container>
-            <Row>
+            <Row className="backlog-btn-nav">
               <IconButton href="/dashboard">
                 <ArrowBack />
               </IconButton>
               <ReactToExcel
-                className="fa fa-download fa-2x float-center"
+                className="fa fa-download fa-2x download-btn"
                 table="file_data"
                 filename="file_data"
                 sheet="sheet 1"

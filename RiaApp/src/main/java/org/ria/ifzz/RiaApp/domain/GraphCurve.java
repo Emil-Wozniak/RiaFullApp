@@ -22,7 +22,7 @@ public class GraphCurve {
     private Double zeroBindingPercent = null;
     private Double regressionParameterB;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "backlog_id", updatable = false, nullable = false)
     @JsonIgnore
     private Backlog backlog;

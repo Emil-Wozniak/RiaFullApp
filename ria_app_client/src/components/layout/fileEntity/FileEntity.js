@@ -31,10 +31,10 @@ class FileEntity extends Component {
             </td>
             <td>
               <Link to={`/fileBoard/${file_entity.dataId}`}>
-                {file_entity.fileName}
+                <div className="tableContainer">{file_entity.fileName}</div>
               </Link>
             </td>
-            <td>{file_entity.contentType}</td>
+            <td> <div className="tableContainer">{file_entity.contentType}</div></td>
             <td>
               <IconButton
                 onClick={this.onDeleteClick.bind(this, file_entity.id)}

@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 /**
  * performs mathematical algorithms
  */
-public class ResultMath {
+class ResultMath {
 
     protected Logger logger = LoggerFactory.getLogger(getClass());
 

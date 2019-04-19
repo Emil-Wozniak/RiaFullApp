@@ -3,28 +3,51 @@ import React, { Component } from "react";
 class StandardPoint extends Component {
   render() {
     const { standardPoint } = this.props;
+    let spreadCondition = 0;
+    var spreadStyle;
+    console.log(spreadStyle)
 
-    function isStandardSpreadCorrect(standardPoint) {
+    function getSpreadLevel(standardPoint) {
       if (
-        Math.abs( (standardPoint.meterReading*100)/standardPoint.standard) > 110
+        Math.abs((standardPoint.meterReading * 100) / standardPoint.standard) >
+        110
       ) {
-        return 1;
+        return (spreadCondition = 1);
+      } else if (
+        Math.abs((standardPoint.meterReading * 100) / standardPoint.standard) >=
+        105
+      ) {
+        return (spreadCondition = 0);
       } else {
-        return 0;
+        return (spreadCondition = -1);
       }
     }
-    const spreadCondition = isStandardSpreadCorrect(standardPoint) === 0;
-    let spreadStyle = {
-      backgroundColor: spreadCondition ? "#e5ffff" : "#f05545"
-    };
+
+    function getSpreadValue(standardPoint) {
+      getSpreadLevel(standardPoint);
+      if (spreadCondition === 1) {
+        return (spreadStyle = {
+          backgroundColor: "#ff7961"
+        });
+      } else if (spreadCondition === 0) {
+        return (spreadStyle = {
+          backgroundColor: "#e5ffff"
+        });
+      } else {
+        return (spreadStyle = {
+          backgroundColor: "#CCFF90"
+        });
+      }
+    }
+
     return (
       <React.Fragment>
         <tbody>
           <tr>
-            <td className="mx-auto" style={spreadStyle}>
+            <td className="mx-auto" style={getSpreadValue(standardPoint)}>
               {standardPoint.standard}
             </td>
-            <td className="mx-auto" style={spreadStyle}>
+            <td className="mx-auto" style={getSpreadValue(standardPoint)}>
               {standardPoint.meterReading}
             </td>
           </tr>

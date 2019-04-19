@@ -11,6 +11,9 @@ import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.ria.ifzz.RiaApp.domain.DomainConstants.FILE_CONTENT;
 import static org.ria.ifzz.RiaApp.domain.DomainConstants.RESULT_POINTER;
@@ -179,9 +182,9 @@ public class ResultService {
                                         FileEntity fileEntity) {
 
         List<Result> resultsWithData = new ArrayList<>();
-        List<Result> resultListWithNg = new ArrayList<>();
-        List<ControlCurve> controlCurveList;
-        List<ControlCurve> controlCurveListWithData;
+        List<Result> resultsWithNgCounted = new ArrayList<>();
+        List<ControlCurve> controlCurveWithFileData;
+        List<ControlCurve> controlCurveWithParameters;
         List<Result> results = setResultFromColumnsLength(data, file, backlog);
 
         if (data.size() > 24) {
@@ -192,49 +195,44 @@ public class ResultService {
             }
         }
 
-        controlCurveList = controlCurveService.setControlCurveFromFileData(data, file, backlog);
-        controlCurveListWithData = controlCurveService.setDataToControlCurve(data, fileEntity, controlCurveList);
+        controlCurveWithFileData = controlCurveService.setControlCurveFromFileData(data, file, backlog);
+        controlCurveWithParameters = controlCurveService.setDataToControlCurve(data, fileEntity, controlCurveWithFileData);
 
         //Check if any of standard points are above Zeros points
-        if (isStandardCpmAboveZero(controlCurveListWithData)) {
+        if (isStandardCpmAboveZero(controlCurveWithParameters)) {
             List<Point> points = new ArrayList<>();
             List<Double> curve = new ArrayList<>();
-            setBindingPercent(curve, points, controlCurveList);
+            setBindingPercent(curve, points, controlCurveWithFileData);
             countResultUtil.logarithmRealZero();
-            controlCurveRepository.saveAll(controlCurveListWithData);
+            controlCurveRepository.saveAll(controlCurveWithParameters);
             return resultsWithData;
         }
         //is they aren't ng will be set to results
         else {
             try {
-                resultListWithNg = assignNgPerMl(data, controlCurveListWithData, resultsWithData);
+                resultsWithNgCounted = assignNgPerMl(data, controlCurveWithParameters, resultsWithData);
             } catch (Exception e) {
                 logger.error("Exception ng: " + e.getMessage() + " with cause: " + e.getCause());
             }
-            controlCurveRepository.saveAll(controlCurveListWithData);
-            dataAssigner.setHormoneAverage(resultListWithNg);
-            return resultListWithNg;
+            controlCurveRepository.saveAll(controlCurveWithParameters);
+            dataAssigner.setHormoneAverage(resultsWithNgCounted);
+            return resultsWithNgCounted;
         }
     }
 
     /**
-     * @param controlCurves list of curve points
+     * @param controlCurvePoints list of curve points
      * @return false if any controlCurve points is not flagged (is false),
      * and true if any from those are flagged
      */
-    private boolean isStandardCpmAboveZero(List<ControlCurve> controlCurves) {
-        boolean checker = false;
-        boolean isAbove;
-        new ControlCurve();
-        ControlCurve controlCurve;
-        for (int i = 8; i < 21; i++) {
-            controlCurve = controlCurves.get(i);
-            if (controlCurve.isFlagged()) {
-                checker = true;
-                logger.warn("Standard point with CPM value " + controlCurve.getCpm() + " are above zero ");
-            }
-        }
-        isAbove = checker;
+    private boolean isStandardCpmAboveZero(List<ControlCurve> controlCurvePoints) {
+        AtomicBoolean checker = new AtomicBoolean(false);
+        controlCurvePoints.stream().skip(7).limit(20).peek((controlCurve) -> {
+            if (controlCurve.isFlagged()) checker.getAndSet(true);
+            logger.warn("Standard point with CPM value " + controlCurve.getCpm() + " are above zero ");
+        }).collect(Collectors.toList());
+        System.out.println("Peek " + checker.get());
+        boolean isAbove = checker.get();
         return isAbove;
     }
 }

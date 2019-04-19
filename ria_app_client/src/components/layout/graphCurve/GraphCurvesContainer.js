@@ -1,26 +1,21 @@
 import React, { Component } from "react";
-import ChartistGraph from "react-chartist";
-import Chartist from "chartist";
-import { Table } from "reactstrap";
+import { Card, CardBody, Table, Row, Col, Collapse, Button } from "reactstrap";
 import Paper from "@material-ui/core/Paper";
 import StandardPoint from "./StandardPoint";
-
-var thStyle = {
-  fontSize: "12px",
-  textAlign: "center",
-  margin: "0px",
-  padding: "1",
-  borderRadius: "50%"
-};
-
-var tdStyle = {
-  fontSize: "14px",
-  margin: "1px",
-  padding: "2",
-  borderRadius: "10px"
-};
+import CurveParameters from "./CurveParameters";
+import GraphCurveLines from "./GraphCurveLines";
 
 class GraphCurvesContainer extends Component {
+  constructor(props) {
+    super(props);
+    this.toggle = this.toggle.bind(this);
+    this.state = { collapse: true };
+  }
+
+  toggle() {
+    this.setState(state => ({ collapse: !state.collapse }));
+  }
+
   render() {
     Array.prototype.sortAttr = function(attr, reverse) {
       var sorter = function(a, b) {
@@ -39,118 +34,32 @@ class GraphCurvesContainer extends Component {
 
     const { graph_curves_prop } = this.props;
 
-    var correlation = [];
-    var graph_coordinates = [];
-    let varX = [];
-    let varY1 = [];
-    let varY2 = [];
-    let varAverage = [];
-    let slope = [];
-    let standard = [];
-    let standardRead = [];
-
+    var correlation;
+    let slope;
+    let graph_coordinates = [];
     for (let i = 0; i < graph_curves_prop.length; i++) {
-      slope = graph_curves_prop[i].regressionParameterB;
+      graph_coordinates.push(graph_curves_prop[i]);
     }
 
-    for (let i = 0; i < graph_curves_prop.length; i++) {
-      graph_coordinates = graph_curves_prop[i].graphCurveLines;
-    }
+    let parameters = graph_curves_prop.map(parameters => (
+      <CurveParameters parameters={parameters} />
+    ));
 
-    for (let i = 0; i < graph_coordinates.length; i++) {
-      graph_coordinates.sortAttr("id");
-      if (graph_coordinates[i].id % 2) {
-        varX.push(graph_coordinates[i].x);
-      }
-    }
-
-    for (let i = 0; i < graph_coordinates.length; i++) {
-      graph_coordinates.sortAttr("id");
-      if (graph_coordinates[i].id % 2) {
-        varY1.push(graph_coordinates[i].y);
-      }
-    }
-
-    for (let i = 0; i < graph_coordinates.length; i++) {
-      graph_coordinates.sortAttr("id");
-      if (!(graph_coordinates[i].id % 2)) {
-        varY2.push(graph_coordinates[i].y);
-      }
-    }
-
-    for (let i = 0; i < varY1.length; i++) {
-      let middle = varY2[i] + varY1[i];
-      middle = middle / 2;
-      varAverage.push(middle);
-    }
-
-    for (let i = 0; i < graph_coordinates.length; i++) {
-      graph_coordinates.sortAttr("id");
-      standard.push(graph_coordinates[i].standard);
-    }
-    for (let i = 0; i < graph_coordinates.length; i++) {
-      graph_coordinates.sortAttr("id");
-      standardRead.push(graph_coordinates[i].meterReading);
-    }
-
-    let standardPoint = graph_coordinates
+    let standardPoint = graph_coordinates[0].graphCurveLines
       .sort((a, b) => a.id > b.id)
       .map((standardPoint, i) => (
         <StandardPoint key={i} standardPoint={standardPoint} />
       ));
 
-    let varBinding = [];
-    if (graph_curves_prop.length > 0) {
-      graph_curves_prop.sortAttr("id");
-      correlation.push(graph_curves_prop[0].correlation);
-    }
-    if (graph_curves_prop.length > 0) {
-      graph_curves_prop.sortAttr("id");
-      varBinding.push(graph_curves_prop[0].zeroBindingPercent);
-    }
+    var moreThan10 = ">10%";
+    var between5and10 = "5-10%";
+    var equalStandard = "almost equals";
 
-    var lineChartData = {
-      labels: varX,
-      series: [
-        varY1,
-        varY2,
-        {
-          name: "series-3",
-          data: varAverage
-        }
-      ]
-    };
-
-    var lineChartOptions = {
-      high: 2,
-      low: -2,
-      showLine: false,
-      fullWidth: false,
-      showPoint: true,
-      showGrid: true,
-      showArea: false,
-      chartPadding: {
-        right: 30,
-        left: 0,
-        top: 20
-      },
-      lineSmooth: Chartist.Interpolation.cardinal({
-        fillHoles: true
-      }),
-      series: {
-        "series-3": {
-          showLine: true,
-          showPoint: false
-        }
-      }
-    };
+    slope = graph_coordinates[0].regressionParameterB;
+    correlation = graph_coordinates[0].correlation;
 
     const isGraphPresent = graph_curves_prop => {
-      if (
-        graph_curves_prop.length < 1 ||
-        correlation === null ||
-        varBinding === null
-      ) {
+      if (correlation === null || slope === null) {
         return (
           <div className="alert alert-danger text-center" role="alert">
             No curve
@@ -159,52 +68,85 @@ class GraphCurvesContainer extends Component {
       } else {
         return (
           <React.Fragment>
-            <ChartistGraph
-              data={lineChartData}
-              options={lineChartOptions}
-              type={"Line"}
-            />
-            <Table className="table table-sm" striped>
-              <thead>
-                <tr>
-                  <th width="60">
-                    <p style={thStyle}>Correlation:</p>
-                  </th>
-                  <th width="60">
-                    <p style={thStyle}>%:</p>
-                  </th>
-                  <th width="60">
-                    <p style={thStyle}>\</p>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>
-                    <p style={tdStyle}>{correlation}</p>
-                  </td>
-                  <td>
-                    <p style={tdStyle}>{varBinding}</p>
-                  </td>
-                  <td style={tdStyle}>
-                    <p>{slope}</p>
-                  </td>
-                </tr>
-              </tbody>
-            </Table>
-            <Table className="table table-sm" striped>
-              <thead>
-                <tr>
-                  <th width="60">
-                    <p style={thStyle}>Standard:</p>
-                  </th>
-                  <th width="60">
-                    <p style={thStyle}>Standard read:</p>
-                  </th>
-                </tr>
-              </thead>
-              {standardPoint}
-            </Table>
+            <Row>
+              <Col md="9" style={{ paddingRight: 4 }}>
+                <Card>
+              
+                  <CardBody style={{ padding: 1, margin: 1 }}>
+                    <GraphCurveLines graph_curves_prop={graph_curves_prop} />
+                  </CardBody>
+                  <Row>
+                    <Col md="7" style={{ paddingRight: 4 }}>
+                      <div className="map-legend">
+                        {parameters}
+                        <Row className="parameter-row">
+                          <p className="map-legend-tittle">Correlation:</p>
+                          <p className="map-legend-value">
+                            {graph_curves_prop[0].correlation}
+                          </p>
+                        </Row>
+                        <Row className="parameter-row">
+                          <p className="map-legend-tittle">%:</p>
+                          <p className="map-legend-value">
+                            {graph_curves_prop[0].zeroBindingPercent}
+                          </p>
+                        </Row>
+                        <Row className="parameter-row">
+                          <p className="map-legend-tittle">Slope:</p>
+                          <p className="map-legend-value">
+                            {graph_curves_prop[0].regressionParameterB}
+                          </p>
+                        </Row>
+                      </div>
+                    </Col>
+                    <Col md="5" style={{ paddingLeft: 4 }}>
+                      <div className="map-legend">
+                        <p className="legend">
+                          <div className="legend-color legend-color-red" />
+                          {moreThan10}
+                        </p>
+                        <p className="legend">
+                          <div className="legend-color legend-color-blue" />
+                          {between5and10}
+                        </p>
+                        <p className="legend">
+                          <div className="legend-color legend-color-green" />
+                          {equalStandard}
+                        </p>
+                      </div>
+                    </Col>
+                  </Row>
+                </Card>
+              </Col>
+              <Col md="3" style={{ paddingLeft: 4 }}>
+                <Card>
+                  <Button className="btn-sm legend-btn" onClick={this.toggle}>
+                    Standard table:
+                  </Button>
+                  <Collapse isOpen={this.state.collapse}>
+                    <CardBody style={{ padding: 0, margin: 0 }}>
+                      <Table className="standard-table table-sm" striped>
+                        <thead>
+                          <tr>
+                            <th width="60">
+                              <p style={{ fontWeight: "bold" }}>
+                                Standard exp.:
+                              </p>
+                            </th>
+                            <th width="60">
+                              <p style={{ fontWeight: "bold" }}>
+                                Standard read:
+                              </p>
+                            </th>
+                          </tr>
+                        </thead>
+                        {standardPoint}
+                      </Table>
+                    </CardBody>
+                  </Collapse>
+                </Card>
+              </Col>
+            </Row>
           </React.Fragment>
         );
       }
