@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -43,6 +44,25 @@ public class GraphCurveService {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
+    public GraphCurve setGraphCurve(DataFileMetadata file, FileEntity fileEntity, Backlog backlog) {
+        GraphCurve graphCurve = new GraphCurve();
+//        try {
+            String fileId = fileEntity.getDataId();
+            graphCurve.setFileName(fileUtils.setFileName(file));
+            graphCurve.setDataId(fileId);
+            graphCurve.setBacklog(backlog);
+            Double correlation = countResultUtil.setCorrelation();
+            graphCurve.setCorrelation(correlation);
+            Double binding = countResultUtil.setZeroBindingPercent();
+            graphCurve.setZeroBindingPercent(binding);
+            Double regressionParameterB = countResultUtil.getRegressionParameterB();
+            graphCurve.setRegressionParameterB(regressionParameterB);
+//        } catch (Exception e) {
+//            logger.error(GraphCurveService.class.getName() + ".setGraphCurve() msg: " + e.getMessage() + " and cause: " + e.getCause() + " \n" + Arrays.toString(e.getStackTrace()));
+//        }
+        return graphCurve;
+    }
+
     public List<GraphCurveLines> setCoordinates(GraphCurve graphCurve, Backlog backlog,List<String> fileData ) {
         List<Double> listX = countResultUtil.getLogDoseList();
         List<Double> listY = countResultUtil.getLogarithmRealZeroTable();
@@ -71,28 +91,9 @@ public class GraphCurveService {
         return graphCurveLinesList;
     }
 
-    public GraphCurve setGraphCurve(DataFileMetadata file, FileEntity fileEntity, Backlog backlog) {
-        GraphCurve graphCurve = new GraphCurve();
-        try {
-            String fileId = fileEntity.getDataId();
-            graphCurve.setFileName(fileUtils.setFileName(file));
-            graphCurve.setDataId(fileId);
-            graphCurve.setBacklog(backlog);
-            Double correlation = countResultUtil.setCorrelation();
-            graphCurve.setCorrelation(correlation);
-            Double binding = countResultUtil.setZeroBindingPercent();
-            graphCurve.setZeroBindingPercent(binding);
-            Double regressionParameterB = countResultUtil.getRegressionParameterB();
-            graphCurve.setRegressionParameterB(regressionParameterB);
-        } catch (Exception e) {
-            logger.error(GraphCurveService.class.getName() + ".setGraphCurve() msg: " + e.getMessage() + " and cause: " + e.getCause());
-        }
-        return graphCurve;
-    }
-
-    public Iterable<GraphCurve> findBacklogByDataId(String dataId) throws FileNotFoundException {
+    public GraphCurve findBacklogByDataId(String dataId) throws FileNotFoundException {
         fileEntityService.findFileEntityByDataId(dataId);
-        return graphCurveRepository.findByDataIdOrderByFileName(dataId);
+        return graphCurveRepository.getByDataIdOrderByFileName(dataId);
     }
 
     public Optional<GraphCurveLines> findResultForCoordinatesByDataId(String dataId, String fileName, Long id) throws FileNotFoundException {

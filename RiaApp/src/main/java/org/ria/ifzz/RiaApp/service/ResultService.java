@@ -226,14 +226,18 @@ public class ResultService {
      * and true if any from those are flagged
      */
     private boolean isStandardCpmAboveZero(List<ControlCurve> controlCurvePoints) {
-        AtomicBoolean checker = new AtomicBoolean(false);
-        controlCurvePoints.stream().skip(7).limit(20).peek((controlCurve) -> {
-            if (controlCurve.isFlagged()) checker.getAndSet(true);
-            logger.warn("Standard point with CPM value " + controlCurve.getCpm() + " are above zero ");
-        }).collect(Collectors.toList());
-        System.out.println("Peek " + checker.get());
-        boolean isAbove = checker.get();
-        return isAbove;
+//        AtomicBoolean checker = new AtomicBoolean(false);
+//        controlCurvePoints.stream().skip(7).limit(20).peek((controlCurve) -> {
+//            if (controlCurve.isFlagged()) checker.getAndSet(true);
+//            logger.warn("Standard point with CPM value " + controlCurve.getCpm() + " are above zero ");
+//        }).collect(Collectors.toList());
+//        boolean isAbove = checker.get();
+        boolean flag = false;
+        for (int i = 8; i < 21; i++) {
+            ControlCurve controlCurve = controlCurvePoints.get(i);
+            if (controlCurve.isFlagged()) flag = true;
+        }
+        return flag;
     }
 }
 

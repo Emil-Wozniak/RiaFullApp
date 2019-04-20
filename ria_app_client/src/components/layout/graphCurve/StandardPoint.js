@@ -2,19 +2,25 @@ import React, { Component } from "react";
 
 class StandardPoint extends Component {
   render() {
-    const { standardPoint } = this.props;
+    const { graphCurveLines} = this.props;
     let spreadCondition = 0;
     var spreadStyle;
-    console.log(spreadStyle)
+    console.log(spreadStyle);
+    var standardPoint =[];
 
-    function getSpreadLevel(standardPoint) {
+   for (let i = 0; i <graphCurveLines.length; i++) {
+     const element = graphCurveLines[i];
+     standardPoint.push(element);
+   }
+
+    function getSpreadLevel({standardPoint}) {
       if (
-        Math.abs((standardPoint.meterReading * 100) / standardPoint.standard) >
+        (graphCurveLines.meterReading * 100) / graphCurveLines.standard >
         110
       ) {
         return (spreadCondition = 1);
       } else if (
-        Math.abs((standardPoint.meterReading * 100) / standardPoint.standard) >=
+        (graphCurveLines.meterReading * 100) / graphCurveLines.standard >=
         105
       ) {
         return (spreadCondition = 0);
@@ -23,7 +29,7 @@ class StandardPoint extends Component {
       }
     }
 
-    function getSpreadValue(standardPoint) {
+    function getSpreadValue() {
       getSpreadLevel(standardPoint);
       if (spreadCondition === 1) {
         return (spreadStyle = {
@@ -44,11 +50,11 @@ class StandardPoint extends Component {
       <React.Fragment>
         <tbody>
           <tr>
-            <td className="mx-auto" style={getSpreadValue(standardPoint)}>
-              {standardPoint.standard}
+            <td className="mx-auto" style={getSpreadValue()}>
+              {graphCurveLines.standard}
             </td>
-            <td className="mx-auto" style={getSpreadValue(standardPoint)}>
-              {standardPoint.meterReading}
+            <td className="mx-auto" style={getSpreadValue()}>
+              {graphCurveLines.meterReading}
             </td>
           </tr>
         </tbody>

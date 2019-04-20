@@ -24,16 +24,9 @@ public class GraphCurveController {
     }
 
     @GetMapping("/{dataId}")
-    public Iterable<GraphCurve> getFileEntityBacklogGC(@PathVariable String dataId) throws FileNotFoundException {
+    public GraphCurve getFileEntityBacklogGC(@PathVariable String dataId) throws FileNotFoundException {
         return graphCurveService.findBacklogByDataId(dataId);
     }
-
-//    @GetMapping("/{dataId}/{fileName}")
-//    public ResponseEntity<?> getGraphCurvePoint(@PathVariable String dataId, @PathVariable String fileName) throws FileNotFoundException {
-//
-//        GraphCurve graphCurve = graphCurveService.findGraphCurveByDataId(dataId, fileName);
-//        return new ResponseEntity<>(graphCurve, HttpStatus.OK);
-//    }
 
     @GetMapping("/{dataId}/{fileName}/coordinates/{id}")
     public ResponseEntity<?> getGraphCurvePoints(@PathVariable String dataId, @PathVariable String fileName, @PathVariable Long id) throws FileNotFoundException {

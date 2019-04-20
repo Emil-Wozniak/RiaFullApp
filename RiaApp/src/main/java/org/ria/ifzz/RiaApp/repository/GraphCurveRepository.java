@@ -9,5 +9,7 @@ public interface GraphCurveRepository extends CrudRepository<GraphCurve, Long> {
 
     Iterable<GraphCurve> findByDataIdOrderByFileName(String dataId);
 
+    GraphCurve getByDataIdOrderByFileName(String dataId);
+
     GraphCurve findByFileName(String fileName);
 }

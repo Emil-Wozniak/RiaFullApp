@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -267,10 +268,14 @@ public class CountResultUtil {
 
     public double setCorrelation() {
         double[] logDoseListArray = new double[logDoseList.size()];
-        for (int i = 0; i < logDoseList.size(); i++) logDoseListArray[i] = logDoseList.get(i);
         double[] logarithmRealZeroArray = new double[logarithmRealZeroTable.size()];
-        for (int i = 0; i < logarithmRealZeroTable.size(); i++)
+        for (int i = 0; i < logDoseList.size(); i++) {
+            logDoseListArray[i] = logDoseList.get(i);
+        }
+        for (int i = 0; i < logarithmRealZeroTable.size(); i++) {
             logarithmRealZeroArray[i] = logarithmRealZeroTable.get(i);
+        }
+        System.out.println("lrz" +logarithmRealZeroTable.size() + " ld: " + logDoseList.size());
         PearsonsCorrelation pearsonsCorrelation = new PearsonsCorrelation();
         double correlation = pearsonsCorrelation.correlation(logDoseListArray, logarithmRealZeroArray);
         double correlationPow = Math.pow(correlation, 2);
@@ -304,8 +309,8 @@ public class CountResultUtil {
         meterReading = standardsCPM.stream()
                 .map(point -> Precision
                         .round((Math.pow(10, ((Math
-                                .log10((point - zero)* 100/ binding/ (100 - (point - zero) * 100 / binding))- regressionParameterA)/ regressionParameterB)
-                )), 4)).collect(Collectors.toList());
+                                .log10((point - zero) * 100 / binding / (100 - (point - zero) * 100 / binding)) - regressionParameterA) / regressionParameterB)
+                        )), 4)).collect(Collectors.toList());
         return meterReading;
     }
 }

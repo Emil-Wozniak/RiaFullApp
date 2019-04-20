@@ -143,3 +143,14 @@ h5 {
 .standard-table p {
   margin-bottom: 0rem !important;
 }
+
+
+.theme-btn{
+  background: #FFFBFA;
+  color: #442C2E;
+  font-family: 'Courier New', Courier, monospace;
+  border-radius: 40%;
+  font-size: 10;
+  padding: 0rem !important;
+  line-height: 1!important;
+}

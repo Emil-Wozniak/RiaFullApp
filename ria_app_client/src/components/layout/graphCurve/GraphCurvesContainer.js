@@ -36,27 +36,28 @@ class GraphCurvesContainer extends Component {
 
     var correlation;
     let slope;
-    let graph_coordinates = [];
-    for (let i = 0; i < graph_curves_prop.length; i++) {
-      graph_coordinates.push(graph_curves_prop[i]);
-    }
 
-    let parameters = graph_curves_prop.map(parameters => (
-      <CurveParameters parameters={parameters} />
-    ));
+    // let parameters = graph_curves_prop.map(parameters => (
+    //   <CurveParameters parameters={parameters} />
+    // ));
 
-    let standardPoint = graph_coordinates[0].graphCurveLines
-      .sort((a, b) => a.id > b.id)
-      .map((standardPoint, i) => (
-        <StandardPoint key={i} standardPoint={standardPoint} />
-      ));
+    // let lines = [];
+    // lines = graph_curves_prop =>
+    //   lines
+    //     // .map(({ line }) =>
+    //     //   lines.push({ line: graph_curves_prop.graphCurveLines })
+    //     // )
+    //     .map(standardPoint => <StandardPoint standardPoint={standardPoint} />);
 
     var moreThan10 = ">10%";
     var between5and10 = "5-10%";
     var equalStandard = "almost equals";
 
-    slope = graph_coordinates[0].regressionParameterB;
-    correlation = graph_coordinates[0].correlation;
+    slope =  graph_curves_prop.regressionParameterB;
+    correlation = graph_curves_prop =>
+      slope.map(correlation => ({
+        correlation: graph_curves_prop.correlation
+      }));
 
     const isGraphPresent = graph_curves_prop => {
       if (correlation === null || slope === null) {
@@ -71,30 +72,29 @@ class GraphCurvesContainer extends Component {
             <Row>
               <Col md="9" style={{ paddingRight: 4 }}>
                 <Card>
-              
                   <CardBody style={{ padding: 1, margin: 1 }}>
                     <GraphCurveLines graph_curves_prop={graph_curves_prop} />
                   </CardBody>
                   <Row>
                     <Col md="7" style={{ paddingRight: 4 }}>
                       <div className="map-legend">
-                        {parameters}
+                   
                         <Row className="parameter-row">
                           <p className="map-legend-tittle">Correlation:</p>
                           <p className="map-legend-value">
-                            {graph_curves_prop[0].correlation}
+                            {graph_curves_prop.correlation}
                           </p>
                         </Row>
                         <Row className="parameter-row">
                           <p className="map-legend-tittle">%:</p>
                           <p className="map-legend-value">
-                            {graph_curves_prop[0].zeroBindingPercent}
+                            {graph_curves_prop.zeroBindingPercent}
                           </p>
                         </Row>
                         <Row className="parameter-row">
                           <p className="map-legend-tittle">Slope:</p>
                           <p className="map-legend-value">
-                            {graph_curves_prop[0].regressionParameterB}
+                            {graph_curves_prop.regressionParameterB}
                           </p>
                         </Row>
                       </div>
@@ -140,7 +140,13 @@ class GraphCurvesContainer extends Component {
                             </th>
                           </tr>
                         </thead>
-                        {standardPoint}
+                        {graph_curves_prop.graphCurveLines
+                          .map(graphCurveLines => (
+                            <StandardPoint
+                              key={graphCurveLines.id}
+                              graphCurveLines={graphCurveLines}
+                            />
+                          ))}
                       </Table>
                     </CardBody>
                   </Collapse>
