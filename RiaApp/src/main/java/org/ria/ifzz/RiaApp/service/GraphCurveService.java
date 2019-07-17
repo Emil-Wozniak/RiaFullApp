@@ -82,7 +82,6 @@ public class GraphCurveService implements FileUtils {
 
     public Optional<GraphCurveLines> findResultForCoordinatesByDataId(String dataId, String fileName, Long id) throws FileNotFoundException, FileEntityNotFoundException {
         fileEntityService.findFileEntityByDataId(dataId);
-
         Optional<GraphCurveLines> graphCurveLines = graphCurveLinesRepository.findById(id);
         if (!graphCurveLines.isPresent()) {
             throw new FileEntityNotFoundException("File with ID: '" + fileName + "' not found");

@@ -9,7 +9,6 @@ import org.ria.ifzz.RiaApp.repository.GraphCurveRepository;
 import org.ria.ifzz.RiaApp.repository.ResultRepository;
 import org.ria.ifzz.RiaApp.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -107,13 +106,9 @@ public class FileEntityController {
      *
      * @param data               which will be handle
      * @param redirectAttributes message shown if upload goes well
-     * @throws IOException
      */
     @PostMapping(value = "/")
-    public ResponseEntity<?> handleFileUpload(@Valid DataFileMetadata data,
-                                              BindingResult result,
-                                              RedirectAttributes redirectAttributes,
-                                              Principal principal) throws IOException, StorageException {
+    public ResponseEntity<?> handleFileUpload(@Valid DataFileMetadata data, BindingResult result, RedirectAttributes redirectAttributes, Principal principal) throws IOException, StorageException {
 
         ResponseEntity<?> errorMap = errorService.MapValidationService(result);
         if (errorMap != null) return errorMap;

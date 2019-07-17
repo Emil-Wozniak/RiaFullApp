@@ -22,6 +22,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import static org.ria.ifzz.RiaApp.service.FileNameChecker.isFileAlreadyStorage;
+import static org.ria.ifzz.RiaApp.service.FileNameChecker.isWrongFileName;
+
 @RestController
 public class FileEntityStorageService implements StorageService {
 
@@ -47,22 +50,12 @@ public class FileEntityStorageService implements StorageService {
      */
     @Override
     public FileEntity storeAndSaveFileEntity(MultipartFile file, RedirectAttributes redirectAttributes, String username) throws IOException, StorageException {
-        FileEntity fileEntity = new FileEntity(
-                file.getOriginalFilename(),
-                file.getContentType(),
-                file.getBytes());
-
+        FileEntity fileEntity = new FileEntity(file.getOriginalFilename(), file.getContentType(), file.getBytes());
         String filename = StringUtils.cleanPath(file.getOriginalFilename());
 
-        if (fileEntityRepository.findByFileName(filename) != null) {
-            throw new StorageException("File already uploaded: " + filename);
-        }
-        if (filename.contains("..")) {
-            // This is a security check
-            throw new StorageException(
-                    "Cannot store file with relative path outside current directory "
-                            + filename);
-        }
+        isFileAlreadyStorage(fileEntityRepository,filename);
+        isWrongFileName(filename);
+
         try {
             User user = userRepository.findByUsername(username);
             fileEntity.setUser(user);
@@ -111,11 +104,14 @@ public class FileEntityStorageService implements StorageService {
     @Override
     public FileEntity getByDataId(String dataId) throws FileEntityNotFoundException {
         FileEntity fileEntity = fileEntityRepository.getByDataId(dataId);
-        if (fileEntity == null) {
-            throw new FileEntityNotFoundException(
-                    "File does not exist" + dataId);
-        }
+        isFileEntityNull(dataId, fileEntity);
         return fileEntity;
+    }
+
+    private void isFileEntityNull(String dataId, FileEntity fileEntity) throws FileEntityNotFoundException {
+        if (fileEntity == null) {
+            throw new FileEntityNotFoundException("File does not exist" + dataId);
+        }
     }
 
     @Override

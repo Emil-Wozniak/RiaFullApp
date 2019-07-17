@@ -20,7 +20,7 @@ public class BacklogService {
         this.resultRepository = resultRepository;
     }
 
-    public Backlog setBacklog(FileEntity fileEntity) {
+    Backlog setBacklog(FileEntity fileEntity) {
         Backlog backlog = new Backlog();
         backlog.setFileEntity(fileEntity);
         backlog.setFileName(fileEntity.getFileName());

@@ -2,7 +2,6 @@ package org.ria.ifzz.RiaApp.service;
 
 import org.ria.ifzz.RiaApp.domain.FileEntity;
 import org.ria.ifzz.RiaApp.repository.FileEntityRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.FileNotFoundException;
@@ -10,15 +9,15 @@ import java.io.FileNotFoundException;
 @Service
 public class FileEntityService {
 
-    @Autowired
-    private FileEntityRepository fileEntityRepository;
+    private final FileEntityRepository fileEntityRepository;
 
-    public FileEntity findFileEntityByDataId(String dataId) throws FileNotFoundException {
+    public FileEntityService(FileEntityRepository fileEntityRepository) {
+        this.fileEntityRepository = fileEntityRepository;
+    }
+
+    void findFileEntityByDataId(String dataId) throws FileNotFoundException {
         FileEntity fileEntity = fileEntityRepository.findByDataId(dataId);
         if (fileEntity == null) {
-            throw new FileNotFoundException(
-                    "File does not exist");
-        }
-        return fileEntity;
+            throw new FileNotFoundException("File does not exist");}
     }
 }
