@@ -3,44 +3,40 @@ package org.ria.ifzz.RiaApp.service;
 import org.ria.ifzz.RiaApp.domain.Backlog;
 import org.ria.ifzz.RiaApp.domain.ControlCurve;
 import org.ria.ifzz.RiaApp.domain.FileEntity;
-import org.ria.ifzz.RiaApp.domain.DataFileMetadata;
 import org.ria.ifzz.RiaApp.exception.FileEntityNotFoundException;
 import org.ria.ifzz.RiaApp.repository.ControlCurveRepository;
-import org.ria.ifzz.RiaApp.utils.CustomFileReader;
 import org.ria.ifzz.RiaApp.utils.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import javax.validation.constraints.NotNull;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.ria.ifzz.RiaApp.domain.HormonesPattern.CORTISOL_PATTERN;
-import static org.ria.ifzz.RiaApp.utils.CustomFileReader.*;
-import static org.ria.ifzz.RiaApp.utils.FileUtils.*;
+import static org.ria.ifzz.RiaApp.utils.CustomFileReader.getMatchingStrings;
 
 @Service
-public class ControlCurveService implements FileUtils{
+public class ControlCurveService implements FileUtils {
 
     private final ControlCurveRepository controlCurveRepository;
     private final FileEntityService fileEntityService;
 
-    public ControlCurveService( ControlCurveRepository controlCurveRepository, FileEntityService fileEntityService) {
+    public ControlCurveService(ControlCurveRepository controlCurveRepository, FileEntityService fileEntityService) {
         this.controlCurveRepository = controlCurveRepository;
         this.fileEntityService = fileEntityService;
     }
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    public List<ControlCurve> setControlCurveFromFileData(List<String> fileData, @NotNull DataFileMetadata file, Backlog backlog) {
+    public List<ControlCurve> setControlCurveFromFileData(List<String> fileData, Backlog backlog) {
         List<ControlCurve> controlCurveList = new ArrayList<>();
         for (int i = 0; i < 25; i++) {
             String line = fileData.get(i);
             if (line.startsWith(" \tUnk")) {
                 ControlCurve controlCurvePoint = new ControlCurve();
-                controlCurvePoint.setFileName(i + "_" + setFileName(file));
+                controlCurvePoint.setFileName(i + "_" + backlog.getDataId());
                 controlCurvePoint.setBacklog(backlog);
                 controlCurveList.add(controlCurvePoint);
             }
@@ -54,9 +50,7 @@ public class ControlCurveService implements FileUtils{
      * @param fileData contains data
      * @return list of all control curve points
      */
-    public List<ControlCurve> setDataToControlCurve(List<String> fileData,
-                                                    FileEntity fileEntity,
-                                                    List<ControlCurve> curveList) {
+    List<ControlCurve> setDataToControlCurve(List<String> fileData, FileEntity fileEntity, List<ControlCurve> curveList) {
 
         List<ControlCurve> controlCurveList = new ArrayList<>();
         String fileId = fileEntity.getDataId();
@@ -183,7 +177,7 @@ public class ControlCurveService implements FileUtils{
      * @param third   curve point
      * @param percent not accepted percentage difference between the points
      */
-    public void setNSBsZerosFlag(ControlCurve first, ControlCurve second, ControlCurve third, int percent) {
+    private void setNSBsZerosFlag(ControlCurve first, ControlCurve second, ControlCurve third, int percent) {
         double a = first.getCpm();
         double b = second.getCpm();
         double c = third.getCpm();

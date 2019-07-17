@@ -39,12 +39,11 @@ public class GraphCurveService implements FileUtils {
         this.graphCurveLinesRepository = graphCurveLinesRepository;
     }
 
-    public GraphCurve setGraphCurve(DataFileMetadata file, FileEntity fileEntity, Backlog backlog) {
-        String fileId = fileEntity.getDataId();
+    public GraphCurve setGraphCurve(Backlog backlog) {
         double correlation = countResultUtil.setCorrelation();
         double zeroBindingPercentage = countResultUtil.setZeroBindingPercent();
         Double regressionParameterB = countResultUtil.getRegressionParameterB();
-        return new GraphCurve(correlation, setFileName(file), fileId, zeroBindingPercentage, regressionParameterB, backlog);
+        return new GraphCurve(correlation, backlog.getDataId(), backlog.getDataId(), zeroBindingPercentage, regressionParameterB, backlog);
     }
 
     public List<GraphCurveLines> setCoordinates(GraphCurve graphCurve, Backlog backlog, List<String> fileData) {

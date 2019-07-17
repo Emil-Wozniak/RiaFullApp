@@ -104,27 +104,26 @@ public class FileEntityController {
      * it is responsible for handle a file upload and generate database tables,
      * then assign values from file to appropriate variables.
      *
-     * @param data               which will be handle
-     * @param redirectAttributes message shown if upload goes well
+     * @param data               information from file
      */
     @PostMapping(value = "/")
-    public ResponseEntity<?> handleFileUpload(@Valid DataFileMetadata data, BindingResult result, RedirectAttributes redirectAttributes, Principal principal) throws IOException, StorageException {
+    public ResponseEntity<?> handleFileUpload(@Valid DataFileMetadata data, BindingResult result, Principal principal) throws IOException, StorageException {
 
         ResponseEntity<?> errorMap = errorService.MapValidationService(result);
         if (errorMap != null) return errorMap;
 
-        FileEntity fileEntity = storageService.storeAndSaveFileEntity(data.getFile(), redirectAttributes, principal.getName());
+        FileEntity fileEntity = storageService.storeAndSaveFileEntity(data.getFile(), principal.getName());
         Backlog currentBacklog = fileEntity.getBacklog();
 
         // Get data from uploaded file
         List<String> serviceFileData = resultService.getFileData(data);
 
         // Result
-        List<Result> results = resultService.setDataToResult(data, serviceFileData, currentBacklog, fileEntity);
+        List<Result> results = resultService.setDataToResult(serviceFileData, currentBacklog, fileEntity);
         resultRepository.saveAll(results);
 
         // Graph Curve
-        GraphCurve graphCurve = graphCurveService.setGraphCurve(data, fileEntity, currentBacklog);
+        GraphCurve graphCurve = graphCurveService.setGraphCurve(currentBacklog);
         graphCurveRepository.save(graphCurve);
 
         // Coordinates

@@ -3,6 +3,8 @@ package org.ria.ifzz.RiaApp.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -13,19 +15,20 @@ import java.util.List;
 @Entity
 @Data
 @NoArgsConstructor
+@RequiredArgsConstructor
 public class Backlog {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String fileName;
-    private String contentType;
-    private String dataId;
+    @NonNull String fileName;
+    @NonNull String contentType;
+    @NonNull String dataId;
 
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "file_entity_id", nullable = false)
     @JsonIgnore
-    private FileEntity fileEntity;
+    @NonNull FileEntity fileEntity;
 
     @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(cascade = CascadeType.REFRESH, mappedBy = "backlog", orphanRemoval = true)

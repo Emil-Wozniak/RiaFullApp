@@ -1,8 +1,6 @@
 package org.ria.ifzz.RiaApp.utils;
 
-import lombok.Getter;
 import org.ria.ifzz.RiaApp.domain.DataFileMetadata;
-import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,9 +16,9 @@ public interface CustomFileReader {
 
     /**
      * takes metadata from uploaded file and
+     *
      * @param metadata uploaded file
      * @return Strings containing data for
-     * @throws IOException
      */
     static List<String> readFromStream(DataFileMetadata metadata) throws IOException {
         List<String> examinationResult = new ArrayList<>();
@@ -34,7 +32,6 @@ public interface CustomFileReader {
                 examinationResult.add(metadataLine);
             }
         }
-        examinationResult.forEach(System.out::println);
         return examinationResult;
     }
 
@@ -51,9 +48,7 @@ public interface CustomFileReader {
         for (String added : list) {
             List<String> wordInLine = Arrays.asList(added.split("\\t"));
             if (wordInLine.size() == 5) {
-                if (!wordInLine.isEmpty()) {
-                    matches.add(wordInLine.get(columnNumber));
-                }
+                matches.add(wordInLine.get(columnNumber));
             } else {
                 matches.isEmpty();
             }

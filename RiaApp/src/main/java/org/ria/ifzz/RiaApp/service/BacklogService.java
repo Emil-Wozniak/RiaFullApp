@@ -21,12 +21,7 @@ public class BacklogService {
     }
 
     Backlog setBacklog(FileEntity fileEntity) {
-        Backlog backlog = new Backlog();
-        backlog.setFileEntity(fileEntity);
-        backlog.setFileName(fileEntity.getFileName());
-        backlog.setDataId(fileEntity.getDataId());
-        backlog.setContentType(fileEntity.getContentType());
-        return backlog;
+        return new Backlog(fileEntity.getFileName(),fileEntity.getContentType(),fileEntity.getDataId(),fileEntity);
     }
 
     /**

@@ -16,18 +16,12 @@ public interface StorageService {
 
     void init() throws StorageException;
 
-    FileEntity storeAndSaveFileEntity(MultipartFile file, RedirectAttributes redirectAttributes, String username) throws IOException, StorageException;
+    FileEntity storeAndSaveFileEntity(MultipartFile file, String username) throws IOException, StorageException;
 
     Iterable<FileEntity> loadAll();
-
-    Path load(String filename);
-
-    Resource loadAsResource(String filename) throws StorageFileNotFoundException;
 
     void deleteAll();
 
     FileEntity getByDataId(String dataId) throws FileNotFoundException, FileEntityNotFoundException;
-
-    void delete(Long id);
 
 }

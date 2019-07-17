@@ -1,41 +1,34 @@
 package org.ria.ifzz.RiaApp.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
-/**
- * Represents uploaded file with its content
- */
 @Entity
-@Data
+@Getter
 @NoArgsConstructor
+@RequiredArgsConstructor
 public class FileEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String fileName;
-    private String contentType;
-    private String dataId;
-    private String fileOwner;
+    @NonNull String fileName;
+    @NonNull String contentType;
+    @NonNull String dataId;
+    @NonNull String fileOwner;
 
+    @Setter
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "fileEntity", orphanRemoval = true)
     @JsonIgnore
     private Backlog backlog;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
-    private User user;
+    @NonNull User user;
 
+    @Setter
     @JsonIgnore
     private byte[] data;
-
-    public FileEntity(String fileName, String contentType, byte[] data) {
-        this.fileName = fileName;
-        this.contentType = contentType;
-        this.data = data;
-    }
 }

@@ -1,7 +1,7 @@
 package org.ria.ifzz.RiaApp.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -13,7 +13,10 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-@Data
+@Setter
+@Getter
+@AllArgsConstructor
+@RequiredArgsConstructor
 @Entity
 @Table(name = "customer")
 public class User implements UserDetails {
