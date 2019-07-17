@@ -13,57 +13,41 @@ import org.springframework.stereotype.Service;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 
 import static org.ria.ifzz.RiaApp.domain.HormonesPattern.CORTISOL_PATTERN;
+import static org.ria.ifzz.RiaApp.utils.FileUtils.setFileName;
 
 @Service
-public class GraphCurveService {
+public class GraphCurveService implements FileUtils {
 
     private List<GraphCurveLines> graphCurveLinesList = new ArrayList<>();
-
     private final GraphCurveRepository graphCurveRepository;
     private final FileEntityService fileEntityService;
     private final CountResultUtil countResultUtil;
-    private final FileUtils fileUtils;
     private final GraphCurveLinesRepository graphCurveLinesRepository;
+    private Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    public GraphCurveService(GraphCurveRepository graphCurveRepository, FileEntityService fileEntityService, CountResultUtil countResultUtil, FileUtils fileUtils, GraphCurveLinesRepository graphCurveLinesRepository) {
+    public GraphCurveService(GraphCurveRepository graphCurveRepository, FileEntityService fileEntityService, CountResultUtil countResultUtil, GraphCurveLinesRepository graphCurveLinesRepository) {
         this.graphCurveRepository = graphCurveRepository;
         this.fileEntityService = fileEntityService;
         this.countResultUtil = countResultUtil;
-        this.fileUtils = fileUtils;
         this.graphCurveLinesRepository = graphCurveLinesRepository;
     }
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
-
     public GraphCurve setGraphCurve(DataFileMetadata file, FileEntity fileEntity, Backlog backlog) {
-        GraphCurve graphCurve = new GraphCurve();
-//        try {
-            String fileId = fileEntity.getDataId();
-            graphCurve.setFileName(fileUtils.setFileName(file));
-            graphCurve.setDataId(fileId);
-            graphCurve.setBacklog(backlog);
-            Double correlation = countResultUtil.setCorrelation();
-            graphCurve.setCorrelation(correlation);
-            Double binding = countResultUtil.setZeroBindingPercent();
-            graphCurve.setZeroBindingPercent(binding);
-            Double regressionParameterB = countResultUtil.getRegressionParameterB();
-            graphCurve.setRegressionParameterB(regressionParameterB);
-//        } catch (Exception e) {
-//            logger.error(GraphCurveService.class.getName() + ".setGraphCurve() msg: " + e.getMessage() + " and cause: " + e.getCause() + " \n" + Arrays.toString(e.getStackTrace()));
-//        }
-        return graphCurve;
+        String fileId = fileEntity.getDataId();
+        double correlation = countResultUtil.setCorrelation();
+        double zeroBindingPercentage = countResultUtil.setZeroBindingPercent();
+        Double regressionParameterB = countResultUtil.getRegressionParameterB();
+        return new GraphCurve(correlation, setFileName(file), fileId, zeroBindingPercentage, regressionParameterB, backlog);
     }
 
-    public List<GraphCurveLines> setCoordinates(GraphCurve graphCurve, Backlog backlog,List<String> fileData ) {
+    public List<GraphCurveLines> setCoordinates(GraphCurve graphCurve, Backlog backlog, List<String> fileData) {
         List<Double> listX = countResultUtil.getLogDoseList();
         List<Double> listY = countResultUtil.getLogarithmRealZeroTable();
         List<Double> patternPoints = setStandardPattern(fileData);
@@ -86,7 +70,7 @@ public class GraphCurveService {
                 graphCurveLinesList.add(graphCurveLines);
             }
         } catch (Exception e) {
-            logger.error(GraphCurveService.class.getName() + ".setGraphCurve() msg:" + e.getMessage() + " and cause: " + e.getCause());
+            LOGGER.error(GraphCurveService.class.getName() + ".setGraphCurve() msg:" + e.getMessage() + " and cause: " + e.getCause());
         }
         return graphCurveLinesList;
     }
@@ -109,7 +93,7 @@ public class GraphCurveService {
     private List<Double> setStandardPattern(List<String> fileData) {
         List<Double> hormonePattern = new ArrayList<>();
         if (fileData.get(0).equals("KORTYZOL_5_MIN")) {
-            logger.info("Pattern detected: " + fileData.get(0));
+            LOGGER.info("Pattern detected: " + fileData.get(0));
             hormonePattern = DoubleStream.of(CORTISOL_PATTERN).boxed().collect(
                     Collectors.toCollection(ArrayList::new));
 

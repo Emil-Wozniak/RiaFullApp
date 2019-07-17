@@ -28,9 +28,7 @@ public class FileEntityStorageService implements StorageService {
     private final Path rootLocation;
     private final FileEntityRepository fileEntityRepository;
     private final BacklogService backlogService;
-
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Autowired
     public FileEntityStorageService(StorageProperties properties, FileEntityRepository fileEntityRepository, BacklogService backlogService, UserRepository userRepository) {
@@ -41,7 +39,7 @@ public class FileEntityStorageService implements StorageService {
     }
 
     /**
-     * @param file               uploaded
+     * @param file               uploaded file
      * @param redirectAttributes page response
      * @param username           user credentials
      * @return file_entity object with all necessary contents

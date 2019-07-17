@@ -32,7 +32,6 @@ public class BacklogService {
     /**
      * @param dataId unique identifier
      * @return Result from repository if exists
-     * @throws FileNotFoundException
      */
     public Iterable<Result> findBacklogByDataId(String dataId) throws FileNotFoundException {
         fileEntityService.findFileEntityByDataId(dataId);

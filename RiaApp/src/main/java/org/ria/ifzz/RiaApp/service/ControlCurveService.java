@@ -18,19 +18,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.ria.ifzz.RiaApp.domain.HormonesPattern.CORTISOL_PATTERN;
+import static org.ria.ifzz.RiaApp.utils.FileUtils.*;
 
 @Service
-public class ControlCurveService {
+public class ControlCurveService implements FileUtils{
 
     private final CustomFileReader customFileReader;
     private final ControlCurveRepository controlCurveRepository;
-    private final FileUtils fileUtils;
+
     private final FileEntityService fileEntityService;
 
-    public ControlCurveService(CustomFileReader customFileReader, ControlCurveRepository controlCurveRepository, FileUtils fileUtils, FileEntityService fileEntityService) {
+    public ControlCurveService(CustomFileReader customFileReader, ControlCurveRepository controlCurveRepository, FileEntityService fileEntityService) {
         this.customFileReader = customFileReader;
         this.controlCurveRepository = controlCurveRepository;
-        this.fileUtils = fileUtils;
         this.fileEntityService = fileEntityService;
     }
 
@@ -44,7 +44,7 @@ public class ControlCurveService {
             String line = fileData.get(i);
             if (line.startsWith(" \tUnk")) {
                 ControlCurve controlCurvePoint = new ControlCurve();
-                controlCurvePoint.setFileName(i + "_" + fileUtils.setFileName(file));
+                controlCurvePoint.setFileName(i + "_" + setFileName(file));
                 controlCurvePoint.setBacklog(backlog);
                 controlCurveList.add(controlCurvePoint);
             }

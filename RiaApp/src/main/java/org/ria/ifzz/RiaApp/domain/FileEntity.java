@@ -30,7 +30,7 @@ public class FileEntity {
     @JsonIgnore
     private User user;
 
-    @Lob
+    @JsonIgnore
     private byte[] data;
 
     public FileEntity(String fileName, String contentType, byte[] data) {

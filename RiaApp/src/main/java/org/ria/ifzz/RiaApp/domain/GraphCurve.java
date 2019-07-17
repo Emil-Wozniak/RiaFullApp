@@ -1,7 +1,10 @@
 package org.ria.ifzz.RiaApp.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -10,24 +13,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Data
+//@Data
+@Getter
+//@Setter
+@NoArgsConstructor
+@RequiredArgsConstructor
 public class GraphCurve {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Double correlation = null;
-    private String fileName;
-    private String dataId;
-    private Double zeroBindingPercent = null;
-    private Double regressionParameterB;
+    @NonNull Double correlation;
+    @NonNull String fileName;
+    @NonNull String dataId;
+    @NonNull Double zeroBindingPercent;
+    @NonNull Double regressionParameterB;
 
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "backlog_id", updatable = false, nullable = false)
     @JsonIgnore
-    private Backlog backlog;
+    @NonNull Backlog backlog;
 
     @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(cascade = CascadeType.REFRESH, mappedBy = "graphCurve", orphanRemoval = true)
-    private List<GraphCurveLines> graphCurveLines = new ArrayList<>();
+    @NonNull List<GraphCurveLines> graphCurveLines = new ArrayList<>();
 }

@@ -18,21 +18,20 @@ import java.util.stream.Stream;
 import static org.ria.ifzz.RiaApp.domain.DomainConstants.FILE_CONTENT;
 import static org.ria.ifzz.RiaApp.domain.DomainConstants.RESULT_POINTER;
 import static org.ria.ifzz.RiaApp.domain.HormonesPattern.CORTISOL_PATTERN;
+import static org.ria.ifzz.RiaApp.utils.FileUtils.*;
 
 @RestController
-public class ResultService {
+public class ResultService implements FileUtils{
 
     private final CustomFileReader customFileReader;
     private final CountResultUtil countResultUtil;
-    private final FileUtils fileUtils;
     private final ControlCurveRepository controlCurveRepository;
     private final ControlCurveService controlCurveService;
     private final DataAssigner dataAssigner;
 
-    public ResultService(CustomFileReader customFileReader, CountResultUtil countResultUtil, FileUtils fileUtils, ControlCurveRepository controlCurveRepository, ControlCurveService controlCurveService, DataAssigner dataAssigner) {
+    public ResultService(CustomFileReader customFileReader, CountResultUtil countResultUtil, ControlCurveRepository controlCurveRepository, ControlCurveService controlCurveService, DataAssigner dataAssigner) {
         this.customFileReader = customFileReader;
         this.countResultUtil = countResultUtil;
-        this.fileUtils = fileUtils;
         this.controlCurveRepository = controlCurveRepository;
         this.controlCurveService = controlCurveService;
         this.dataAssigner = dataAssigner;
@@ -69,7 +68,7 @@ public class ResultService {
         for (String dataLine : data) {
             if (dataLine.startsWith(RESULT_POINTER)) {
                 result = new Result();
-                result.setFileName(data.indexOf(dataLine) + "_" + fileUtils.setFileName(file));
+                result.setFileName(data.indexOf(dataLine) + "_" + setFileName(file));
                 result.setBacklog(backlog);
                 results.add(result);
             }

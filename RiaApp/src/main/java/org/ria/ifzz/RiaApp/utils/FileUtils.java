@@ -3,11 +3,9 @@ package org.ria.ifzz.RiaApp.utils;
 import org.ria.ifzz.RiaApp.domain.DataFileMetadata;
 import org.springframework.stereotype.Service;
 
-@Service
-public class FileUtils {
+public interface FileUtils {
 
-    public String setFileName(DataFileMetadata file) {
-        String fileName = file.getFileName();
-        return fileName;
+    static String setFileName(DataFileMetadata file) {
+        return file.getFileName();
     }
 }

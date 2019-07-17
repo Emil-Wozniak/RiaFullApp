@@ -1,4 +1,4 @@
-package org.ria.ifzz.RiaApp.web;
+package org.ria.ifzz.RiaApp.controller;
 
 import org.ria.ifzz.RiaApp.domain.ControlCurve;
 import org.ria.ifzz.RiaApp.domain.Result;

@@ -38,7 +38,6 @@ public class Backlog {
     @LazyCollection(LazyCollectionOption.FALSE)
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "backlog", orphanRemoval = true)
     @JsonIgnore
-//    @OneToMany(cascade = CascadeType.REFRESH, mappedBy = "backlog", orphanRemoval = true)
     private GraphCurve graphCurveList;
 
 }

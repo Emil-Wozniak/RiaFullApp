@@ -1,4 +1,4 @@
-package org.ria.ifzz.RiaApp.web;
+package org.ria.ifzz.RiaApp.controller;
 
 import org.ria.ifzz.RiaApp.domain.*;
 import org.ria.ifzz.RiaApp.repository.FileEntityRepository;
@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 @RestController
-@RequestMapping("/api/files")
+@RequestMapping("/api/files/")
 @CrossOrigin(origins = "http://localhost:3000")
 public class FileEntityController {
 
@@ -68,7 +68,7 @@ public class FileEntityController {
     @GetMapping("/download")
     public ResponseEntity<byte[]> getFile() {
         long amountOfFiles = fileEntityRepository.count();
-        Long randomPrimaryKey;
+        long randomPrimaryKey;
 
         if (amountOfFiles == 0) {
             return ResponseEntity.ok(new byte[0]);
@@ -86,25 +86,6 @@ public class FileEntityController {
         header.setContentLength(fileEntity.getData().length);
         header.set("Content-Disposition", "attachment; filename=" + fileEntity.getFileName());
         return new ResponseEntity<>(fileEntity.getData(), header, HttpStatus.OK);
-    }
-
-    @GetMapping("/download/{filename:.+}")
-    @ResponseBody
-    public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
-
-        Resource file = storageService.loadAsResource(filename);
-        if (file.exists()) {
-            HttpHeaders headers = new HttpHeaders();
-            //instructing web browser how to treat downloaded file
-            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"");
-            //allowing web browser to read additional headers from response
-            headers.add("Access-Control-Expose-Headers", HttpHeaders.CONTENT_DISPOSITION + "," + HttpHeaders.CONTENT_LENGTH);
-
-            //put headers and file within response body
-            return ResponseEntity.ok().headers(headers).body(file);
-        }
-        //in case requested file does not exists
-        return ResponseEntity.notFound().build();
     }
 
     @GetMapping("/{dataId}")
@@ -126,7 +107,7 @@ public class FileEntityController {
      * @param redirectAttributes message shown if upload goes well
      * @throws IOException
      */
-    @PostMapping
+    @PostMapping(value = "/")
     public ResponseEntity<?> handleFileUpload(@Valid DataFileMetadata data,
                                               BindingResult result,
                                               RedirectAttributes redirectAttributes,
@@ -158,7 +139,6 @@ public class FileEntityController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteFile(@PathVariable Long id) {
-        storageService.delete(id);
         return new ResponseEntity<>("File with ID: '" + id + "' was deleted", HttpStatus.OK);
     }
 }

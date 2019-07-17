@@ -1,4 +1,4 @@
-package org.ria.ifzz.RiaApp.web;
+package org.ria.ifzz.RiaApp.controller;
 
 import org.ria.ifzz.RiaApp.domain.User;
 import org.ria.ifzz.RiaApp.payload.JWTLoginSuccessResponse;
@@ -28,20 +28,19 @@ import static org.ria.ifzz.RiaApp.security.SecurityConstants.TOKEN_PREFIX;
 @RequestMapping("/api/users")
 public class UserController {
 
-    @Autowired
-    private MapValidationErrorService mapValidationErrorService;
+    private final MapValidationErrorService mapValidationErrorService;
+    private final UserService userService;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final AuthenticationManager authenticationManager;
+    private final UserValidator userValidator;
 
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private JwtTokenProvider jwtTokenProvider;
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private UserValidator userValidator;
+    public UserController(MapValidationErrorService mapValidationErrorService, UserService userService, JwtTokenProvider jwtTokenProvider, AuthenticationManager authenticationManager, UserValidator userValidator) {
+        this.mapValidationErrorService = mapValidationErrorService;
+        this.userService = userService;
+        this.jwtTokenProvider = jwtTokenProvider;
+        this.authenticationManager = authenticationManager;
+        this.userValidator = userValidator;
+    }
 
     /**
      * authenticateUser was provided to handle login with black
