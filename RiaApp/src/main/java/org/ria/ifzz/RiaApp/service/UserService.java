@@ -20,7 +20,7 @@ public class UserService {
      * @param newUser Instance of User class
      * @return new User object or ExceptionHandler if username already exists
      */
-    public User saveUser(User newUser) {
+    public User saveUser(User newUser) throws UserNameAlreadyExistsException {
 
         try{
             newUser.setPassword(bCryptPasswordEncoder.encode(newUser.getPassword()));

@@ -14,36 +14,31 @@ import java.util.stream.Collectors;
 /**
  * performs mathematical algorithms
  */
-class ResultMath {
+interface ResultMath {
 
-    protected Logger logger = LoggerFactory.getLogger(getClass());
-
-    public double count(List<Double> values) {
+    static double count(List<Double> values) {
         return values.size();
     }
 
-    public Double averageTwo(Double first, Double second) {
-        logger.info("Elements: " + "[1: " + first + " | 2: " + second + "]");
+    static Double averageTwo(Double first, Double second) {
         double result = (first + second) / 2;
         return Math.ceil(result);
     }
 
-    public double averageThree(double first, double second, double third) {
-        logger.info("Elements: " + "[1: " + first + " | 2: " + second + " | 3: " + third + "]");
+    static double averageThree(double first, double second, double third) {
         double result = (first + second + third) / 3;
         Math.ceil(result);
         double ceil = Math.ceil(result);
-        logger.info("Average three: " + ceil);
         return ceil;
     }
 
-    public List<Double> subtractTableElements(Double subtrahend, List<Double> values) {
+    static List<Double> subtractTableElements(Double subtrahend, List<Double> values) {
         return values
                 .stream()
                 .map(element -> (subtrahend - element)).collect(Collectors.toList());
     }
 
-    public List<Double> subtractTablesElement(List<Double> subtrahend, double value) {
+    static List<Double> subtractTablesElement(List<Double> subtrahend, double value) {
         Double sub;
         Double result;
         List<Double> results = new ArrayList<>();
@@ -55,7 +50,7 @@ class ResultMath {
         return results;
     }
 
-    public List<Double> divideTableCeilElements(double factor, List<Double> values) {
+    static List<Double> divideTableCeilElements(double factor, List<Double> values) {
         return values
                 .stream()
                 .map(element -> (element / factor))
@@ -63,7 +58,7 @@ class ResultMath {
                 .map(element -> Precision.round(element, 0)).collect(Collectors.toList());
     }
 
-    public List<Double> logarithmTable2(List<Double> logarithmTable) {
+    static List<Double> logarithmTable2(List<Double> logarithmTable) {
         List<Double> resultTable;
         resultTable = logarithmTable
                 .stream()
@@ -74,7 +69,7 @@ class ResultMath {
         return resultTable;
     }
 
-    public List<Double> logarithmTable1(List<Double> logarithmTable) {
+    static List<Double> logarithmTable1(List<Double> logarithmTable) {
         List<Double> resultTable;
         resultTable = logarithmTable
                 .stream()
@@ -83,7 +78,7 @@ class ResultMath {
         return resultTable;
     }
 
-    public List<Double> divisionTable(List<Double> factors, List<Double> values) {
+    static List<Double> divisionTable(List<Double> factors, List<Double> values) {
         double product;
         List<Double> productTable = new ArrayList<>();
         for (int i = 0; i < factors.size(); i++) {
@@ -94,7 +89,7 @@ class ResultMath {
         return productTable;
     }
 
-    public List<Double> multiplyList(Double multiplier, List<Double> values) {
+    static List<Double> multiplyList(Double multiplier, List<Double> values) {
         return values
                 .stream()
                 .map(element -> (element * multiplier))
@@ -102,7 +97,7 @@ class ResultMath {
     }
 
 
-    public double sum(List<Double> values) {
+    static double sum(List<Double> values) {
         double product = values.stream()
                 .mapToDouble(value -> Precision.round(value, 2))
                 .sum();
@@ -110,7 +105,7 @@ class ResultMath {
         return product;
     }
 
-    public Double sumProduct(List<Double> factor, List<Double> multiplier) {
+    static Double sumProduct(List<Double> factor, List<Double> multiplier) {
 
         double product;
         List<Pair<Double, Double>> pairs = new ArrayList<>();
@@ -124,7 +119,7 @@ class ResultMath {
         return product;
     }
 
-    public Double sumsq(List<Double> values) {
+    static Double sumsq(List<Double> values) {
         return values
                 .parallelStream()
                 .mapToDouble(element -> Math.pow(element, 2))
@@ -139,7 +134,7 @@ class ResultMath {
      * @return digit rounded in pointed place
      * @author Jonik
      */
-    public static double round(double value, int places) {
+    static double round(double value, int places) {
         if (places < 0) throw new IllegalArgumentException();
         BigDecimal bd = new BigDecimal(value);
         bd = bd.setScale(places, RoundingMode.HALF_UP);

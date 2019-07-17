@@ -18,19 +18,18 @@ import java.util.stream.Stream;
 import static org.ria.ifzz.RiaApp.domain.DomainConstants.FILE_CONTENT;
 import static org.ria.ifzz.RiaApp.domain.DomainConstants.RESULT_POINTER;
 import static org.ria.ifzz.RiaApp.domain.HormonesPattern.CORTISOL_PATTERN;
+import static org.ria.ifzz.RiaApp.utils.CustomFileReader.*;
 import static org.ria.ifzz.RiaApp.utils.FileUtils.*;
 
 @RestController
-public class ResultService implements FileUtils{
+public class ResultService implements FileUtils, CustomFileReader{
 
-    private final CustomFileReader customFileReader;
     private final CountResultUtil countResultUtil;
     private final ControlCurveRepository controlCurveRepository;
     private final ControlCurveService controlCurveService;
     private final DataAssigner dataAssigner;
 
-    public ResultService(CustomFileReader customFileReader, CountResultUtil countResultUtil, ControlCurveRepository controlCurveRepository, ControlCurveService controlCurveService, DataAssigner dataAssigner) {
-        this.customFileReader = customFileReader;
+    public ResultService( CountResultUtil countResultUtil, ControlCurveRepository controlCurveRepository, ControlCurveService controlCurveService, DataAssigner dataAssigner) {
         this.countResultUtil = countResultUtil;
         this.controlCurveRepository = controlCurveRepository;
         this.controlCurveService = controlCurveService;
@@ -47,8 +46,7 @@ public class ResultService implements FileUtils{
      * @throws IOException
      */
     public List<String> getFileData(DataFileMetadata data) throws IOException {
-        System.out.println(FILE_CONTENT);
-        return customFileReader.readFromStream(data);
+        return readFromStream(data);
     }
 
     /**
@@ -59,9 +57,9 @@ public class ResultService implements FileUtils{
      * @param file
      * @return Result entities
      */
-    public List<Result> setResultFromColumnsLength(List<String> data,
-                                                   @NotNull DataFileMetadata file,
-                                                   Backlog backlog) {
+    private List<Result> setResultFromColumnsLength(List<String> data,
+                                                    @NotNull DataFileMetadata file,
+                                                    Backlog backlog) {
 
         Result result;
         List<Result> results = new ArrayList<>();
@@ -168,7 +166,7 @@ public class ResultService implements FileUtils{
         for (int i = 0; i < 24; i++) {
             controlCurve = controlCurveList.get(i);
             Double pointValue = controlCurve.getCpm();
-            Boolean flag = controlCurve.isFlagged();
+            boolean flag = controlCurve.isFlagged();
             curve.add(pointValue);
             Point point = new Point(pointValue, flag);
             points.add(point);

@@ -46,7 +46,7 @@ public class FileEntityStorageService implements StorageService {
      * @throws IOException if upload is not successful
      */
     @Override
-    public FileEntity storeAndSaveFileEntity(MultipartFile file, RedirectAttributes redirectAttributes, String username) throws IOException {
+    public FileEntity storeAndSaveFileEntity(MultipartFile file, RedirectAttributes redirectAttributes, String username) throws IOException, StorageException {
         FileEntity fileEntity = new FileEntity(
                 file.getOriginalFilename(),
                 file.getContentType(),
@@ -88,7 +88,7 @@ public class FileEntityStorageService implements StorageService {
     }
 
     @Override
-    public Resource loadAsResource(String filename) {
+    public Resource loadAsResource(String filename) throws StorageFileNotFoundException {
         try {
             Path file = load(filename);
             Resource resource = new UrlResource(file.toUri());
@@ -128,7 +128,7 @@ public class FileEntityStorageService implements StorageService {
      * Generate directory for uploaded files
      */
     @Override
-    public void init() {
+    public void init() throws StorageException {
         try {
             Files.createDirectories(rootLocation);
         } catch (IOException exception) {

@@ -1,6 +1,7 @@
 package org.ria.ifzz.RiaApp.controller;
 
 import org.ria.ifzz.RiaApp.domain.User;
+import org.ria.ifzz.RiaApp.exception.UserNameAlreadyExistsException;
 import org.ria.ifzz.RiaApp.payload.JWTLoginSuccessResponse;
 import org.ria.ifzz.RiaApp.payload.LoginRequest;
 import org.ria.ifzz.RiaApp.security.JwtTokenProvider;
@@ -46,8 +47,6 @@ public class UserController {
      * authenticateUser was provided to handle login with black
      *
      * @param loginRequest represent the message received when credentials are incorrect
-     * @param result
-     * @return
      */
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest, BindingResult result) {
@@ -72,7 +71,7 @@ public class UserController {
      * @return Valid User object
      */
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody User user, BindingResult result) {
+    public ResponseEntity<?> registerUser(@Valid @RequestBody User user, BindingResult result) throws UserNameAlreadyExistsException {
         // Validate passwords match
         userValidator.validate(user, result);
         ResponseEntity<?> errorMap = mapValidationErrorService.MapValidationService(result);

@@ -2,6 +2,7 @@ package org.ria.ifzz.RiaApp.controller;
 
 import org.ria.ifzz.RiaApp.domain.ControlCurve;
 import org.ria.ifzz.RiaApp.domain.Result;
+import org.ria.ifzz.RiaApp.exception.FileEntityNotFoundException;
 import org.ria.ifzz.RiaApp.service.BacklogService;
 import org.ria.ifzz.RiaApp.service.ControlCurveService;
 import org.ria.ifzz.RiaApp.service.MapValidationErrorService;
@@ -17,16 +18,15 @@ import java.io.FileNotFoundException;
 @CrossOrigin
 public class BacklogController {
 
-    @Autowired
-    MapValidationErrorService errorService;
-
+    private final MapValidationErrorService errorService;
     private final BacklogService backlogService;
     private final ControlCurveService controlCurveService;
 
     @Autowired
-    public BacklogController(BacklogService backlogService, ControlCurveService controlCurveService) {
+    public BacklogController(BacklogService backlogService, ControlCurveService controlCurveService, MapValidationErrorService errorService) {
         this.backlogService = backlogService;
         this.controlCurveService = controlCurveService;
+        this.errorService = errorService;
     }
 
     @GetMapping("/{dataId}")
@@ -35,7 +35,7 @@ public class BacklogController {
     }
 
     @GetMapping("/{dataId}/{fileName}")
-    public ResponseEntity<?> getCurve(@PathVariable String dataId, @PathVariable String fileName) throws FileNotFoundException {
+    public ResponseEntity<?> getCurve(@PathVariable String dataId, @PathVariable String fileName) throws FileNotFoundException, FileEntityNotFoundException {
 
         ControlCurve controlCurve = controlCurveService.findResultByDataId(dataId, fileName);
         return new ResponseEntity<>(controlCurve, HttpStatus.OK);
@@ -47,7 +47,7 @@ public class BacklogController {
     }
 
     @GetMapping("/{dataId}/curve/{fileName}")
-    public ResponseEntity<?> getResult(@PathVariable String dataId, @PathVariable String fileName) throws FileNotFoundException {
+    public ResponseEntity<?> getResult(@PathVariable String dataId, @PathVariable String fileName) throws FileNotFoundException, FileEntityNotFoundException {
 
         Result result = backlogService.findResultByDataId(dataId, fileName);
         return new ResponseEntity<>(result, HttpStatus.OK);

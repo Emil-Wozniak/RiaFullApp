@@ -18,27 +18,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.ria.ifzz.RiaApp.domain.HormonesPattern.CORTISOL_PATTERN;
+import static org.ria.ifzz.RiaApp.utils.CustomFileReader.*;
 import static org.ria.ifzz.RiaApp.utils.FileUtils.*;
 
 @Service
 public class ControlCurveService implements FileUtils{
 
-    private final CustomFileReader customFileReader;
     private final ControlCurveRepository controlCurveRepository;
-
     private final FileEntityService fileEntityService;
 
-    public ControlCurveService(CustomFileReader customFileReader, ControlCurveRepository controlCurveRepository, FileEntityService fileEntityService) {
-        this.customFileReader = customFileReader;
+    public ControlCurveService( ControlCurveRepository controlCurveRepository, FileEntityService fileEntityService) {
         this.controlCurveRepository = controlCurveRepository;
         this.fileEntityService = fileEntityService;
     }
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    public List<ControlCurve> setControlCurveFromFileData(List<String> fileData,
-                                                          @NotNull DataFileMetadata file,
-                                                          Backlog backlog) {
+    public List<ControlCurve> setControlCurveFromFileData(List<String> fileData, @NotNull DataFileMetadata file, Backlog backlog) {
         List<ControlCurve> controlCurveList = new ArrayList<>();
         for (int i = 0; i < 25; i++) {
             String line = fileData.get(i);
@@ -68,7 +64,7 @@ public class ControlCurveService implements FileUtils{
 
         //Assign CPM to Result
         for (int i = 0; i < 24; i++) {
-            List<String> CPMs = customFileReader.getMatchingStrings(fileData, 3);
+            List<String> CPMs = getMatchingStrings(fileData, 3);
 
             controlCurve = curveList.get(i);
 
@@ -89,7 +85,7 @@ public class ControlCurveService implements FileUtils{
 
         //Assign position to Result
         for (int i = 0; i < 24; i++) {
-            List position = customFileReader.getMatchingStrings(fileData, 2);
+            List position = getMatchingStrings(fileData, 2);
 
             controlCurve = curveList.get(i);
 
@@ -206,13 +202,12 @@ public class ControlCurveService implements FileUtils{
         }
     }
 
-
     public Iterable<ControlCurve> findCCBacklogByDataId(String dataId) throws FileNotFoundException {
         fileEntityService.findFileEntityByDataId(dataId);
         return controlCurveRepository.findByDataIdOrderByFileName(dataId);
     }
 
-    public ControlCurve findResultByDataId(String dataId, String fileName) throws FileNotFoundException {
+    public ControlCurve findResultByDataId(String dataId, String fileName) throws FileNotFoundException, FileEntityNotFoundException {
         fileEntityService.findFileEntityByDataId(dataId);
         ControlCurve controlCurve = controlCurveRepository.findByFileName(fileName);
         if (controlCurve == null) {

@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -30,7 +31,7 @@ public class DataFileMetadata {
         try {
             return loadFromFile();
         } catch (IOException ioException) {
-            throw new StorageException("Storage Failed " + ioException.getMessage());
+            return Collections.singletonList(ioException.getMessage());
         }
     }
 

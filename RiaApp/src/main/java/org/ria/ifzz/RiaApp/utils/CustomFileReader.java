@@ -14,11 +14,7 @@ import static org.ria.ifzz.RiaApp.domain.DomainConstants.*;
 /**
  * Provides methods needed to read and return List of String from uploaded file
  */
-@Service
-public class CustomFileReader {
-
-    @Getter
-    private String positionRegex = "[\\w]";
+public interface CustomFileReader {
 
     /**
      * takes metadata from uploaded file and
@@ -26,7 +22,7 @@ public class CustomFileReader {
      * @return Strings containing data for
      * @throws IOException
      */
-    public List<String> readFromStream(DataFileMetadata metadata) throws IOException {
+    static List<String> readFromStream(DataFileMetadata metadata) throws IOException {
         List<String> examinationResult = new ArrayList<>();
         List<String> streamMetadata = metadata.getContents().get();
         String hormonePattern = streamMetadata.get(HORMONE_PATTERN);
@@ -49,7 +45,7 @@ public class CustomFileReader {
      * @param columnNumber The targeted column to use
      * @return list containing the words of all matching entries
      */
-    public List<String> getMatchingStrings(List<String> list, Integer columnNumber) {
+    static List<String> getMatchingStrings(List<String> list, Integer columnNumber) {
 
         List<String> matches = new ArrayList<>();
         for (String added : list) {

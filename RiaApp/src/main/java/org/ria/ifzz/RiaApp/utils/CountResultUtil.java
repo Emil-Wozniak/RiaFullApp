@@ -9,14 +9,15 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
-public class CountResultUtil {
+import static org.ria.ifzz.RiaApp.utils.ResultMath.*;
 
-    protected Logger logger = LoggerFactory.getLogger(getClass());
+@Service
+public class CountResultUtil implements ResultMath{
+
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     private Double total;
     private Double zero;
@@ -37,8 +38,6 @@ public class CountResultUtil {
     @Getter
     private Double regressionParameterB;
     private Double regressionParameterA;
-
-    private ResultMath resultMath = new ResultMath();
 
     /**
      * @param points list containing CMPs and flags
@@ -69,7 +68,7 @@ public class CountResultUtil {
                 zero3 = curveFlagged.get(4);
             }
 
-            total = resultMath.averageTwo(t1.getValue(), t2.getValue());
+            total = averageTwo(t1.getValue(), t2.getValue());
             nsb = isControlCurveHasFlag(nsb1, nsb2, nsb3);
             zero = isControlCurveHasFlag(zero1, zero2, zero3);
 
@@ -92,15 +91,15 @@ public class CountResultUtil {
         Double output = null;
         if (first.isFlag() || second.isFlag() || third.isFlag()) {
             if (!first.isFlag() && !second.isFlag()) {
-                output = resultMath.averageTwo(first.getValue(), second.getValue());
+                output = averageTwo(first.getValue(), second.getValue());
             } else if (!second.isFlag() && !third.isFlag()) {
-                output = resultMath.averageTwo(second.getValue(), third.getValue());
+                output = averageTwo(second.getValue(), third.getValue());
             } else if (!third.isFlag() && !first.isFlag()) {
-                output = resultMath.averageTwo(third.getValue(), first.getValue());
+                output = averageTwo(third.getValue(), first.getValue());
             }
         } else {
             //handle if every of points are false
-            output = resultMath.averageThree(first.getValue(), second.getValue(), third.getValue());
+            output = averageThree(first.getValue(), second.getValue(), third.getValue());
         }
         return output;
     }
@@ -140,7 +139,7 @@ public class CountResultUtil {
         for (double point : results) {
             standardPattern.add(point);
         }
-        logDoseList = resultMath.logarithmTable2(standardPattern);
+        logDoseList = logarithmTable2(standardPattern);
         logger.info("Standard points:" + Arrays.toString(results));
     }
 
@@ -150,13 +149,11 @@ public class CountResultUtil {
     /**
      * subtracts each value from standards CMP List by each value result from logDose(),
      * then multiply each result by 100, divides those by binding
-     *
-     * @return
      */
     public void bindingPercent() {
-        List<Double> subtraction = resultMath.subtractTablesElement(standardsCPM, zero);
-        List<Double> multiplication = resultMath.multiplyList(100.0, subtraction);
-        List<Double> result = resultMath.divideTableCeilElements(binding, multiplication); // %Bo-Bg
+        List<Double> subtraction = subtractTablesElement(standardsCPM, zero);
+        List<Double> multiplication = multiplyList(100.0, subtraction);
+        List<Double> result = divideTableCeilElements(binding, multiplication); // %Bo-Bg
         if (result != null) {
             for (int i = 0; i < result.size(); i++) {
                 Double pointer;
@@ -178,9 +175,9 @@ public class CountResultUtil {
     public void logarithmRealZero() {
         List<Double> logTable = null;
         try {
-            List<Double> subtractPercentNO = resultMath.subtractTableElements(100.0, bindingPercent);
-            List<Double> divideTable = resultMath.divisionTable(bindingPercent, subtractPercentNO);
-            logTable = resultMath.logarithmTable2(divideTable);
+            List<Double> subtractPercentNO = subtractTableElements(100.0, bindingPercent);
+            List<Double> divideTable = divisionTable(bindingPercent, subtractPercentNO);
+            logTable = logarithmTable2(divideTable);
         } catch (Exception e) {
             System.out.println(e.getMessage() + " " + e.getCause());
         }
@@ -203,9 +200,9 @@ public class CountResultUtil {
     * = sum(N25:N40)/ count(M25:M40)- N19 => regressionParameterB* sum(M25:M40) / count(M25:M40)
     */
     public void countRegressionParameterA() {
-        Double sumLogRealZero = resultMath.sum(logarithmRealZeroTable);
-        Double countLogDose = resultMath.count(logDoseList);
-        Double sumLogDose = resultMath.sum(logDoseList);
+        Double sumLogRealZero = sum(logarithmRealZeroTable);
+        Double countLogDose = count(logDoseList);
+        Double sumLogDose = sum(logDoseList);
         regressionParameterA = sumLogRealZero / countLogDose - regressionParameterB * sumLogDose / countLogDose;
         logger.info("Regression Parameter A = " + regressionParameterA);
     }
@@ -218,19 +215,19 @@ public class CountResultUtil {
     * =(COUNT(M25:M40) *SUMPRODUCT(M25:M40;N25:N40) -SUM(M25:M40)*SUM(N25:N40))/(COUNT(M25:M40)*SUMSQ(M25:M40)-(SUM(M25:M40))^2)
      */
     public void countRegressionParameterB() {
-        List<Double> realZeroPrecision1 = resultMath.logarithmTable1(logarithmRealZeroTable);
+        List<Double> realZeroPrecision1 = logarithmTable1(logarithmRealZeroTable);
         double firstFactor;
         double secondFactor;
-        Double logDoseCount = resultMath.count(logDoseList);
-        Double sum = resultMath.sumProduct(logDoseList, realZeroPrecision1); // logarithmRealZeroTable in this place have to be in first flouting point
-        Double sumLogDose = resultMath.sum(logDoseList);
-        Double sumLogRealZero = resultMath.sum(logarithmRealZeroTable);
+        Double logDoseCount = count(logDoseList);
+        Double sum = sumProduct(logDoseList, realZeroPrecision1); // logarithmRealZeroTable in this place have to be in first flouting point
+        Double sumLogDose = sum(logDoseList);
+        Double sumLogRealZero = sum(logarithmRealZeroTable);
         firstFactor = (logDoseCount * sum) - (sumLogDose * sumLogRealZero);
         double firstFactorInPrecision2 = Precision.round(firstFactor, 2);
 
-        Double countSecond = resultMath.count(logDoseList);
-        Double sumsqSecondFactor = resultMath.sumsq(logDoseList);
-        double sqr = resultMath.sum(logDoseList);
+        Double countSecond = count(logDoseList);
+        Double sumsqSecondFactor = sumsq(logDoseList);
+        double sqr = sum(logDoseList);
         sqr = Math.pow(sqr, 2);
 
         secondFactor = countSecond * sumsqSecondFactor - sqr;

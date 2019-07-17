@@ -1,6 +1,9 @@
 package org.ria.ifzz.RiaApp.service;
 
 import org.ria.ifzz.RiaApp.domain.FileEntity;
+import org.ria.ifzz.RiaApp.exception.FileEntityNotFoundException;
+import org.ria.ifzz.RiaApp.exception.StorageException;
+import org.ria.ifzz.RiaApp.exception.StorageFileNotFoundException;
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -11,19 +14,19 @@ import java.nio.file.Path;
 
 public interface StorageService {
 
-    void init();
+    void init() throws StorageException;
 
-    FileEntity storeAndSaveFileEntity(MultipartFile file, RedirectAttributes redirectAttributes, String username) throws IOException;
+    FileEntity storeAndSaveFileEntity(MultipartFile file, RedirectAttributes redirectAttributes, String username) throws IOException, StorageException;
 
     Iterable<FileEntity> loadAll();
 
     Path load(String filename);
 
-    Resource loadAsResource(String filename);
+    Resource loadAsResource(String filename) throws StorageFileNotFoundException;
 
     void deleteAll();
 
-    FileEntity getByDataId(String dataId) throws FileNotFoundException;
+    FileEntity getByDataId(String dataId) throws FileNotFoundException, FileEntityNotFoundException;
 
     void delete(Long id);
 

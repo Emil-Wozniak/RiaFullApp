@@ -13,11 +13,11 @@ public class Point {
         this.flag = flag;
     }
 
-    public double getValue() {
+    double getValue() {
         return value;
     }
 
-    public boolean isFlag() {
+    boolean isFlag() {
         return flag;
     }
 

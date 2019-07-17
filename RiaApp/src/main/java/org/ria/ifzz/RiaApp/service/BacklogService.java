@@ -38,7 +38,7 @@ public class BacklogService {
         return resultRepository.findByDataIdOrderByFileName(dataId);
     }
 
-    public Result findResultByDataId(String dataId, String fileName) throws FileNotFoundException {
+    public Result findResultByDataId(String dataId, String fileName) throws FileNotFoundException, FileEntityNotFoundException {
         fileEntityService.findFileEntityByDataId(dataId);
 
         Result result = resultRepository.findByFileName(fileName);

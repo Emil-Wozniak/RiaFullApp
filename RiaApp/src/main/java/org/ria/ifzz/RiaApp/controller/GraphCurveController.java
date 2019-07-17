@@ -2,6 +2,7 @@ package org.ria.ifzz.RiaApp.controller;
 
 import org.ria.ifzz.RiaApp.domain.GraphCurve;
 import org.ria.ifzz.RiaApp.domain.GraphCurveLines;
+import org.ria.ifzz.RiaApp.exception.FileEntityNotFoundException;
 import org.ria.ifzz.RiaApp.service.GraphCurveService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,7 +30,7 @@ public class GraphCurveController {
     }
 
     @GetMapping("/{dataId}/{fileName}/coordinates/{id}")
-    public ResponseEntity<?> getGraphCurvePoints(@PathVariable String dataId, @PathVariable String fileName, @PathVariable Long id) throws FileNotFoundException {
+    public ResponseEntity<?> getGraphCurvePoints(@PathVariable String dataId, @PathVariable String fileName, @PathVariable Long id) throws FileNotFoundException, FileEntityNotFoundException {
 
         Optional<GraphCurveLines> graphCurveLines = graphCurveService.findResultForCoordinatesByDataId(dataId, fileName, id);
         return new ResponseEntity<>(graphCurveLines, HttpStatus.OK);

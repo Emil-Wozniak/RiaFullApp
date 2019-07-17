@@ -80,7 +80,7 @@ public class GraphCurveService implements FileUtils {
         return graphCurveRepository.getByDataIdOrderByFileName(dataId);
     }
 
-    public Optional<GraphCurveLines> findResultForCoordinatesByDataId(String dataId, String fileName, Long id) throws FileNotFoundException {
+    public Optional<GraphCurveLines> findResultForCoordinatesByDataId(String dataId, String fileName, Long id) throws FileNotFoundException, FileEntityNotFoundException {
         fileEntityService.findFileEntityByDataId(dataId);
 
         Optional<GraphCurveLines> graphCurveLines = graphCurveLinesRepository.findById(id);

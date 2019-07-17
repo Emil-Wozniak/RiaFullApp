@@ -1,6 +1,8 @@
 package org.ria.ifzz.RiaApp.controller;
 
 import org.ria.ifzz.RiaApp.domain.*;
+import org.ria.ifzz.RiaApp.exception.FileEntityNotFoundException;
+import org.ria.ifzz.RiaApp.exception.StorageException;
 import org.ria.ifzz.RiaApp.repository.FileEntityRepository;
 import org.ria.ifzz.RiaApp.repository.GraphCurveLinesRepository;
 import org.ria.ifzz.RiaApp.repository.GraphCurveRepository;
@@ -89,7 +91,7 @@ public class FileEntityController {
     }
 
     @GetMapping("/{dataId}")
-    public ResponseEntity<FileEntity> getFileEntityById(@PathVariable String dataId) throws FileNotFoundException {
+    public ResponseEntity<FileEntity> getFileEntityById(@PathVariable String dataId) throws FileNotFoundException, FileEntityNotFoundException {
         FileEntity fileEntity = storageService.getByDataId(dataId);
         return new ResponseEntity<>(fileEntity, HttpStatus.OK);
     }
@@ -111,7 +113,7 @@ public class FileEntityController {
     public ResponseEntity<?> handleFileUpload(@Valid DataFileMetadata data,
                                               BindingResult result,
                                               RedirectAttributes redirectAttributes,
-                                              Principal principal) throws IOException {
+                                              Principal principal) throws IOException, StorageException {
 
         ResponseEntity<?> errorMap = errorService.MapValidationService(result);
         if (errorMap != null) return errorMap;

@@ -1,13 +1,13 @@
 package org.ria.ifzz.RiaApp.exception;
 
-import lombok.Data;
+import lombok.Getter;
 
-@Data
-public class StorageExceptionResponse {
+@Getter
+class StorageExceptionResponse {
 
     private String message;
 
-    public StorageExceptionResponse(String message) {
+    StorageExceptionResponse(String message) {
         this.message = message;
     }
 }

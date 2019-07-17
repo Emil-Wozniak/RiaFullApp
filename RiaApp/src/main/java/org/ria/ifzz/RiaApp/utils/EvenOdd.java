@@ -1,8 +1,8 @@
 package org.ria.ifzz.RiaApp.utils;
 
-public class EvenOdd {
+interface EvenOdd {
 
-    public static boolean isOdd(int i) {
+    static boolean isOdd(int i) {
         return i % 2 == 1;
     }
 }
