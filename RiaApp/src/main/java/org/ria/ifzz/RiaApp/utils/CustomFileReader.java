@@ -47,6 +47,7 @@ public interface CustomFileReader {
         filename = filename.replace(FILENAME_UNNECESSARY_PART, "");
         String hormonePattern = streamMetadata.get(HORMONE_PATTERN);
         hormonePattern = hormonePattern.replace(HORMONE_PATTERN_UNNECESSARY_PART, "");
+        examinationResult.add(filename);
         examinationResult.add(hormonePattern);
         for (String metadataLine : streamMetadata) {
             if (!metadataLine.startsWith(DATA_TARGET_POINT)) {
@@ -54,8 +55,6 @@ public interface CustomFileReader {
                 examinationResult.add(metadataLine);
             }
         }
-        examinationResult.add(filename);
-        examinationResult.forEach(System.out::println);
         return examinationResult;
     }
 

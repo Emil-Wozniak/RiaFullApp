@@ -2,7 +2,6 @@ package org.ria.ifzz.RiaApp.services.examination;
 
 import org.ria.ifzz.RiaApp.models.results.ControlCurve;
 import org.ria.ifzz.RiaApp.utils.CustomFileReader;
-import org.ria.ifzz.RiaApp.utils.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -18,7 +17,7 @@ import static org.ria.ifzz.RiaApp.utils.constants.ControlCurveConstants.*;
 import static org.ria.ifzz.RiaApp.utils.constants.ExaminationConstants.CORTISOL_5MIN;
 
 @Service
-public class ControlCurveService implements FileUtils, CustomFileReader {
+public class ControlCurveService implements CustomFileReader {
 
     private Logger LOGGER = LoggerFactory.getLogger(this.getClass());
     private List<ControlCurve> controlCurvePoints = new ArrayList<>();
@@ -30,9 +29,9 @@ public class ControlCurveService implements FileUtils, CustomFileReader {
      * @return controlCurve entities with all needed data from file metadata
      */
     public List<ControlCurve> create(List<String> metadata) {
-        String filename = metadata.get(metadata.size()-1);
-        String pattern = metadata.get(0);
-        metadata = metadata.stream().skip(1).collect(Collectors.toList());
+        String filename = metadata.get(0);
+        String pattern = metadata.get(1);
+        metadata = metadata.stream().skip(2).collect(Collectors.toList());
         List<Integer> probeNumbers = setProbeNumber();
         List<String> positions = setPosition(pattern);
         List<Integer> CPMs = setCPMs(metadata);

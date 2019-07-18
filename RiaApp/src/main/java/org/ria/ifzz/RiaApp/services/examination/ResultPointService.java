@@ -40,9 +40,9 @@ public class ResultPointService implements CustomFileReader {
      * @return ExaminationPoint entities
      */
     public List<ExaminationPoint> create(List<String> metadata, List<ControlCurve> controlCurve) {
-        String filename = metadata.get(metadata.size() - 1);
-        String pattern = metadata.get(0);
-        setStandardPattern(metadata.get(0));
+        String filename = metadata.get(0);
+        String pattern = metadata.get(1);
+        setStandardPattern(metadata.get(1));
         metadata = metadata.stream().skip(2).collect(Collectors.toList());
         return createExaminationPoint(filename, pattern, metadata, controlCurve);
     }

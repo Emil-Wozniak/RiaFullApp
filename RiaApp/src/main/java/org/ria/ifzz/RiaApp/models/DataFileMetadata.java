@@ -3,6 +3,8 @@ package org.ria.ifzz.RiaApp.models;
 import cyclops.control.Eval;
 import lombok.Getter;
 import lombok.Setter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.BufferedReader;
@@ -14,16 +16,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 
-import static org.ria.ifzz.RiaApp.models.DomainConstants.FILENAME_LINE;
-import static org.ria.ifzz.RiaApp.models.DomainConstants.FILENAME_UNNECESSARY_PART;
-
 @Getter
 @Setter
 public class DataFileMetadata {
 
-    private Long customerId;
+    Logger LOGGER = LoggerFactory.getLogger(this.getClass());
     private MultipartFile file;
-    private String fileName;
     private final Supplier<List<String>> contents = Eval.later(this::loadContents);
 
     private List<String> loadContents() {
@@ -45,9 +43,8 @@ public class DataFileMetadata {
                 metadata.add(line);
             }
         } catch (IOException ioException) {
-            System.err.println(ioException.getMessage());
+            LOGGER.warn(ioException.getMessage());
         }
-        this.fileName = metadata.get(FILENAME_LINE).replace(FILENAME_UNNECESSARY_PART, "");
         return metadata;
     }
 

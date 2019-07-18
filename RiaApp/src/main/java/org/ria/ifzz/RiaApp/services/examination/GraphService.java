@@ -38,8 +38,9 @@ public class GraphService {
         double zeroBindingPercentage = countResultUtil.setZeroBindingPercent();
         double regressionParameterB = countResultUtil.getRegressionParameterB();
 
-        String filename = metadata.get(metadata.size()-1);
-        Graph graph = new Graph(filename, metadata.get(0), correlation, zeroBindingPercentage, regressionParameterB);
+        String filename = metadata.get(0);
+        String pattern = metadata.get(1);
+        Graph graph = new Graph(filename, pattern, correlation, zeroBindingPercentage, regressionParameterB);
         LOGGER.info("Create graph: " + graph.toString());
 
         graphLines = createGraphLines(filename, metadata, graph);
@@ -71,8 +72,8 @@ public class GraphService {
 
     private List<Double> setStandardPattern(List<String> metadata) {
         List<Double> hormonePattern = new ArrayList<>();
-        if (metadata.get(0).equals("KORTYZOL_5_MIN")) {
-            LOGGER.info("Pattern detected: " + metadata.get(0));
+        if (metadata.get(1).equals("KORTYZOL_5_MIN")) {
+            LOGGER.info("Pattern detected: " + metadata.get(1));
             hormonePattern = DoubleStream.of(CORTISOL_PATTERN).boxed().collect(Collectors.toCollection(ArrayList::new));
         }
         return hormonePattern;
