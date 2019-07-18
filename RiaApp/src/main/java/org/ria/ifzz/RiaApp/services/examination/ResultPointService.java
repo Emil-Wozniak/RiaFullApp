@@ -40,22 +40,26 @@ public class ResultPointService implements CustomFileReader {
      * @return ExaminationPoint entities
      */
     public List<ExaminationPoint> create(List<String> metadata, List<ControlCurve> controlCurve) {
+        String filename = metadata.get(metadata.size() - 1);
         String pattern = metadata.get(0);
         setStandardPattern(metadata.get(0));
         metadata = metadata.stream().skip(2).collect(Collectors.toList());
-        return createExaminationPoint(pattern, metadata, controlCurve);
+        return createExaminationPoint(filename, pattern, metadata, controlCurve);
     }
 
     /**
      * takes a proper data from metadata,
      * and assigns them to created Result Point properties
      *
+     * @param filename     uploaded file title
      * @param pattern      examination pattern from metadata
      * @param metadata     data from uploaded file
      * @param controlCurve Control Curve entities
      * @return ExaminationPoint List
      */
-    private List<ExaminationPoint> createExaminationPoint(String pattern, List<String> metadata, List<ControlCurve> controlCurve) {
+    private List<ExaminationPoint> createExaminationPoint(String filename, String pattern, List<String> metadata, List<ControlCurve> controlCurve) {
+        int FILENAME_POSITION = metadata.size() - 1;
+        metadata.remove(FILENAME_POSITION);
         List<ExaminationPoint> results = new ArrayList<>();
         List<Integer> probeNumbers = setProbeNumber(metadata.size());
         List<String> positions = setPosition(probeNumbers);
@@ -63,7 +67,7 @@ public class ResultPointService implements CustomFileReader {
         List<Boolean> flags = isFlagged(controlCurve, CPMs);
         List<String> NGs = setNg(controlCurve, CPMs);
         for (int i = 0; i < metadata.size() - CONTROL_CURVE_LENGTH; i++) {
-            ExaminationPoint result = new ExaminationPoint(pattern, probeNumbers.get(i), positions.get(i), CPMs.get(i), flags.get(i), NGs.get(i));
+            ExaminationPoint result = new ExaminationPoint(filename, pattern, probeNumbers.get(i), positions.get(i), CPMs.get(i), flags.get(i), NGs.get(i));
             results.add(result);
         }
         LOGGER.info("Examination points created: " + results.size());
@@ -108,10 +112,13 @@ public class ResultPointService implements CustomFileReader {
      * @return integers from CPM column
      */
     private List<Integer> setCPMs(List<String> metadata) {
-        return metadata.stream().skip(CONTROL_CURVE_LENGTH).map(line -> {
-            line = getMatchingString(line, 3);
-            return line;
-        }).map(Integer::parseInt).collect(Collectors.toList());
+
+        return metadata.stream().skip(CONTROL_CURVE_LENGTH)
+                .map(line -> {
+                    line = getMatchingString(line, 3);
+                    return line;
+                })
+                .map(Integer::parseInt).collect(Collectors.toList());
     }
 
     /**

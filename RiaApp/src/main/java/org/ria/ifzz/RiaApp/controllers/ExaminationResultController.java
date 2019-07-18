@@ -38,6 +38,7 @@ public class ExaminationResultController implements CustomFileReader {
 
     @PostMapping(value = "/")
     public ResponseEntity<?> handleFileUpload(@Valid DataFileMetadata metadata, BindingResult result, Principal principal) throws IOException, StorageException {
+
         List<String> examinationContent = readFromStream(metadata);
         List<ExaminationResult> results = new ArrayList<>();
         if (!examinationContent.isEmpty()) {

@@ -1,12 +1,6 @@
 package org.ria.ifzz.RiaApp.security;
 
-import org.ria.ifzz.RiaApp.services.CustomUserDetailsService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import static org.ria.ifzz.RiaApp.security.SecurityConstants.H2_URL;
-import static org.ria.ifzz.RiaApp.security.SecurityConstants.SIGN_UP_URLS;
 
 
 @Configuration

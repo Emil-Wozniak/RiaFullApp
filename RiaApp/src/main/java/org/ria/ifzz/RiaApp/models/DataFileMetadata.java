@@ -47,8 +47,7 @@ public class DataFileMetadata {
         } catch (IOException ioException) {
             System.err.println(ioException.getMessage());
         }
-        fileName = metadata.get(FILENAME_LINE).replace(FILENAME_UNNECESSARY_PART, "");
-        System.out.println(fileName);
+        this.fileName = metadata.get(FILENAME_LINE).replace(FILENAME_UNNECESSARY_PART, "");
         return metadata;
     }
 

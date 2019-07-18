@@ -36,15 +36,18 @@ public class GraphService {
     private Graph createGraph(List<String> metadata) {
         double correlation = countResultUtil.setCorrelation(setStandardPattern(metadata));
         double zeroBindingPercentage = countResultUtil.setZeroBindingPercent();
-        Double regressionParameterB = countResultUtil.getRegressionParameterB();
-        Graph graph = new Graph(metadata.get(0), correlation, zeroBindingPercentage, regressionParameterB);
+        double regressionParameterB = countResultUtil.getRegressionParameterB();
+
+        String filename = metadata.get(metadata.size()-1);
+        Graph graph = new Graph(filename, metadata.get(0), correlation, zeroBindingPercentage, regressionParameterB);
         LOGGER.info("Create graph: " + graph.toString());
-        graphLines = createGraphLines(metadata, graph);
+
+        graphLines = createGraphLines(filename, metadata, graph);
         graph.setGraphLines(graphLines);
         return graph;
     }
 
-    private List<GraphLine> createGraphLines(List<String> metadata, Graph graph) {
+    private List<GraphLine> createGraphLines(String filename, List<String> metadata, Graph graph) {
         List<Double> listX = countResultUtil.getLogDoseList();
         List<Double> listY = countResultUtil.getLogarithmRealZeroTable();
         List<Double> patternPoints = setStandardPattern(metadata);
@@ -55,7 +58,7 @@ public class GraphService {
                 double y = listY.get(i);
                 double patternPoint = patternPoints.get(i);
                 List<Double> meterReadingPg = countResultUtil.countMeterReading();
-                GraphLine graphCurveLine = new GraphLine(metadata.get(0), x, y, patternPoint, meterReadingPg.get(i), graph);
+                GraphLine graphCurveLine = new GraphLine(filename, metadata.get(0), x, y, patternPoint, meterReadingPg.get(i), graph);
                 graphLines.add(graphCurveLine);
             }
         } catch (Exception error) {

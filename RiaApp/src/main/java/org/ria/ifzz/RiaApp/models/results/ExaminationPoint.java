@@ -19,6 +19,7 @@ public class ExaminationPoint extends ExaminationResult {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NonNull String identifier;
+    @NonNull String pattern;
     @NonNull Integer probeNumber;
     @NonNull String position;
     @NonNull Integer cpm;

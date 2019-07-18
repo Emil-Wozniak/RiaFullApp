@@ -30,6 +30,7 @@ public class ControlCurveService implements FileUtils, CustomFileReader {
      * @return controlCurve entities with all needed data from file metadata
      */
     public List<ControlCurve> create(List<String> metadata) {
+        String filename = metadata.get(metadata.size()-1);
         String pattern = metadata.get(0);
         metadata = metadata.stream().skip(1).collect(Collectors.toList());
         List<Integer> probeNumbers = setProbeNumber();
@@ -38,7 +39,7 @@ public class ControlCurveService implements FileUtils, CustomFileReader {
         List<Boolean> flags = isFlagged(CPMs);
         List<ControlCurve> controlCurve = new ArrayList<>();
         for (int i = 0; i < 24; i++) {
-            ControlCurve controlCurvePoint = new ControlCurve(pattern, probeNumbers.get(i), positions.get(i), CPMs.get(i), flags.get(i));
+            ControlCurve controlCurvePoint = new ControlCurve(filename, pattern, probeNumbers.get(i), positions.get(i), CPMs.get(i), flags.get(i));
             LOGGER.info(controlCurvePoint.toString());
             controlCurve.add(controlCurvePoint);
         }

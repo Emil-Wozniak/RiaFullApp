@@ -17,6 +17,7 @@ public class GraphLine {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @NonNull String filename;
     @NonNull String pattern;
     @NonNull Double x;
     @NonNull Double y ;

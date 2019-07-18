@@ -54,6 +54,7 @@ public interface CustomFileReader {
                 examinationResult.add(metadataLine);
             }
         }
+        examinationResult.add(filename);
         examinationResult.forEach(System.out::println);
         return examinationResult;
     }

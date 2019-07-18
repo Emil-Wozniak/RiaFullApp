@@ -1,8 +1,5 @@
-package org.ria.ifzz.RiaApp.services;
+package org.ria.ifzz.RiaApp.services.user;
 
-import org.ria.ifzz.RiaApp.models.User.User;
-import org.ria.ifzz.RiaApp.exception.UserNameAlreadyExistsException;
-import org.ria.ifzz.RiaApp.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,10 +14,10 @@ public class UserService {
 //    }
 //
 //    /**
-//     * @param newUser Instance of User class
-//     * @return new User object or ExceptionHandler if username already exists
+//     * @param newUser Instance of user class
+//     * @return new user object or ExceptionHandler if username already exists
 //     */
-//    public User saveUser(User newUser) throws UserNameAlreadyExistsException {
+//    public user saveUser(user newUser) throws UserNameAlreadyExistsException {
 //
 //        try{
 //            newUser.setPassword(bCryptPasswordEncoder.encode(newUser.getPassword()));

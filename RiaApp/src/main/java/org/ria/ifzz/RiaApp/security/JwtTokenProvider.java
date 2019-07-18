@@ -1,16 +1,7 @@
 package org.ria.ifzz.RiaApp.security;
 
-import io.jsonwebtoken.*;
-import org.ria.ifzz.RiaApp.models.User.User;
 //import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
-
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.ria.ifzz.RiaApp.security.SecurityConstants.EXPIRATION_TIME;
-import static org.ria.ifzz.RiaApp.security.SecurityConstants.SECRET;
 
 /**
  * JwtTokenProvider generate token with all needed contents on it
@@ -21,7 +12,7 @@ public class JwtTokenProvider {
 
 //    public String generateToken(Authentication authentication) {
 //
-//        User user = (User) authentication.getPrincipal();
+//        user user = (user) authentication.getPrincipal();
 //        Date now = new Date(System.currentTimeMillis());
 //
 //        Date expiredDate = new Date(now.getTime() + EXPIRATION_TIME);

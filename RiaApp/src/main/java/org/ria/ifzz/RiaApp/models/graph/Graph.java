@@ -19,6 +19,7 @@ public class Graph {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NonNull String identifier;
+    @NonNull String pattern;
     @NonNull Double correlation;
     @NonNull Double zeroBindingPercent;
     @NonNull Double regressionParameterB;

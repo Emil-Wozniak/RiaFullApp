@@ -22,13 +22,13 @@ import java.util.List;
 @Service
 public class ExaminationResultSolution extends ExaminationResultStrategyImpl {
 
+    @Setter
+    private List<String> metadata;
+    Logger LOGGER = LoggerFactory.getLogger(this.getClass());
     private final CountResultUtil countResultUtil;
     private final ControlCurveService controlCurveService;
     private final GraphService graphService;
     private final ResultPointService resultPointService;
-    Logger LOGGER = LoggerFactory.getLogger(this.getClass());
-    @Setter
-    private List<String> metadata;
     @Getter
     private List<ExaminationResult> results = new ArrayList<>();
     private List<ControlCurve> controlCurvePoints = new ArrayList<>();
