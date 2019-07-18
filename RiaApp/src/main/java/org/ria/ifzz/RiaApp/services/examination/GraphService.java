@@ -7,6 +7,8 @@ import org.ria.ifzz.RiaApp.repositories.results.GraphRepository;
 import org.ria.ifzz.RiaApp.utils.CountResultUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -81,5 +83,15 @@ public class GraphService {
             hormonePattern = DoubleStream.of(CORTISOL_PATTERN).boxed().collect(Collectors.toCollection(ArrayList::new));
         }
         return hormonePattern;
+    }
+
+    public ResponseEntity<?> findAll() {
+        List<Graph> graphs = (List<Graph>) graphRepository.findAll();
+        return new ResponseEntity<>(graphs, HttpStatus.FOUND);
+    }
+
+    public ResponseEntity<?> findAllLines() {
+        List<GraphLine> graphLines = (List<GraphLine>) graphLineRepository.findAll();
+        return new ResponseEntity<>(graphLines, HttpStatus.FOUND);
     }
 }

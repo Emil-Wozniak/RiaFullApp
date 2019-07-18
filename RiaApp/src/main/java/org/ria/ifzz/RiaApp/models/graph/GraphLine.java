@@ -1,15 +1,13 @@
 package org.ria.ifzz.RiaApp.models.graph;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @RequiredArgsConstructor
+@NoArgsConstructor
 @Getter
 @ToString
 public class GraphLine {

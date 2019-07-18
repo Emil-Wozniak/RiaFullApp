@@ -5,6 +5,8 @@ import org.ria.ifzz.RiaApp.repositories.results.ControlCurveRepository;
 import org.ria.ifzz.RiaApp.utils.CustomFileReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -148,5 +150,9 @@ public class ControlCurveService implements CustomFileReader {
         return isSpread(CPMs);
     }
 
+    public ResponseEntity<?> findAll() {
+        List<ControlCurve> controlCurves = (List<ControlCurve>) controlCurveRepository.findAll();
+        return new ResponseEntity<>(controlCurves, HttpStatus.FOUND);
+    }
 }
 

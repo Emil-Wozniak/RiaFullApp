@@ -7,6 +7,8 @@ import org.ria.ifzz.RiaApp.utils.CountResultUtil;
 import org.ria.ifzz.RiaApp.utils.CustomFileReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -171,5 +173,15 @@ public class ExaminationPointService implements CustomFileReader {
             LOGGER.info("Pattern detected: " + fileData);
             countResultUtil.logDose();
         }
+    }
+
+    public ResponseEntity<?> getExaminationResults() {
+        List<ExaminationPoint> examinationPoints= (List<ExaminationPoint>) examinationPointRepository.findAll();
+        return new ResponseEntity<>(examinationPoints, HttpStatus.FOUND);
+    }
+
+    public ResponseEntity<?> getExaminationResultsByFilename(String filename){
+        List<ExaminationPoint> examinationPoints = examinationPointRepository.findAllByIdentifier(filename);
+        return new ResponseEntity<>(examinationPoints, HttpStatus.FOUND);
     }
 }

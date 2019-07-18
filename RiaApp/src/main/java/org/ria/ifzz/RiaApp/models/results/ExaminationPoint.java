@@ -11,6 +11,7 @@ import javax.persistence.Id;
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @RequiredArgsConstructor
+@NoArgsConstructor
 @Getter
 @ToString
 public class ExaminationPoint extends ExaminationResult {
