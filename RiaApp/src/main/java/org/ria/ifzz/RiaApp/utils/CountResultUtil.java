@@ -3,144 +3,107 @@ package org.ria.ifzz.RiaApp.utils;
 import lombok.Getter;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 import org.apache.commons.math3.util.Precision;
+import org.ria.ifzz.RiaApp.models.results.ControlCurve;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.ria.ifzz.RiaApp.models.HormonesPattern.CORTISOL_PATTERN;
 import static org.ria.ifzz.RiaApp.utils.ResultMath.*;
 
-@Service
-public class CountResultUtil implements ResultMath{
+@Component
+public class CountResultUtil implements ResultMath {
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private Logger LOGGER = LoggerFactory.getLogger(getClass());
 
-    private Double total;
-    private Double zero;
-    private Double nsb;
-    private Double binding;
+    private int total;
+    private Integer zero;
+    private Integer nsb;
+    private int binding;
 
     @Getter
-    private List<Double> standardsCPM;
+    private List<Double> logDoseList;
     @Getter
-    private List<Point> curveFlagged;
-    @Getter
-    private List<Point> standardsCpmFlagged;
-    @Getter
-    private List<Double> logDoseList = new ArrayList<>();
-    private List<Double> bindingPercent = new ArrayList<>();
-    @Getter
-    private List<Double> logarithmRealZeroTable = new ArrayList<>();
+    private List<Double> logarithmRealZeroTable;
     @Getter
     private Double regressionParameterB;
     private Double regressionParameterA;
+    private List<Integer> standardsCPM;
 
-    /**
-     * @param points list containing CMPs and flags
-     * @return List which represents first 8 points of Control Curve (T, N, O)
-     * and average results of total, zero and nsb
-     */
-    public List<Point> setControlCurveCpmWithFlag(List<Point> points) {
-        curveFlagged = new ArrayList<>();
-        if (!points.isEmpty()) {
-            curveFlagged.addAll(points);
-            Point t1 = new Point();
-            Point t2 = new Point();
-            Point nsb1 = new Point();
-            Point nsb2 = new Point();
-            Point nsb3 = new Point();
-            Point zero1 = new Point();
-            Point zero2 = new Point();
-            Point zero3 = new Point();
-
-            for (int i = 0; i < 8; i++) {
-                t1 = curveFlagged.get(0);
-                t2 = curveFlagged.get(1);
-                nsb1 = curveFlagged.get(5);
-                nsb2 = curveFlagged.get(6);
-                nsb3 = curveFlagged.get(7);
-                zero1 = curveFlagged.get(2);
-                zero2 = curveFlagged.get(3);
-                zero3 = curveFlagged.get(4);
-            }
-
-            total = averageTwo(t1.getValue(), t2.getValue());
-            nsb = isControlCurveHasFlag(nsb1, nsb2, nsb3);
-            zero = isControlCurveHasFlag(zero1, zero2, zero3);
-
+    public void createStandardListWithCPMs(List<ControlCurve> controlCurves) {
+        if (!controlCurves.isEmpty()) {
+            List<ControlCurve> NSBs = getPoint(controlCurves, 5, 7);
+            List<ControlCurve> ZEROs = getPoint(controlCurves, 2, 4);
+            total = (controlCurves.get(0).getCpm() + controlCurves.get(1).getCpm()) / 2;
+            nsb = calculateByFlagsValue(NSBs);
+            zero = calculateByFlagsValue(ZEROs);
             binding = nsb - zero;
-            logger.info("T: " + total + " | Zero: " + zero + " | NSB: " + nsb + " | N - O: " + binding);
+            LOGGER.info("T: " + total + " | Zero: " + zero + " | NSB: " + nsb + " | N - O: " + binding);
         }
-        return curveFlagged;
     }
 
     /**
      * takes Point parameters and checks if one of them is flagged,
      * if does perform correct algorithm which ignore flagged element
      *
-     * @param first  Point
-     * @param second Point
-     * @param third  Point
      * @return average value between two or three of Points value which are not flagged
      */
-    private double isControlCurveHasFlag(Point first, Point second, Point third) {
-        Double output = null;
-        if (first.isFlag() || second.isFlag() || third.isFlag()) {
-            if (!first.isFlag() && !second.isFlag()) {
-                output = averageTwo(first.getValue(), second.getValue());
-            } else if (!second.isFlag() && !third.isFlag()) {
-                output = averageTwo(second.getValue(), third.getValue());
-            } else if (!third.isFlag() && !first.isFlag()) {
-                output = averageTwo(third.getValue(), first.getValue());
+    private Integer calculateByFlagsValue(List<ControlCurve> controlCurve) {
+        Integer output = null;
+        if ((controlCurve.get(0).isFlagged()) || (controlCurve.get(1).isFlagged()) || (controlCurve.get(2).isFlagged())) {
+            if (!controlCurve.get(0).isFlagged() && !controlCurve.get(1).isFlagged()) {
+                output = (controlCurve.get(0).getCpm() + controlCurve.get(1).getCpm()) / 2;
+            } else if (!controlCurve.get(1).isFlagged() && !controlCurve.get(2).isFlagged()) {
+                output = (controlCurve.get(1).getCpm() + controlCurve.get(2).getCpm()) / 2;
+            } else if (!controlCurve.get(2).isFlagged() && !controlCurve.get(0).isFlagged()) {
+                output = (controlCurve.get(2).getCpm() + controlCurve.get(0).getCpm()) / 2;
             }
         } else {
-            //handle if every of points are false
-            output = averageThree(first.getValue(), second.getValue(), third.getValue());
+            output = (controlCurve.get(0).getCpm() + controlCurve.get(1).getCpm() + controlCurve.get(2).getCpm()) / 3;
         }
         return output;
     }
+
+    private List<ControlCurve> getPoint(List<ControlCurve> controlCurves, int from, int to) {
+        List<ControlCurve> selectedPoints = new ArrayList<>();
+        for (int i = from; i < to + 1; i++) {
+            ControlCurve controlCurve = controlCurves.get(i);
+            selectedPoints.add(controlCurve);
+        }
+        return selectedPoints;
+    }
+
+
 
     //Standard storing CMP and Flag
     //tableC && tableG -> Control Curve CCMP
 
     /**
      * * @param controlCurve array of CMP of hormone standardized pattern e.g CORTISOL_PATTERN
-     *
-     * @return array of CMP of hormone standardized pattern e.g CORTISOL_PATTERN
      */
-    public void setStandardsCpmWithFlags(List<Point> points) {
-//        standardsCpmFlagged = new ArrayList<>();
+    public void setStandardsCpmWithFlags(List<ControlCurve> controlCurve) {
         standardsCPM = new ArrayList<>();
-
-        if (standardsCPM.size() < 8) {
-            for (int i = 8; i < points.size() - 2; i++) {
-                Point point = points.get(i);
-                Double pointValue = point.getValue();
-                standardsCPM.add(pointValue);
-            }
+        for (int i = 8; i < 22; i++) {
+            standardsCPM.add(controlCurve.get(i).getCpm());
         }
     }
-
-    //table M == table I
 
     /**
      * take double array which contains standardized pattern and
      * performs a logarithmic function for each elements of the array
-     *
-     * @param results array of hormone standardized pattern e.g CORTISOL_PATTERN
-     * @return Double List
      */
-    public void logDose(double[] results) {
+    public void logDose() {
         List<Double> standardPattern = new ArrayList<>();
-        for (double point : results) {
+        for (double point : CORTISOL_PATTERN) {
             standardPattern.add(point);
         }
         logDoseList = logarithmTable2(standardPattern);
-        logger.info("Standard points:" + Arrays.toString(results));
+        LOGGER.info("Standard points:" + Arrays.toString(CORTISOL_PATTERN));
     }
 
     // Table H == %(N-O)
@@ -150,29 +113,29 @@ public class CountResultUtil implements ResultMath{
      * subtracts each value from standards CMP List by each value result from logDose(),
      * then multiply each result by 100, divides those by binding
      */
-    public void bindingPercent() {
+    public List<Double> bindingPercent() {
         List<Double> subtraction = subtractTablesElement(standardsCPM, zero);
         List<Double> multiplication = multiplyList(100.0, subtraction);
-        List<Double> result = divideTableCeilElements(binding, multiplication); // %Bo-Bg
+        List<Double> result = divideTableCeilElements(binding, multiplication);
         if (result != null) {
+            Double pointer;
             for (int i = 0; i < result.size(); i++) {
-                Double pointer;
                 pointer = result.get(i);
                 if (pointer.isNaN() || pointer.isInfinite()) {
-                    logger.warn("Binding percent has infinite or NaN points;");
+                    LOGGER.warn("Binding percent has infinite or NaN points;");
                 } else {
-                    logger.info("Binding percent: " + i + ": " + pointer);
+                    LOGGER.info("Binding percent: " + i + ": " + pointer);
                 }
             }
         }
-        bindingPercent = result;
+        return result;
     }
 
     /*
     Table J
     =LOG(H23/(100-H23))
      */
-    public void logarithmRealZero() {
+    public void logarithmRealZero(List<Double> bindingPercent) {
         List<Double> logTable = null;
         try {
             List<Double> subtractPercentNO = subtractTableElements(100.0, bindingPercent);
@@ -184,9 +147,9 @@ public class CountResultUtil implements ResultMath{
         if (logTable != null) {
             for (int i = 0; i < logTable.size(); i++) {
                 if (logTable.get(i).isNaN() || logTable.get(i).isInfinite()) {
-                    logger.warn("Logarithm Real Zero has infinite or NaN points;");
+                    LOGGER.warn("Logarithm Real Zero has infinite or NaN points;");
                 } else {
-                    logger.info("Logarithm Real Zero: " + i + ": " + logTable.get(i));
+                    LOGGER.info("Logarithm Real Zero: " + i + ": " + logTable.get(i));
                 }
             }
         }
@@ -204,7 +167,7 @@ public class CountResultUtil implements ResultMath{
         Double countLogDose = count(logDoseList);
         Double sumLogDose = sum(logDoseList);
         regressionParameterA = sumLogRealZero / countLogDose - regressionParameterB * sumLogDose / countLogDose;
-        logger.info("Regression Parameter A = " + regressionParameterA);
+        LOGGER.info("Regression Parameter A = " + regressionParameterA);
     }
 
     /* Excel version:
@@ -232,12 +195,13 @@ public class CountResultUtil implements ResultMath{
 
         secondFactor = countSecond * sumsqSecondFactor - sqr;
 
-        Double resultSum = firstFactor / secondFactor;
+        double resultSum = firstFactor / secondFactor;
         Double roundResult = Precision.round(resultSum, 4);
         regressionParameterB = roundResult;
-        logger.info("Regression Parameter B = " + regressionParameterB);
-        logger.info("First factor " + firstFactorInPrecision2 + "\t[count: " + logDoseCount + "\t|sumproduct:  " + sum + "\t\t|sumLogDose: " + sumLogDose + "\t\t|sumLogRealZero: " + sumLogRealZero + "\t]");
-        logger.info("Second factor: " + secondFactor + "\t[count logDose: " + countSecond + "\t|sumsq logDose: " + sumsqSecondFactor + "\t|square logDose: " + sqr + "\t]");
+
+        LOGGER.info("Regression Parameter B = " + regressionParameterB);
+        LOGGER.info("First factor " + firstFactorInPrecision2 + "\t[count: " + logDoseCount + "\t|sumproduct:  " + sum + "\t\t|sumLogDose: " + sumLogDose + "\t\t|sumLogRealZero: " + sumLogRealZero + "\t]");
+        LOGGER.info("Second factor: " + secondFactor + "\t[count logDose: " + countSecond + "\t|sumsq logDose: " + sumsqSecondFactor + "\t|square logDose: " + sqr + "\t]");
     }
 
     /* Excel version:
@@ -251,20 +215,20 @@ public class CountResultUtil implements ResultMath{
      * @param CPM ccmp value from file
      * @return the value of hormone nanograms in the sample
      */
-    public Double countResult(Double CPM) {
-        Double firstPart = ((Math.log10((CPM - zero) * 100 / binding / (100 - (CPM - zero) * 100 / binding)) - regressionParameterA) / regressionParameterB);
+    public Double countNg(Double CPM) {
+        double firstPart = ((Math.log10((CPM - zero) * 100 / binding / (100 - (CPM - zero) * 100 / binding)) - regressionParameterA) / regressionParameterB);
         double power = Math.pow(10, firstPart);
         power = Precision.round(power, 2);
+        power = Precision.round(power, 2);
         if (!Double.isNaN(power)) {
-            logger.info("Count Result: [CPM: " + CPM + "\t|\t" + power + " ng\t]");
+            return power;
         } else {
-            logger.warn("Count Result: [CPM: " + CPM + "\t|\t" + power + " ng\t]");
+            return 0.0;
         }
-        return power;
     }
 
-    public double setCorrelation() {
-        double[] logDoseListArray = new double[logDoseList.size()];
+    public double setCorrelation(List<Double> pattern) {
+        double[] logDoseListArray = new double[pattern.size()];
         double[] logarithmRealZeroArray = new double[logarithmRealZeroTable.size()];
         for (int i = 0; i < logDoseList.size(); i++) {
             logDoseListArray[i] = logDoseList.get(i);
@@ -272,35 +236,21 @@ public class CountResultUtil implements ResultMath{
         for (int i = 0; i < logarithmRealZeroTable.size(); i++) {
             logarithmRealZeroArray[i] = logarithmRealZeroTable.get(i);
         }
-        System.out.println("lrz" +logarithmRealZeroTable.size() + " ld: " + logDoseList.size());
         PearsonsCorrelation pearsonsCorrelation = new PearsonsCorrelation();
         double correlation = pearsonsCorrelation.correlation(logDoseListArray, logarithmRealZeroArray);
         double correlationPow = Math.pow(correlation, 2);
         correlationPow = Precision.round(correlationPow, 6);
-        logger.info("Correlation: " + correlationPow);
+        LOGGER.info("Correlation: " + correlationPow);
         return correlationPow;
     }
 
     public double setZeroBindingPercent() {
         double zeroBindingPercent = binding * 100 / total;
         zeroBindingPercent = Precision.round(zeroBindingPercent, 2);
-        logger.info("Zero binding percent: " + zeroBindingPercent);
+        LOGGER.info("Zero binding percent: " + zeroBindingPercent);
         return zeroBindingPercent;
     }
 
-    // =10^(
-    // (
-    // LOG(
-    // (StandardCPMs-AverageZero)
-    // *100/
-    // Binding/
-    // (100-
-    // (StandardCPMs-AverageZero)
-    // *100
-    // /Binding)
-    // )-regressionParameterA
-    // )/regressionParameterB
-    // )
     public List<Double> countMeterReading() {
         List<Double> meterReading;
         meterReading = standardsCPM.stream()

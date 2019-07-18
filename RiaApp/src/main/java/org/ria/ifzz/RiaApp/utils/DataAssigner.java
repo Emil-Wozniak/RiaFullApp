@@ -1,7 +1,7 @@
 package org.ria.ifzz.RiaApp.utils;
 
 import org.apache.commons.math3.util.Precision;
-import org.ria.ifzz.RiaApp.domain.Result;
+import org.ria.ifzz.RiaApp.models.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -11,7 +11,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.ria.ifzz.RiaApp.domain.DomainConstants.FILEDATA_RESULT_LINE_POINTER;
+import static org.ria.ifzz.RiaApp.models.DomainConstants.FILEDATA_RESULT_LINE_POINTER;
 import static org.ria.ifzz.RiaApp.utils.CustomFileReader.getMatchingStrings;
 import static org.ria.ifzz.RiaApp.utils.EvenOdd.isOdd;
 

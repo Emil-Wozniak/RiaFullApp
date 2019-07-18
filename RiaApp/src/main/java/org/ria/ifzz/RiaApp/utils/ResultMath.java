@@ -38,12 +38,12 @@ interface ResultMath {
                 .map(element -> (subtrahend - element)).collect(Collectors.toList());
     }
 
-    static List<Double> subtractTablesElement(List<Double> subtrahend, double value) {
+    static List<Double> subtractTablesElement(List<Integer> subtrahend, double value) {
         Double sub;
         Double result;
         List<Double> results = new ArrayList<>();
         for (int i = 0; i < subtrahend.size(); i++) {
-            sub = subtrahend.get(i);
+            sub = Double.valueOf(subtrahend.get(i));
             result = sub - value;
             results.add(result);
         }
@@ -110,7 +110,9 @@ interface ResultMath {
         double product;
         List<Pair<Double, Double>> pairs = new ArrayList<>();
         for (int i = 0; i < multiplier.size(); i++) {
-            pairs.add(new Pair<>(factor.get(i), multiplier.get(i)));
+            pairs.add(new Pair<>(
+                    factor.get(i),
+                    multiplier.get(i)));
         }
         product = pairs.parallelStream()
                 .mapToDouble(p -> p.getFirst() * p.getSecond())

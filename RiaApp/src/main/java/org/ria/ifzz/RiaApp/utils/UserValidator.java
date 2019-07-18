@@ -1,6 +1,6 @@
 package org.ria.ifzz.RiaApp.utils;
 
-import org.ria.ifzz.RiaApp.domain.User;
+import org.ria.ifzz.RiaApp.models.User.User;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
