@@ -58,7 +58,7 @@ public class ExaminationResultSolution extends ExaminationResultStrategyImpl {
     @Override
     boolean isControlCurve() {
         if (metadata.size() >= 1) {
-            controlCurvePoints = controlCurveService.create(metadata);
+            controlCurvePoints = controlCurveService.create(metadata.subList(0,26));
             if (!controlCurvePoints.isEmpty()) {
                 results.addAll(controlCurvePoints);
             }

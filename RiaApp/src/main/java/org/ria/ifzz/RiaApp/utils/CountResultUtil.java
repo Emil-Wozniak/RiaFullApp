@@ -78,8 +78,6 @@ public class CountResultUtil implements ResultMath {
         return selectedPoints;
     }
 
-
-
     //Standard storing CMP and Flag
     //tableC && tableG -> Control Curve CCMP
 
