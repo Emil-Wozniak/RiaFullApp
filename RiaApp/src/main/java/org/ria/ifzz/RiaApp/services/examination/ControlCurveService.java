@@ -1,6 +1,7 @@
 package org.ria.ifzz.RiaApp.services.examination;
 
 import org.ria.ifzz.RiaApp.models.results.ControlCurve;
+import org.ria.ifzz.RiaApp.repositories.results.ControlCurveRepository;
 import org.ria.ifzz.RiaApp.utils.CustomFileReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.ria.ifzz.RiaApp.models.HormonesPattern.CORTISOL_PATTERN;
+import static org.ria.ifzz.RiaApp.models.pattern.HormonesPattern.CORTISOL_PATTERN;
 import static org.ria.ifzz.RiaApp.services.strategies.SpreadCounter.isSpread;
 import static org.ria.ifzz.RiaApp.utils.CustomFileReader.getMatchingStrings;
 import static org.ria.ifzz.RiaApp.utils.constants.ControlCurveConstants.*;
@@ -20,7 +21,11 @@ import static org.ria.ifzz.RiaApp.utils.constants.ExaminationConstants.CORTISOL_
 public class ControlCurveService implements CustomFileReader {
 
     private Logger LOGGER = LoggerFactory.getLogger(this.getClass());
-    private List<ControlCurve> controlCurvePoints = new ArrayList<>();
+    private final ControlCurveRepository controlCurveRepository;
+
+    public ControlCurveService(ControlCurveRepository controlCurveRepository) {
+        this.controlCurveRepository = controlCurveRepository;
+    }
 
     /**
      * generate ControlCurve entities and returns them with metadata set to the attributes
@@ -42,7 +47,7 @@ public class ControlCurveService implements CustomFileReader {
             LOGGER.info(controlCurvePoint.toString());
             controlCurve.add(controlCurvePoint);
         }
-        setControlCurvePoints(controlCurve);
+        controlCurveRepository.saveAll(controlCurve);
         return controlCurve;
     }
 
@@ -143,12 +148,5 @@ public class ControlCurveService implements CustomFileReader {
         return isSpread(CPMs);
     }
 
-    public List<ControlCurve> getControlCurvePoints() {
-        return controlCurvePoints;
-    }
-
-    private void setControlCurvePoints(List<ControlCurve> controlCurve) {
-        this.controlCurvePoints = controlCurve;
-    }
 }
 

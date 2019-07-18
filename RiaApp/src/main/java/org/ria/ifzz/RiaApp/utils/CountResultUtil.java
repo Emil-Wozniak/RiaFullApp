@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.ria.ifzz.RiaApp.models.HormonesPattern.CORTISOL_PATTERN;
+import static org.ria.ifzz.RiaApp.models.pattern.HormonesPattern.CORTISOL_PATTERN;
 import static org.ria.ifzz.RiaApp.utils.ResultMath.*;
 
 @Component

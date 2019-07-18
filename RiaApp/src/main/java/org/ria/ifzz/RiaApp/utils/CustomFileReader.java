@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.ria.ifzz.RiaApp.models.DomainConstants.*;
+import static org.ria.ifzz.RiaApp.utils.constants.DomainConstants.*;
 import static org.ria.ifzz.RiaApp.utils.constants.ExaminationConstants.COLUMN_SPLICER;
 
 /**

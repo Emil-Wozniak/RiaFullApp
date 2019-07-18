@@ -2,6 +2,7 @@ package org.ria.ifzz.RiaApp.services.examination;
 
 import org.ria.ifzz.RiaApp.models.graph.Graph;
 import org.ria.ifzz.RiaApp.models.graph.GraphLine;
+import org.ria.ifzz.RiaApp.repositories.results.GraphLineRepository;
 import org.ria.ifzz.RiaApp.repositories.results.GraphRepository;
 import org.ria.ifzz.RiaApp.utils.CountResultUtil;
 import org.slf4j.Logger;
@@ -13,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 
-import static org.ria.ifzz.RiaApp.models.HormonesPattern.CORTISOL_PATTERN;
+import static org.ria.ifzz.RiaApp.models.pattern.HormonesPattern.CORTISOL_PATTERN;
 
 @Service
 public class GraphService {
@@ -22,10 +23,12 @@ public class GraphService {
     private List<GraphLine> graphLines = new ArrayList<>();
     private final CountResultUtil countResultUtil;
     private final GraphRepository graphRepository;
+    private final GraphLineRepository graphLineRepository;
 
-    public GraphService(CountResultUtil countResultUtil, GraphRepository graphRepository) {
+    public GraphService(CountResultUtil countResultUtil, GraphRepository graphRepository, GraphLineRepository graphLineRepository) {
         this.countResultUtil = countResultUtil;
         this.graphRepository = graphRepository;
+        this.graphLineRepository = graphLineRepository;
     }
 
 
@@ -42,9 +45,10 @@ public class GraphService {
         String pattern = metadata.get(1);
         Graph graph = new Graph(filename, pattern, correlation, zeroBindingPercentage, regressionParameterB);
         LOGGER.info("Create graph: " + graph.toString());
-
         graphLines = createGraphLines(filename, metadata, graph);
         graph.setGraphLines(graphLines);
+        graphRepository.save(graph);
+        graphLineRepository.saveAll(graphLines);
         return graph;
     }
 

@@ -20,13 +20,13 @@ import static org.ria.ifzz.RiaApp.utils.constants.ExaminationConstants.CONTROL_C
 import static org.ria.ifzz.RiaApp.utils.constants.ExaminationConstants.CORTISOL_5MIN;
 
 @Service
-public class ResultPointService implements CustomFileReader {
+public class ExaminationPointService implements CustomFileReader {
 
     private final CountResultUtil countResultUtil;
     private Logger LOGGER = LoggerFactory.getLogger(this.getClass());
     private final ExaminationPointRepository examinationPointRepository;
 
-    public ResultPointService(CountResultUtil countResultUtil, ExaminationPointRepository examinationPointRepository) {
+    public ExaminationPointService(CountResultUtil countResultUtil, ExaminationPointRepository examinationPointRepository) {
         this.countResultUtil = countResultUtil;
         this.examinationPointRepository = examinationPointRepository;
     }
@@ -60,18 +60,19 @@ public class ResultPointService implements CustomFileReader {
     private List<ExaminationPoint> createExaminationPoint(String filename, String pattern, List<String> metadata, List<ControlCurve> controlCurve) {
         int FILENAME_POSITION = metadata.size() - 1;
         metadata.remove(FILENAME_POSITION);
-        List<ExaminationPoint> results = new ArrayList<>();
+        List<ExaminationPoint> examinationPoints = new ArrayList<>();
         List<Integer> probeNumbers = setProbeNumber(metadata.size());
         List<String> positions = setPosition(probeNumbers);
         List<Integer> CPMs = setCPMs(metadata);
         List<Boolean> flags = isFlagged(controlCurve, CPMs);
         List<String> NGs = setNg(controlCurve, CPMs);
         for (int i = 0; i < metadata.size() - CONTROL_CURVE_LENGTH; i++) {
-            ExaminationPoint result = new ExaminationPoint(filename, pattern, probeNumbers.get(i), positions.get(i), CPMs.get(i), flags.get(i), NGs.get(i));
-            results.add(result);
+            ExaminationPoint examinationPoint = new ExaminationPoint(filename, pattern, probeNumbers.get(i), positions.get(i), CPMs.get(i), flags.get(i), NGs.get(i));
+            examinationPoints.add(examinationPoint);
         }
-        LOGGER.info("Examination points created: " + results.size());
-        return results;
+        examinationPointRepository.saveAll(examinationPoints);
+        LOGGER.info("Examination points created: " + examinationPoints.size());
+        return examinationPoints;
     }
 
     /**

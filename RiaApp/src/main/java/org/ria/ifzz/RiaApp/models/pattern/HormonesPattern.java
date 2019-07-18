@@ -1,4 +1,4 @@
-package org.ria.ifzz.RiaApp.models;
+package org.ria.ifzz.RiaApp.models.pattern;
 
 /**
  * represents hormones patterns which should be founded in uploaded file
