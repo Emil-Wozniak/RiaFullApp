@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.ria.ifzz.RiaApp.utils.CustomFileReader.readFromStream;
 
@@ -23,6 +25,7 @@ public class ExaminationResultController implements CustomFileReader {
 
     private final ExaminationResultSolution solution;
     private final ExaminationPointService service;
+    private Map<String,String> response = new HashMap<>();
 
     public ExaminationResultController(ExaminationResultSolution solution, ExaminationPointService service) {
         this.solution = solution;
@@ -33,16 +36,18 @@ public class ExaminationResultController implements CustomFileReader {
     public ResponseEntity<?> handleFileUpload(@Valid DataFileMetadata metadata, Principal principal) throws IOException {
 
         List<String> examinationContent = readFromStream(metadata);
+
         try {
             solution.setMetadata(examinationContent);
             solution.create();
-            return ResponseEntity.ok().body("Upload successful");
+            response.put("message", "Upload successful");
+            return ResponseEntity.ok().body(response);
         } catch (ControlCurveException curveError) {
             return new ResponseEntity<>( curveError.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
-    @GetMapping("/examination_points/")
+    @GetMapping("/")
     public ResponseEntity<?> getExaminationPoints() {
         return service.getExaminationResults();
     }

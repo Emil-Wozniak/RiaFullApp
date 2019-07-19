@@ -54,7 +54,7 @@ public class FileExtractorImpl<ER extends ExaminationResult> implements FileExtr
                         flags.stream().skip(24).collect(Collectors.toList()),
                         NGs.stream().skip(24).collect(Collectors.toList()));
             default:
-                return new ArrayList<>();
+                throw new ClassCastException();
         }
     }
 
@@ -86,7 +86,6 @@ public class FileExtractorImpl<ER extends ExaminationResult> implements FileExtr
      * @return List of integers pair
      */
     private List<String> setPosition(RESULT_CLAZZ clazz, List<Integer> probeNumbers, String pattern) {
-        List<String> positions = new ArrayList<>();
         switch (clazz) {
             case ControlCurve:
                 return probeNumbers.stream().map(pattern_point -> (
@@ -100,7 +99,7 @@ public class FileExtractorImpl<ER extends ExaminationResult> implements FileExtr
                     return isOdd(position) ? (position + 1) / 2 : position / 2;
                 }).map(String::valueOf).collect(Collectors.toList());
             default:
-                return positions;
+                throw new ClassCastException();
         }
     }
 
