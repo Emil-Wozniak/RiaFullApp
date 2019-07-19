@@ -1,30 +1,22 @@
 package org.ria.ifzz.RiaApp.utils;
 
-import lombok.Getter;
-import org.ria.ifzz.RiaApp.domain.DataFileMetadata;
-import org.springframework.stereotype.Service;
+import org.ria.ifzz.RiaApp.models.DataFileMetadata;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.ria.ifzz.RiaApp.domain.DomainConstants.*;
+import static org.ria.ifzz.RiaApp.utils.constants.DomainConstants.*;
+import static org.ria.ifzz.RiaApp.utils.constants.ExaminationConstants.COLUMN_SPLICER;
 
 /**
  * Provides methods needed to read and return List of String from uploaded file
  */
-@Service
-public class CustomFileReader {
-
-    private List<String> examinationResult = new ArrayList<>();
-
-    @Getter
-    private String uploadComment = "File content:\n";
-    @Getter
-    private String positionRegex = "[\\w]";
+public interface CustomFileReader {
 
     /**
+<<<<<<< HEAD
      * takes metadata from uploaded file and
      *
      * @param data uploaded file
@@ -40,15 +32,29 @@ public class CustomFileReader {
             if (!metadataLine.startsWith(DATA_TARGET_POINT)) {
             } else {
                 examinationResult.add(metadataLine);
+=======
+     * @param metadata     Strings that will be read
+     * @param columnNumber target point in String
+     * @return List containing only targeted String's point
+     */
+    static List<String> getMatchingStrings(List<String> metadata, Integer columnNumber) {
+        List<String> matches = new ArrayList<>();
+        for (String added : metadata) {
+            if (added.startsWith(" \tUnk")) {
+                List<String> wordInLine = Arrays.asList(added.split(COLUMN_SPLICER));
+                if (!wordInLine.isEmpty()) {
+                    matches.add(wordInLine.get(columnNumber));
+                }
+>>>>>>> dev
             }
         }
-        examinationResult.forEach(System.out::println);
-        return examinationResult;
+        return matches;
     }
 
     /**
-     * Finds the all word in all entries in the list that matches with the column number
+     * takes metadata from uploaded file and
      *
+<<<<<<< HEAD
      * @param data             The list of strings to check
      * @param columnNumberInData The targeted column to use
      * @return list containing the words of all matching entries
@@ -61,13 +67,42 @@ public class CustomFileReader {
                 matches.add(dataInLine.get(columnNumberInData));
             } else {
                 matches.isEmpty();
+=======
+     * @param metadata uploaded file
+     * @return Strings containing data for
+     */
+    static List<String> readFromStream(DataFileMetadata metadata) throws IOException {
+        List<String> examinationResult = new ArrayList<>();
+        List<String> streamMetadata = metadata.getContents().get();
+        if (!streamMetadata.isEmpty()) {
+            String filename = streamMetadata.get(0);
+            filename = filename.replace(FILENAME_UNNECESSARY_PART, "");
+            String hormonePattern = streamMetadata.get(HORMONE_PATTERN);
+            hormonePattern = hormonePattern.replace(HORMONE_PATTERN_UNNECESSARY_PART, "");
+            examinationResult.add(filename);
+            examinationResult.add(hormonePattern);
+            for (String metadataLine : streamMetadata) {
+                if (!metadataLine.startsWith(DATA_TARGET_POINT)) {
+                } else {
+                    examinationResult.add(metadataLine);
+                }
+>>>>>>> dev
             }
+            return examinationResult;
         }
+<<<<<<< HEAD
         return matches;
+=======
+        return new ArrayList<>();
+>>>>>>> dev
     }
 
-    public List<String> getIndex(List<String> list, Integer columnNumber) {
-        List<String> matches = getMatchingStrings(list, columnNumber);
-        return matches;
+    static String getMatchingString(String line, Integer columnNumber) {
+        String matchesLine = "";
+        List<String> wordInLine = Arrays.asList(line.split(COLUMN_SPLICER));
+        if (!wordInLine.isEmpty()) {
+            matchesLine = wordInLine.get(columnNumber);
+        }
+        return matchesLine;
     }
 }

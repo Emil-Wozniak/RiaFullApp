@@ -23,6 +23,7 @@
 /nbdist/
 /.nb-gradle/
 /build/
+yarn.lock
 
 ### zip ###
 RiaApp.zip

@@ -23,4 +23,10 @@
 /nbdist/
 /.nb-gradle/
 /build/
+<<<<<<< HEAD
 /node_modules
+=======
+node_modules
+
+ria_app_client
+>>>>>>> dev
