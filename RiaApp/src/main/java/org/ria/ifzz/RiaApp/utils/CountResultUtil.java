@@ -101,7 +101,6 @@ public class CountResultUtil implements ResultMath {
             standardPattern.add(point);
         }
         logDoseList = logarithmTable2(standardPattern);
-        LOGGER.info("Standard points:" + Arrays.toString(CORTISOL_PATTERN));
     }
 
     // Table H == %(N-O)
@@ -194,12 +193,7 @@ public class CountResultUtil implements ResultMath {
         secondFactor = countSecond * sumsqSecondFactor - sqr;
 
         double resultSum = firstFactor / secondFactor;
-        Double roundResult = Precision.round(resultSum, 4);
-        regressionParameterB = roundResult;
-
-        LOGGER.info("Regression Parameter B = " + regressionParameterB);
-        LOGGER.info("First factor " + firstFactorInPrecision2 + "\t[count: " + logDoseCount + "\t|sumproduct:  " + sum + "\t\t|sumLogDose: " + sumLogDose + "\t\t|sumLogRealZero: " + sumLogRealZero + "\t]");
-        LOGGER.info("Second factor: " + secondFactor + "\t[count logDose: " + countSecond + "\t|sumsq logDose: " + sumsqSecondFactor + "\t|square logDose: " + sqr + "\t]");
+        regressionParameterB = Precision.round(resultSum, 4);
     }
 
     /* Excel version:

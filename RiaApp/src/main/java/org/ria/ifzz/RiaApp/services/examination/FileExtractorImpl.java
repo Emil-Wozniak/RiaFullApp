@@ -3,7 +3,9 @@ package org.ria.ifzz.RiaApp.services.examination;
 import org.ria.ifzz.RiaApp.models.results.ControlCurve;
 import org.ria.ifzz.RiaApp.models.results.ExaminationPoint;
 import org.ria.ifzz.RiaApp.models.results.ExaminationResult;
+import org.ria.ifzz.RiaApp.models.results.RESULT_CLAZZ;
 import org.ria.ifzz.RiaApp.utils.CountResultUtil;
+import org.ria.ifzz.RiaApp.utils.CustomFileReader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,10 +18,9 @@ import static org.ria.ifzz.RiaApp.utils.constants.ControlCurveConstants.*;
 import static org.ria.ifzz.RiaApp.utils.constants.ExaminationConstants.CONTROL_CURVE_LENGTH;
 import static org.ria.ifzz.RiaApp.utils.constants.ExaminationConstants.CORTISOL_5MIN;
 
-public class FileExtractorImpl<ER extends ExaminationResult> implements FileExtractor {
+public class FileExtractorImpl<ER extends ExaminationResult> implements FileExtractor, CustomFileReader {
 
     private ER examinationResult;
-
     private final CountResultUtil countResultUtil;
 
     FileExtractorImpl(ER examinationResult, CountResultUtil countResultUtil) {
@@ -27,23 +28,29 @@ public class FileExtractorImpl<ER extends ExaminationResult> implements FileExtr
         this.countResultUtil = countResultUtil;
     }
 
+    @SuppressWarnings("unchecked")
     List<ER> generateResults(List<ControlCurve> controlCurves, List<String> metadata) {
+        RESULT_CLAZZ clazz = RESULT_CLAZZ.valueOf(examinationResult.getClass().getSimpleName());
         String filename = metadata.get(0);
         String pattern = metadata.get(1);
         setStandardPattern(metadata.get(1));
         metadata = metadata.stream().skip(2).collect(Collectors.toList());
 
         List<Integer> probeNumbers = setProbeNumber(metadata.size());
-        List<String> positions = setPosition(examinationResult, probeNumbers, pattern);
+        List<String> positions = setPosition(clazz, probeNumbers, pattern);
         List<Integer> CPMs = setCPMs(metadata);
         List<Boolean> flags = isFlagged(CPMs);
-        if (examinationResult instanceof ControlCurve) {
-            controlCurves = createControlCurve(filename, pattern, probeNumbers, positions, CPMs, flags);
-            return (List<ER>) controlCurves;
-        } else {
-            flags = isFlagged(controlCurves, CPMs);
-            List<String> NGs = setNg(controlCurves, CPMs);
-            return createExaminationPoints(filename, pattern, probeNumbers, positions, CPMs, flags, NGs);
+
+        switch (clazz) {
+            case ControlCurve:
+                controlCurves = createControlCurve(filename, pattern, probeNumbers, positions, CPMs, flags);
+                return (List<ER>) controlCurves;
+            case ExaminationPoint:
+                flags = isFlagged(controlCurves, CPMs);
+                List<String> NGs = setNg(controlCurves, CPMs);
+                return createExaminationPoints(filename, pattern, probeNumbers, positions, CPMs, flags, NGs);
+            default:
+                return new ArrayList<>();
         }
     }
 
@@ -56,6 +63,7 @@ public class FileExtractorImpl<ER extends ExaminationResult> implements FileExtr
         return controlCurves;
     }
 
+    @SuppressWarnings("unchecked")
     private List<ER> createExaminationPoints(String filename, String pattern, List<Integer> probeNumbers, List<String> positions, List<Integer> CPMs, List<Boolean> flags, List<String> NGs) {
         List<ExaminationPoint> examinationPoints = new ArrayList<>();
         for (int i = 0; i < probeNumbers.size(); i++) {
@@ -68,41 +76,42 @@ public class FileExtractorImpl<ER extends ExaminationResult> implements FileExtr
     /**
      * generates pairs of the same integers
      *
-     * @param examinationResult generic type of generated list
-     * @param probeNumbers      generated List of integers
-     * @param pattern
+     * @param clazz        generic type of generated list
+     * @param probeNumbers generated List of integers
+     * @param pattern      represents hormones patterns which should be founded in uploaded file
      * @return List of integers pair
      */
-    private List<String> setPosition(ER examinationResult, List<Integer> probeNumbers, String pattern) {
+    private List<String> setPosition(RESULT_CLAZZ clazz, List<Integer> probeNumbers, String pattern) {
         List<String> positions = new ArrayList<>();
-        if (examinationResult instanceof ExaminationPoint) {
-            for (Integer probeNumber : probeNumbers) {
-                int position = probeNumber - CONTROL_CURVE_LENGTH;
-                if (isOdd(position)) {
-                    position = (position + 1) / 2;
-                } else {
-                    position = position / 2;
+        switch (clazz) {
+            case ExaminationPoint:
+                for (Integer probeNumber : probeNumbers) {
+                    int position = probeNumber - CONTROL_CURVE_LENGTH;
+                    if (isOdd(position)) {
+                        position = (position + 1) / 2;
+                    } else {
+                        position = position / 2;
+                    }
+                    positions.add(String.valueOf(position));
                 }
-                positions.add(String.valueOf(position));
-            }
-            return positions;
-        } else if (examinationResult instanceof ControlCurve) {
-            for (int i = 0; i < 24; i++) {
-                if (i == 0 || i == 1) {
-                    positions.add(TOTAL);
-                } else if (i == 2 || i == 3 || i == 4) {
-                    positions.add(NSB);
-                } else if (i == 5 || i == 6 || i == 7) {
-                    positions.add(ZERO);
-                } else if (i < 22) {
-                    getPattern(pattern, positions, i);
-                } else {
-                    positions.add(CONTROL_POINT);
+                return positions;
+            case ControlCurve:
+                for (int pattern_point = 0; pattern_point < 24; pattern_point++) {
+                    if (pattern_point == 0 || pattern_point == 1) {
+                        positions.add(TOTAL);
+                    } else if (pattern_point == 2 || pattern_point == 3 || pattern_point == 4) {
+                        positions.add(NSB);
+                    } else if (pattern_point == 5 || pattern_point == 6 || pattern_point == 7) {
+                        positions.add(ZERO);
+                    } else if (pattern_point < 22) {
+                        getPattern(pattern, pattern_point, positions);
+                    } else {
+                        positions.add(CONTROL_POINT);
+                    }
                 }
-            }
-            return positions;
-        } else {
-            return positions;
+                return positions;
+            default:
+                return positions;
         }
     }
 

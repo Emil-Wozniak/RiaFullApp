@@ -34,11 +34,7 @@ public class GraphService {
     }
 
 
-    public Graph create(List<String> metadata) {
-        return createGraph(metadata);
-    }
-
-    private Graph createGraph(List<String> metadata) {
+    public void create(List<String> metadata) {
         double correlation = countResultUtil.setCorrelation(setStandardPattern(metadata));
         double zeroBindingPercentage = countResultUtil.setZeroBindingPercent();
         double regressionParameterB = countResultUtil.getRegressionParameterB();
@@ -46,12 +42,11 @@ public class GraphService {
         String filename = metadata.get(0);
         String pattern = metadata.get(1);
         Graph graph = new Graph(filename, pattern, correlation, zeroBindingPercentage, regressionParameterB);
-        LOGGER.info("Create graph: " + graph.toString());
+
         graphLines = createGraphLines(filename, metadata, graph);
         graph.setGraphLines(graphLines);
         graphRepository.save(graph);
         graphLineRepository.saveAll(graphLines);
-        return graph;
     }
 
     private List<GraphLine> createGraphLines(String filename, List<String> metadata, Graph graph) {

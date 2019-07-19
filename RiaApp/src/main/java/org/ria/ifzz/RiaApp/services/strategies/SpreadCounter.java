@@ -15,7 +15,7 @@ public interface SpreadCounter {
         Integer first = CPMs.get(0), second = CPMs.get(1), third = CPMs.get(2);
         boolean firstFlag = false, secondFlag = false, thirdFlag = false;
 
-        if (first - second != 0 || second - third != 0 || third - first != 0) {
+        if (first - second != 0 || second - third != 0) {
             if ((first - second) > (second / 10) || (first - third) > (third / 10)) {
                 firstFlag = true;
                 LOGGER.info(first + " flagged " + true);

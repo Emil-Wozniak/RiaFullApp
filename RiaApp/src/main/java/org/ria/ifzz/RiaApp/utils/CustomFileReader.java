@@ -42,20 +42,22 @@ public interface CustomFileReader {
     static List<String> readFromStream(DataFileMetadata metadata) throws IOException {
         List<String> examinationResult = new ArrayList<>();
         List<String> streamMetadata = metadata.getContents().get();
-
-        String filename = streamMetadata.get(0);
-        filename = filename.replace(FILENAME_UNNECESSARY_PART, "");
-        String hormonePattern = streamMetadata.get(HORMONE_PATTERN);
-        hormonePattern = hormonePattern.replace(HORMONE_PATTERN_UNNECESSARY_PART, "");
-        examinationResult.add(filename);
-        examinationResult.add(hormonePattern);
-        for (String metadataLine : streamMetadata) {
-            if (!metadataLine.startsWith(DATA_TARGET_POINT)) {
-            } else {
-                examinationResult.add(metadataLine);
+        if (!streamMetadata.isEmpty()) {
+            String filename = streamMetadata.get(0);
+            filename = filename.replace(FILENAME_UNNECESSARY_PART, "");
+            String hormonePattern = streamMetadata.get(HORMONE_PATTERN);
+            hormonePattern = hormonePattern.replace(HORMONE_PATTERN_UNNECESSARY_PART, "");
+            examinationResult.add(filename);
+            examinationResult.add(hormonePattern);
+            for (String metadataLine : streamMetadata) {
+                if (!metadataLine.startsWith(DATA_TARGET_POINT)) {
+                } else {
+                    examinationResult.add(metadataLine);
+                }
             }
+            return examinationResult;
         }
-        return examinationResult;
+        return new ArrayList<>();
     }
 
     static String getMatchingString(String line, Integer columnNumber) {
