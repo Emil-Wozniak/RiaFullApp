@@ -125,15 +125,30 @@ public class FileExtractorImpl<ER extends ExaminationResult> implements FileExtr
     }
 
     private List<Boolean> isFlagged(List<Integer> CPMs) {
-        List<Boolean> flagged = new ArrayList<>();
+        List<Integer> points = setProbeNumber(CPMs.size());
         List<Boolean> NSB = getZeroOrNsb(CPMs, 2, 4);
         List<Boolean> Zeros = getZeroOrNsb(CPMs, 5, 7);
-        double nsb1 = CPMs.get(5), nsb2 = CPMs.get(6), nsb3 = CPMs.get(7);
 
-        flagged.add(false);
-        flagged.add(false);
-        flagged.addAll(NSB);
-        flagged.addAll(Zeros);
+        List<Boolean> flagged = points.stream().limit(8).map(point -> {
+            int position = point;
+            switch (point) {
+                case 1: case 2:
+                    return false;
+                case 3: case 4: case 5:
+                    return NSB.get(setPoint(position,3));
+                case 6: case 7: case 8:
+                    return Zeros.get(setPoint(position,6));
+                default:
+                    throw new IllegalStateException("Unexpected value: " + point);
+            }
+        }).collect(Collectors.toList());
+        flagged.addAll(getNSBsSpread(CPMs));
+        return flagged;
+    }
+
+    private List<Boolean> getNSBsSpread(List<Integer> CPMs) {
+        List<Boolean> flagged = new ArrayList<>();
+        double nsb1 = CPMs.get(5), nsb2 = CPMs.get(6), nsb3 = CPMs.get(7);
         for (int element = 8; element < CPMs.size(); element++) {
             if (CPMs.get(element) > nsb1 || nsb2 > CPMs.get(element) || CPMs.get(element) > nsb3) {
                 flagged.add(true);
@@ -142,6 +157,10 @@ public class FileExtractorImpl<ER extends ExaminationResult> implements FileExtr
             }
         }
         return flagged;
+    }
+
+    private int setPoint(int position, int value){
+        return position - value;
     }
 
 
