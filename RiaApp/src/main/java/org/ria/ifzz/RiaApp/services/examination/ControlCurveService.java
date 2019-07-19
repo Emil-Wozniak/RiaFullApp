@@ -1,5 +1,6 @@
 package org.ria.ifzz.RiaApp.services.examination;
 
+import org.ria.ifzz.RiaApp.exception.ControlCurveException;
 import org.ria.ifzz.RiaApp.models.results.ControlCurve;
 import org.ria.ifzz.RiaApp.repositories.results.ControlCurveRepository;
 import org.ria.ifzz.RiaApp.utils.CountResultUtil;
@@ -27,7 +28,7 @@ public class ControlCurveService extends FileExtractorImpl<ControlCurve> impleme
      * @param metadata lines of data from uploaded file
      * @return controlCurve entities with all needed data from file metadata
      */
-    public List<ControlCurve> create(List<String> metadata) {
+    public List<ControlCurve> create(List<String> metadata) throws ControlCurveException {
         List<ControlCurve> controlCurves = new ArrayList<>();
         controlCurves = generateResults(controlCurves,metadata);
         controlCurveRepository.saveAll(controlCurves);

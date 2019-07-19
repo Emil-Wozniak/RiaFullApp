@@ -1,5 +1,6 @@
 package org.ria.ifzz.RiaApp.controllers;
 
+import org.ria.ifzz.RiaApp.exception.ControlCurveException;
 import org.ria.ifzz.RiaApp.models.DataFileMetadata;
 import org.ria.ifzz.RiaApp.services.examination.ExaminationPointService;
 import org.ria.ifzz.RiaApp.services.strategies.ExaminationResultSolution;
@@ -32,12 +33,12 @@ public class ExaminationResultController implements CustomFileReader {
     public ResponseEntity<?> handleFileUpload(@Valid DataFileMetadata metadata, Principal principal) throws IOException {
 
         List<String> examinationContent = readFromStream(metadata);
-        if (!examinationContent.isEmpty()) {
+        try {
             solution.setMetadata(examinationContent);
             solution.create();
             return ResponseEntity.ok().body("Upload successful");
-        } else {
-            return new ResponseEntity<>( "Uploaded file was empty", HttpStatus.BAD_REQUEST);
+        } catch (ControlCurveException curveError) {
+            return new ResponseEntity<>( curveError.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 

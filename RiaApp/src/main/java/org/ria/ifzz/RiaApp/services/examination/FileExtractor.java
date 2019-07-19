@@ -35,14 +35,14 @@ public interface FileExtractor {
 
     /**
      * @param pattern       represents hormones patterns which should be founded in uploaded file
-     * @param positions     String' array which will be returned
      * @param pattern_point point in a pattern
+     * @return explicit pattern points by detected pattern
      */
-    static void getPattern(String pattern, int pattern_point, List<String> positions) {
+    static String getPattern(String pattern, int pattern_point) {
         if (pattern.equals(CORTISOL_5MIN)) {
             double point = CORTISOL_PATTERN[pattern_point - 8];
-            String patternConvert = String.valueOf(point);
-            positions.add(patternConvert);
+            return String.valueOf(point);
         }
+        return "";
     }
 }

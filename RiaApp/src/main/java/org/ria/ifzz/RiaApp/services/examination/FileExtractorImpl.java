@@ -1,5 +1,6 @@
 package org.ria.ifzz.RiaApp.services.examination;
 
+import org.ria.ifzz.RiaApp.exception.ControlCurveException;
 import org.ria.ifzz.RiaApp.models.results.ControlCurve;
 import org.ria.ifzz.RiaApp.models.results.ExaminationPoint;
 import org.ria.ifzz.RiaApp.models.results.ExaminationResult;
@@ -29,7 +30,7 @@ public class FileExtractorImpl<ER extends ExaminationResult> implements FileExtr
     }
 
     @SuppressWarnings("unchecked")
-    List<ER> generateResults(List<ControlCurve> controlCurves, List<String> metadata) {
+    List<ER> generateResults(List<ControlCurve> controlCurves, List<String> metadata) throws ControlCurveException {
         RESULT_CLAZZ clazz = RESULT_CLAZZ.valueOf(examinationResult.getClass().getSimpleName());
         String filename = metadata.get(0);
         String pattern = metadata.get(1);
@@ -85,31 +86,16 @@ public class FileExtractorImpl<ER extends ExaminationResult> implements FileExtr
         List<String> positions = new ArrayList<>();
         switch (clazz) {
             case ExaminationPoint:
-                for (Integer probeNumber : probeNumbers) {
+                return probeNumbers.stream().map(probeNumber -> {
                     int position = probeNumber - CONTROL_CURVE_LENGTH;
-                    if (isOdd(position)) {
-                        position = (position + 1) / 2;
-                    } else {
-                        position = position / 2;
-                    }
-                    positions.add(String.valueOf(position));
-                }
-                return positions;
+                    return isOdd(position) ? (position + 1) / 2 : position / 2;
+                }).map(String::valueOf).collect(Collectors.toList());
             case ControlCurve:
-                for (int pattern_point = 0; pattern_point < 24; pattern_point++) {
-                    if (pattern_point == 0 || pattern_point == 1) {
-                        positions.add(TOTAL);
-                    } else if (pattern_point == 2 || pattern_point == 3 || pattern_point == 4) {
-                        positions.add(NSB);
-                    } else if (pattern_point == 5 || pattern_point == 6 || pattern_point == 7) {
-                        positions.add(ZERO);
-                    } else if (pattern_point < 22) {
-                        getPattern(pattern, pattern_point, positions);
-                    } else {
-                        positions.add(CONTROL_POINT);
-                    }
-                }
-                return positions;
+                return probeNumbers.stream().map(pattern_point -> (
+                        pattern_point == 0 || pattern_point == 1) ? TOTAL :
+                        pattern_point == 2 || pattern_point == 3 || pattern_point == 4 ? NSB :
+                                pattern_point == 5 || pattern_point == 6 || pattern_point == 7 ? ZERO
+                                        : pattern_point < 22 ? getPattern(pattern, pattern_point) : CONTROL_POINT).collect(Collectors.toList());
             default:
                 return positions;
         }
@@ -143,6 +129,7 @@ public class FileExtractorImpl<ER extends ExaminationResult> implements FileExtr
         List<Boolean> NSB = getZeroOrNsb(CPMs, 2, 4);
         List<Boolean> Zeros = getZeroOrNsb(CPMs, 5, 7);
         double nsb1 = CPMs.get(5), nsb2 = CPMs.get(6), nsb3 = CPMs.get(7);
+
         flagged.add(false);
         flagged.add(false);
         flagged.addAll(NSB);
@@ -184,11 +171,11 @@ public class FileExtractorImpl<ER extends ExaminationResult> implements FileExtr
      * @param controlCurves ControlCurve entities
      * @param CPMs          List of integers from CPM metadata column
      */
-    private List<String> setNg(List<ControlCurve> controlCurves, List<Integer> CPMs) {
+    private List<String> setNg(List<ControlCurve> controlCurves, List<Integer> CPMs) throws ControlCurveException {
         countResultUtil.createStandardListWithCPMs(controlCurves);
         countResultUtil.setStandardsCpmWithFlags(controlCurves);
-        List<Double> binding = countResultUtil.bindingPercent();
-        countResultUtil.logarithmRealZero(binding);
+        countResultUtil.bindingPercent();
+        countResultUtil.logarithmRealZero();
         countResultUtil.countRegressionParameterB();
         countResultUtil.countRegressionParameterA();
         return CPMs.stream().map(point -> countResultUtil.countNg(Double.valueOf(point))).map(String::valueOf).collect(Collectors.toList());

@@ -1,5 +1,6 @@
 package org.ria.ifzz.RiaApp.services.examination;
 
+import org.ria.ifzz.RiaApp.exception.ControlCurveException;
 import org.ria.ifzz.RiaApp.models.results.ControlCurve;
 import org.ria.ifzz.RiaApp.models.results.ExaminationPoint;
 import org.ria.ifzz.RiaApp.repositories.results.ExaminationPointRepository;
@@ -26,7 +27,7 @@ public class ExaminationPointService extends FileExtractorImpl<ExaminationPoint>
      * @param metadata      data from uploaded file
      * @param controlCurves Control Curve entities
      */
-    public void create(List<String> metadata, List<ControlCurve> controlCurves) {
+    public void create(List<String> metadata, List<ControlCurve> controlCurves) throws ControlCurveException {
         List<ExaminationPoint> examinationPoints = generateResults(controlCurves, metadata);
         examinationPointRepository.saveAll(examinationPoints);
     }

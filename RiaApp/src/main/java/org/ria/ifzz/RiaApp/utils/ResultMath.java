@@ -71,10 +71,7 @@ interface ResultMath {
 
     static List<Double> logarithmTable1(List<Double> logarithmTable) {
         List<Double> resultTable;
-        resultTable = logarithmTable
-                .stream()
-                .map(element -> round(element, 1))
-                .collect(Collectors.toList());
+        resultTable = logarithmTable.stream().map(element -> round(element, 1)).collect(Collectors.toList());
         return resultTable;
     }
 
@@ -90,17 +87,12 @@ interface ResultMath {
     }
 
     static List<Double> multiplyList(Double multiplier, List<Double> values) {
-        return values
-                .stream()
-                .map(element -> (element * multiplier))
-                .collect(Collectors.toList());
+        return values.stream().map(element -> (element * multiplier)).collect(Collectors.toList());
     }
 
 
     static double sum(List<Double> values) {
-        double product = values.stream()
-                .mapToDouble(value -> Precision.round(value, 2))
-                .sum();
+        double product = values.stream().mapToDouble(value -> Precision.round(value, 2)).sum();
         product = Precision.round(product, 2);
         return product;
     }

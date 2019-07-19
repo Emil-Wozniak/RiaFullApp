@@ -2,6 +2,7 @@ package org.ria.ifzz.RiaApp.services.strategies;
 
 import lombok.Setter;
 import lombok.ToString;
+import org.ria.ifzz.RiaApp.exception.ControlCurveException;
 import org.ria.ifzz.RiaApp.models.results.ControlCurve;
 import org.ria.ifzz.RiaApp.services.examination.ControlCurveService;
 import org.ria.ifzz.RiaApp.services.examination.ExaminationPointService;
@@ -48,7 +49,7 @@ public class ExaminationResultSolution extends ExaminationResultStrategyImpl {
     }
 
     @Override
-    boolean isControlCurve() {
+    boolean isControlCurve() throws ControlCurveException {
         if (metadata.size() >= 1) {
             controlCurvePoints.addAll(controlCurveService.create(metadata.subList(0,26)));
         }
@@ -56,7 +57,7 @@ public class ExaminationResultSolution extends ExaminationResultStrategyImpl {
     }
 
     @Override
-    boolean isResultPoint() {
+    boolean isResultPoint() throws ControlCurveException {
         if (metadata.size() > 25) {
             examinationPointService.create(metadata, controlCurvePoints);
         }

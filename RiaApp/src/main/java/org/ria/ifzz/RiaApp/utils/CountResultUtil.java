@@ -3,13 +3,13 @@ package org.ria.ifzz.RiaApp.utils;
 import lombok.Getter;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 import org.apache.commons.math3.util.Precision;
+import org.ria.ifzz.RiaApp.exception.ControlCurveException;
 import org.ria.ifzz.RiaApp.models.results.ControlCurve;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,10 +21,10 @@ public class CountResultUtil implements ResultMath {
 
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
 
-    private int total;
+    private Integer total;
     private Integer zero;
     private Integer nsb;
-    private int binding;
+    private Integer binding;
 
     @Getter
     private List<Double> logDoseList;
@@ -33,10 +33,11 @@ public class CountResultUtil implements ResultMath {
     @Getter
     private Double regressionParameterB;
     private Double regressionParameterA;
+    private List<Double> bindingPercent;
     private List<Integer> standardsCPM;
 
-    public void createStandardListWithCPMs(List<ControlCurve> controlCurves) {
-        if (!controlCurves.isEmpty()) {
+    public void createStandardListWithCPMs(List<ControlCurve> controlCurves) throws ControlCurveException {
+        try {
             List<ControlCurve> NSBs = getPoint(controlCurves, 5, 7);
             List<ControlCurve> ZEROs = getPoint(controlCurves, 2, 4);
             total = (controlCurves.get(0).getCpm() + controlCurves.get(1).getCpm()) / 2;
@@ -44,6 +45,8 @@ public class CountResultUtil implements ResultMath {
             zero = calculateByFlagsValue(ZEROs);
             binding = nsb - zero;
             LOGGER.info("T: " + total + " | Zero: " + zero + " | NSB: " + nsb + " | N - O: " + binding);
+        } catch (Exception curveException) {
+            throw new ControlCurveException("Control curve too small, size: " + controlCurves.size());
         }
     }
 
@@ -110,7 +113,7 @@ public class CountResultUtil implements ResultMath {
      * subtracts each value from standards CMP List by each value result from logDose(),
      * then multiply each result by 100, divides those by binding
      */
-    public List<Double> bindingPercent() {
+    public void bindingPercent() {
         List<Double> subtraction = subtractTablesElement(standardsCPM, zero);
         List<Double> multiplication = multiplyList(100.0, subtraction);
         List<Double> result = divideTableCeilElements(binding, multiplication);
@@ -125,14 +128,14 @@ public class CountResultUtil implements ResultMath {
                 }
             }
         }
-        return result;
+        bindingPercent = result;
     }
 
     /*
     Table J
     =LOG(H23/(100-H23))
      */
-    public void logarithmRealZero(List<Double> bindingPercent) {
+    public void logarithmRealZero() {
         List<Double> logTable = null;
         try {
             List<Double> subtractPercentNO = subtractTableElements(100.0, bindingPercent);
