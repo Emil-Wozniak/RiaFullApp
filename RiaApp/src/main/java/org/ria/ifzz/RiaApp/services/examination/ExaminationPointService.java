@@ -9,12 +9,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ExaminationPointService extends FileExtractorImpl<ExaminationPoint> {
 
     private final ExaminationPointRepository examinationPointRepository;
+    private Map<String,String> response = new HashMap<>();
 
     public ExaminationPointService(CountResultUtil countResultUtil, ExaminationPointRepository examinationPointRepository) {
         super(new ExaminationPoint(), countResultUtil);
@@ -34,11 +38,11 @@ public class ExaminationPointService extends FileExtractorImpl<ExaminationPoint>
 
     public ResponseEntity<?> getExaminationResults() {
         List<ExaminationPoint> examinationPoints = (List<ExaminationPoint>) examinationPointRepository.findAll();
-        return new ResponseEntity<>(examinationPoints, HttpStatus.FOUND);
+        return !examinationPoints.isEmpty() ? new ResponseEntity<>(examinationPoints, HttpStatus.FOUND) : new ResponseEntity<>(response.put("message", "No results available"), HttpStatus.NOT_FOUND);
     }
 
     public ResponseEntity<?> getExaminationResultsByFilename(String filename) {
         List<ExaminationPoint> examinationPoints = examinationPointRepository.findAllByIdentifier(filename);
-        return new ResponseEntity<>(examinationPoints, HttpStatus.FOUND);
+        return !examinationPoints.isEmpty() ?  new ResponseEntity<>(examinationPoints, HttpStatus.FOUND): new ResponseEntity<>(response.put("message", "No results available"), HttpStatus.NOT_FOUND);
     }
 }
