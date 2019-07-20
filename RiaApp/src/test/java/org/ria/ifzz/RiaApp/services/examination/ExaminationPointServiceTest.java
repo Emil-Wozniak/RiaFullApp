@@ -32,6 +32,7 @@ class ExaminationPointServiceTest {
 
     @AfterEach
     void tearDown() {
+        examinationPoints.clear();
     }
 
     private ExaminationPoint createExaminationPoint(String filename, int probeNumber, String position, int cpm, boolean flag, String ng) {
@@ -74,17 +75,17 @@ class ExaminationPointServiceTest {
     @Test
     void getExaminationResultsByFilename_positive() {
         fillExaminationPoints();
-        List<String> indentifiers = examinationPoints.stream()
+        List<String> identifiers = examinationPoints.stream()
                 .map(ExaminationPoint::getIdentifier)
                 .filter(ex->ex.equals("A16_244")).collect(Collectors.toList());
-        assertTrue(indentifiers.contains("A16_244"));
+        assertTrue(identifiers.contains("A16_244"));
     }
 
     @Test
     void getExaminationResultsByFilename_negative() {
-        List<String> indentifiers = examinationPoints.stream()
+        List<String> identifiers = examinationPoints.stream()
                 .map(ExaminationPoint::getIdentifier)
                 .filter(ex->ex.equals("A16_244")).collect(Collectors.toList());
-        assertFalse(indentifiers.contains("A16_244"));
+        assertFalse(identifiers.contains("A16_244"));
     }
 }
