@@ -1,18 +1,22 @@
 import React, {Component} from 'react';
-import compose from "recompose/compose";
-import { connect } from "react-redux";
-import { getExaminationPoints } from "../actions/examinationPointActions";
+import {connect} from "react-redux";
+import {getExaminationPoints} from "../actions/examinationPointActions";
 import PropTypes from "prop-types";
 import Paper from "@material-ui/core/Paper";
-import { Col, Row, Container, Table } from "reactstrap";
+import {Col, Container, Row, Table} from "reactstrap";
 
 class Dashboard extends Component {
+
+    componentWillMount() {
+        this.props.getExaminationPoints();
+    }
+
     render() {
         return (
             <Container>
                 <Row>
                     <Col md={12}>
-                        <br />
+                        <br/>
                         <Paper>
                             <Col>
                                 <p className="text-left">Files:</p>
@@ -20,10 +24,10 @@ class Dashboard extends Component {
                             <Table striped>
                                 <thead>
                                 <tr>
-                                    <th />
+                                    <th/>
                                     <th>File Name</th>
                                     <th>Content Type:</th>
-                                    <th />
+                                    <th/>
                                 </tr>
                                 </thead>
                                 {/*{file_entities*/}
@@ -43,4 +47,14 @@ class Dashboard extends Component {
     }
 }
 
-export default Dashboard;
+Dashboard.propTypes = {
+    classes: PropTypes.object.isRequired,
+    examination_point: PropTypes.object.isRequired,
+    getExaminationPoints: PropTypes.func.isRequired
+};
+
+const mapStateToProps = state => ({
+    file_entity: state.file_entity
+});
+
+export default connect(mapStateToProps, {getExaminationPoints})(Dashboard)
