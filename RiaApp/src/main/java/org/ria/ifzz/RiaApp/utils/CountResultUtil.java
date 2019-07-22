@@ -185,7 +185,7 @@ public class CountResultUtil implements ResultMath {
         Double sum = sumProduct(logDoseList, realZeroPrecision1); // logarithmRealZeroTable in this place have to be in first flouting point
         Double sumLogDose = sum(logDoseList);
         Double sumLogRealZero = sum(logarithmRealZeroTable);
-        firstFactor = (logDoseCount * sum) - (sumLogDose * sumLogRealZero);
+        firstFactor = getPointSubtract(logDoseCount * sum, sumLogDose * sumLogRealZero);
         double firstFactorInPrecision2 = Precision.round(firstFactor, 2);
 
         Double countSecond = count(logDoseList);
@@ -193,7 +193,7 @@ public class CountResultUtil implements ResultMath {
         double sqr = sum(logDoseList);
         sqr = Math.pow(sqr, 2);
 
-        secondFactor = countSecond * sumsqSecondFactor - sqr;
+        secondFactor = getPointSubtract(countSecond * sumsqSecondFactor, sqr);
 
         double resultSum = firstFactor / secondFactor;
         regressionParameterB = Precision.round(resultSum, 4);
@@ -247,13 +247,11 @@ public class CountResultUtil implements ResultMath {
     }
 
     public List<Double> countMeterReading() {
-        List<Double> meterReading;
-        meterReading = standardsCPM.stream()
-                .map(point -> Precision
-                        .round((Math.pow(10, ((Math
-                                .log10((point - zero) * 100 / binding / (100 - (point - zero) * 100 / binding)) - regressionParameterA) / regressionParameterB)
-                        )), 4)).collect(Collectors.toList());
-        return meterReading;
+        return standardsCPM.stream()
+                .map(point -> Precision.round((Math.pow(10, ((Math.log10(getPointSubtract(point, zero)
+                        * 100 / binding / (100 - (getPointSubtract(point, zero))
+                        * 100 / binding)) - regressionParameterA) / regressionParameterB))), 4))
+                .collect(Collectors.toList());
     }
 }
 

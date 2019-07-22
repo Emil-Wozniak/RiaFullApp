@@ -103,5 +103,9 @@ interface ResultMath {
         decimal = decimal.setScale(places, RoundingMode.HALF_UP);
         return decimal.doubleValue();
     }
+
+    static double getPointSubtract(double first_value, double second_value) {
+        return first_value - second_value;
+    }
 }
 
