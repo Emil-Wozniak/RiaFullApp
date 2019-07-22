@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.ria.ifzz.RiaApp.utils.CustomFileReader.getMatchingString;
@@ -29,29 +30,35 @@ class FileExtractorTest implements CustomFileReader {
 
     private List<Integer> probeNumbers;
     private List<String> fileContent;
-    ControlCurve controlCurve1;
-    ControlCurve controlCurve2;
-    ControlCurve controlCurve3;
-    ControlCurve controlCurve4;
-    ControlCurve controlCurve5;
-    ControlCurve controlCurve6;
+    private List<ControlCurve> controlCurves;
 
     @BeforeEach
     void setUp() {
         fileContent = new ArrayList<>();
         probeNumbers = new ArrayList<>();
         fileContent = new ArrayList<>();
-        controlCurve1 = new ControlCurve( "A16_244.txt", "KORTYZOL_5_MIN", 1, "Total", 49, true);
-        controlCurve2 = new ControlCurve( "A16_244.txt", "KORTYZOL_5_MIN", 1, "Total", 32, false);
-        controlCurve3 = new ControlCurve( "A16_244.txt", "KORTYZOL_5_MIN", 1, "Total", 36, false);
-        controlCurve4 = new ControlCurve( "A16_244.txt", "KORTYZOL_5_MIN", 1, "Total", 458, false);
-        controlCurve5 = new ControlCurve( "A16_244.txt", "KORTYZOL_5_MIN", 1, "Total", 459, false);
-        controlCurve6 = new ControlCurve( "A16_244.txt", "KORTYZOL_5_MIN", 1, "Total", 447, false);
+        ControlCurve controlCurve1 = new ControlCurve("A16_244.txt", "KORTYZOL_5_MIN", 1, "Total", 49, true);
+        ControlCurve controlCurve2 = new ControlCurve("A16_244.txt", "KORTYZOL_5_MIN", 1, "Total", 32, false);
+        ControlCurve controlCurve3 = new ControlCurve("A16_244.txt", "KORTYZOL_5_MIN", 1, "Total", 36, false);
+        ControlCurve controlCurve4 = new ControlCurve("A16_244.txt", "KORTYZOL_5_MIN", 1, "Total", 458, false);
+        ControlCurve controlCurve5 = new ControlCurve("A16_244.txt", "KORTYZOL_5_MIN", 1, "Total", 459, false);
+        ControlCurve controlCurve6 = new ControlCurve("A16_244.txt", "KORTYZOL_5_MIN", 1, "Total", 447, false);
+        controlCurves = new ArrayList<>();
+        controlCurves.add(null);
+        controlCurves.add(null);
+        controlCurves.add(controlCurve1);
+        controlCurves.add(controlCurve2);
+        controlCurves.add(controlCurve3);
+        controlCurves.add(controlCurve4);
+        controlCurves.add(controlCurve5);
+        controlCurves.add(controlCurve6);
     }
 
     @AfterEach
     void tearDown() {
         probeNumbers.clear();
+        fileContent.clear();
+        controlCurves.clear();
     }
 
     private List<String> getFileContents() throws IOException {
@@ -184,6 +191,8 @@ class FileExtractorTest implements CustomFileReader {
     @Test
     void flagCondition() throws IOException {
         List<Integer> CPMs = getCPMs();
-
+        int cpm = CPMs.get(10);
+        boolean isOutOfCurveBoundary = (cpm < controlCurves.get(2).getCpm() || cpm < controlCurves.get(3).getCpm() || cpm < controlCurves.get(4).getCpm()) || (cpm > controlCurves.get(5).getCpm() || cpm > controlCurves.get(6).getCpm() || cpm > controlCurves.get(7).getCpm());
+        assertFalse(isOutOfCurveBoundary);
     }
 }
