@@ -12,11 +12,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
-import static org.ria.ifzz.RiaApp.utils.constants.DomainConstants.DATA_TARGET_POINT;
+import static org.ria.ifzz.RiaApp.utils.CustomFileReader.removeEmpty;
+import static org.ria.ifzz.RiaApp.utils.constants.ExaminationConstants.COLUMN_SPLICER;
 
 class CustomFileReaderTest {
 
@@ -44,22 +46,38 @@ class CustomFileReaderTest {
     void readFromStream() {
         List<String> streamMetadata = metadata.getContents().get();
         List<String> examinationResult = new ArrayList<>();
-        CustomFileReader.addFilenameAndPattern(examinationResult,streamMetadata);
-        List<String> results = streamMetadata.stream().map(this::isDataResult).collect(Collectors.toList());
-        removeEmpty(results);
+        CustomFileReader.addFilenameAndPattern(examinationResult, streamMetadata);
+        List<String> results = streamMetadata.stream().map(CustomFileReader::isDataResult).collect(Collectors.toList());
+        CustomFileReader.removeEmpty(results);
         examinationResult.addAll(results);
-        assertEquals(627,streamMetadata.size());
-    }
-
-    private String isDataResult(String metadataLine) {
-        return (!metadataLine.startsWith(DATA_TARGET_POINT)) ? "" : metadataLine;
-    }
-
-    static void removeEmpty(List<String> strings){
-        strings.removeIf(s -> s == null || s.isEmpty());
+        assertEquals(627, streamMetadata.size());
     }
 
     @Test
-    void getMatchingString() {
+    void isDataResult() {
+    }
+
+    @Test
+    void removeEmpty() {
+    }
+
+    @Test
+    void addFilenameAndPattern() {
+    }
+
+    @Test
+    void getPatternFromMetadata() {
+    }
+
+    @Test
+    void getCleanFileName() {
+    }
+
+    @Test
+    void getMatchingString() throws IOException {
+        List<String> fileContent = CustomFileReader.readFromStream(metadata);
+        String testLine = fileContent.get(3);
+        List<String> wordInLine = Arrays.asList(testLine.split(COLUMN_SPLICER));
+        assertEquals("1982", wordInLine.get(3));
     }
 }

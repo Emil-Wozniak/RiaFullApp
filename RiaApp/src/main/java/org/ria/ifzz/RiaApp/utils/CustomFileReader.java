@@ -78,11 +78,7 @@ public interface CustomFileReader {
     }
 
     static String getMatchingString(String line, Integer columnNumber) {
-        String matchesLine = "";
         List<String> wordInLine = Arrays.asList(line.split(COLUMN_SPLICER));
-        if (!wordInLine.isEmpty()) {
-            matchesLine = wordInLine.get(columnNumber);
-        }
-        return matchesLine;
+        return wordInLine.get(columnNumber);
     }
 }
