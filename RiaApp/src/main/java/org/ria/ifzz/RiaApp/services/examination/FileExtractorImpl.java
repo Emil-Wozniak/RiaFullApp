@@ -64,6 +64,7 @@ public class FileExtractorImpl<ER extends ExaminationResult> implements FileExtr
             ControlCurve controlCurvePoint = new ControlCurve(filename, pattern, probeNumbers.get(i), positions.get(i), CPMs.get(i), flags.get(i));
             controlCurves.add(controlCurvePoint);
         }
+        controlCurves.forEach(System.out::println);
         return controlCurves;
     }
 
@@ -89,9 +90,9 @@ public class FileExtractorImpl<ER extends ExaminationResult> implements FileExtr
         switch (clazz) {
             case ControlCurve:
                 return probeNumbers.stream().map(pattern_point -> (
-                        pattern_point == 0 || pattern_point == 1) ? TOTAL :
-                        pattern_point == 2 || pattern_point == 3 || pattern_point == 4 ? NSB :
-                                pattern_point == 5 || pattern_point == 6 || pattern_point == 7 ? ZERO
+                        pattern_point == 1 || pattern_point == 2) ? TOTAL :
+                        pattern_point == 3 || pattern_point == 4 || pattern_point == 5 ? NSB :
+                                pattern_point == 6 || pattern_point == 7 || pattern_point == 8 ? ZERO
                                         : pattern_point < 22 ? getPattern(pattern, pattern_point) : CONTROL_POINT).collect(Collectors.toList());
             case ExaminationPoint:
                 return probeNumbers.stream().skip(24).map(probeNumber -> {

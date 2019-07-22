@@ -10,6 +10,7 @@ public interface SpreadCounter {
 
     Logger LOGGER = LoggerFactory.getLogger(SpreadCounter.class);
 
+    //TODO debug, sometimes spread is flagged incorrect
     static List<Boolean> isSpread(List<Integer> CPMs) {
         List<Boolean> flagged = new ArrayList<>();
         Integer first = CPMs.get(0), second = CPMs.get(1), third = CPMs.get(2);

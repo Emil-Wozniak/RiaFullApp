@@ -16,24 +16,6 @@ import static org.ria.ifzz.RiaApp.utils.constants.ExaminationConstants.COLUMN_SP
 public interface CustomFileReader {
 
     /**
-     * @param metadata     Strings that will be read
-     * @param columnNumber target point in String
-     * @return List containing only targeted String's point
-     */
-    static List<String> getMatchingStrings(List<String> metadata, Integer columnNumber) {
-        List<String> matches = new ArrayList<>();
-        for (String added : metadata) {
-            if (added.startsWith(" \tUnk")) {
-                List<String> wordInLine = Arrays.asList(added.split(COLUMN_SPLICER));
-                if (!wordInLine.isEmpty()) {
-                    matches.add(wordInLine.get(columnNumber));
-                }
-            }
-        }
-        return matches;
-    }
-
-    /**
      * takes metadata from uploaded file and
      *
      * @param metadata uploaded file

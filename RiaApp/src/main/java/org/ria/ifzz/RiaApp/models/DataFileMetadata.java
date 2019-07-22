@@ -2,6 +2,8 @@ package org.ria.ifzz.RiaApp.models;
 
 import cyclops.control.Eval;
 import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +20,13 @@ import java.util.function.Supplier;
 
 @Getter
 @Setter
+@RequiredArgsConstructor
 public class DataFileMetadata {
+
+    // test case constructor
+    public DataFileMetadata(MultipartFile file) {
+        this.file = file;
+    }
 
     Logger LOGGER = LoggerFactory.getLogger(this.getClass());
     private MultipartFile file;
