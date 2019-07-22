@@ -1,5 +1,6 @@
 package org.ria.ifzz.RiaApp.utils;
 
+import org.jetbrains.annotations.NotNull;
 import org.ria.ifzz.RiaApp.models.DataFileMetadata;
 
 import java.io.IOException;
@@ -24,22 +25,43 @@ public interface CustomFileReader {
     static List<String> readFromStream(DataFileMetadata metadata) throws IOException {
         List<String> examinationResult = new ArrayList<>();
         List<String> streamMetadata = metadata.getContents().get();
-        if (!streamMetadata.isEmpty()) {
-            String filename = streamMetadata.get(0);
-            filename = filename.replace(FILENAME_UNNECESSARY_PART, "");
-            String hormonePattern = streamMetadata.get(HORMONE_PATTERN);
-            hormonePattern = hormonePattern.replace(HORMONE_PATTERN_UNNECESSARY_PART, "");
-            examinationResult.add(filename);
-            examinationResult.add(hormonePattern);
-            for (String metadataLine : streamMetadata) {
-                if (!metadataLine.startsWith(DATA_TARGET_POINT)) {
-                } else {
-                    examinationResult.add(metadataLine);
-                }
-            }
-            return examinationResult;
+        addExactedDataToResults(examinationResult, streamMetadata);
+        for (String metadataLine : streamMetadata) {
+            isDataResult(examinationResult, metadataLine);
         }
-        return new ArrayList<>();
+        return examinationResult;
+    }
+
+    static void isDataResult(List<String> examinationResult, String metadataLine) {
+        if (!metadataLine.startsWith(DATA_TARGET_POINT)) {
+        } else {
+            examinationResult.add(metadataLine);
+        }
+    }
+
+    static void removeEmpty(List<String> strings){
+        strings.removeIf(s -> s == null || s.isEmpty());
+    }
+
+    static void addExactedDataToResults(List<String> examinationResult, List<String> streamMetadata) {
+        String filename = getCleanFileName(streamMetadata, 0, FILENAME_UNNECESSARY_PART);
+        String hormonePattern = getPatternFromMetadata(streamMetadata);
+        examinationResult.add(filename);
+        examinationResult.add(hormonePattern);
+    }
+
+    @NotNull
+    static String getPatternFromMetadata(List<String> streamMetadata) {
+        String hormonePattern = streamMetadata.get(HORMONE_PATTERN);
+        hormonePattern = hormonePattern.replace(HORMONE_PATTERN_UNNECESSARY_PART, "");
+        return hormonePattern;
+    }
+
+    @NotNull
+    static String getCleanFileName(List<String> streamMetadata, int i, String filenameUnnecessaryPart) {
+        String filename = streamMetadata.get(i);
+        filename = filename.replace(filenameUnnecessaryPart, "");
+        return filename;
     }
 
     static String getMatchingString(String line, Integer columnNumber) {
