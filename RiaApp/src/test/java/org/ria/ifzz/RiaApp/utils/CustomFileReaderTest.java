@@ -16,8 +16,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
-import static org.ria.ifzz.RiaApp.utils.CustomFileReader.removeEmpty;
+import static org.junit.Assert.*;
+import static org.ria.ifzz.RiaApp.utils.constants.DomainConstants.*;
 import static org.ria.ifzz.RiaApp.utils.constants.ExaminationConstants.COLUMN_SPLICER;
 
 class CustomFileReaderTest {
@@ -54,23 +54,46 @@ class CustomFileReaderTest {
     }
 
     @Test
-    void isDataResult() {
+    void isDataResult_positive() {
+        List<String> streamMetadata = metadata.getContents().get();
+        assertTrue(streamMetadata.get(20).startsWith(DATA_TARGET_POINT));
+    }
+
+    @Test
+    void isDataResult_negative() {
+        List<String> streamMetadata = metadata.getContents().get();
+        assertFalse(streamMetadata.get(5).startsWith(DATA_TARGET_POINT));
     }
 
     @Test
     void removeEmpty() {
+        List<String> streamMetadata = metadata.getContents().get();
+        streamMetadata = streamMetadata.stream().map(CustomFileReader::isDataResult).collect(Collectors.toList());
+        streamMetadata.removeIf(s -> s == null || s.isEmpty());
+        assertEquals(384, streamMetadata.size());
     }
 
     @Test
     void addFilenameAndPattern() {
+        List<String> streamMetadata = metadata.getContents().get();
+        String filename = CustomFileReader.getCleanFileName(streamMetadata);
+        String pattern = CustomFileReader.getPatternFromMetadata(streamMetadata);
+        assertEquals("A16_244.txt", filename);
+        assertEquals("KORTYZOL_5_MIN", pattern);
     }
 
     @Test
     void getPatternFromMetadata() {
+        List<String> streamMetadata = metadata.getContents().get();
+        String hormonePattern = streamMetadata.get(4).replace(HORMONE_PATTERN_UNNECESSARY_PART,"");
+        assertEquals("KORTYZOL_5_MIN", hormonePattern);
     }
 
     @Test
     void getCleanFileName() {
+        List<String> streamMetadata = metadata.getContents().get();
+        String filename = streamMetadata.get(0).replace(FILENAME_UNNECESSARY_PART,"");
+        assertEquals("A16_244.txt", filename);
     }
 
     @Test

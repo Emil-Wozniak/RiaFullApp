@@ -57,7 +57,7 @@ public interface CustomFileReader {
      *                          but first and second values are filename and hormone pattern
      */
     static void addFilenameAndPattern(List<String> examinationResult, List<String> streamMetadata) {
-        String filename = getCleanFileName(streamMetadata, 0, FILENAME_UNNECESSARY_PART);
+        String filename = getCleanFileName(streamMetadata);
         String hormonePattern = getPatternFromMetadata(streamMetadata);
         examinationResult.add(filename);
         examinationResult.add(hormonePattern);
@@ -65,16 +65,12 @@ public interface CustomFileReader {
 
     @NotNull
     static String getPatternFromMetadata(List<String> streamMetadata) {
-        String hormonePattern = streamMetadata.get(HORMONE_PATTERN);
-        hormonePattern = hormonePattern.replace(HORMONE_PATTERN_UNNECESSARY_PART, "");
-        return hormonePattern;
+        return streamMetadata.get(4).replace(HORMONE_PATTERN_UNNECESSARY_PART,"");
     }
 
     @NotNull
-    static String getCleanFileName(List<String> streamMetadata, int i, String filenameUnnecessaryPart) {
-        String filename = streamMetadata.get(i);
-        filename = filename.replace(filenameUnnecessaryPart, "");
-        return filename;
+    static String getCleanFileName(List<String> streamMetadata) {
+        return streamMetadata.get(0).replace(FILENAME_UNNECESSARY_PART, "");
     }
 
     static String getMatchingString(String line, Integer columnNumber) {
