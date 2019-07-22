@@ -73,7 +73,8 @@ public interface CustomFileReader {
         return streamMetadata.get(0).replace(FILENAME_UNNECESSARY_PART, "");
     }
 
-    static String getMatchingString(String line, Integer columnNumber) {
+    static String getMatchingCPMsString(String line) {
+        int columnNumber = 3;
         List<String> wordInLine = Arrays.asList(line.split(COLUMN_SPLICER));
         return wordInLine.get(columnNumber);
     }

@@ -21,7 +21,7 @@ import java.util.stream.IntStream;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.ria.ifzz.RiaApp.utils.CustomFileReader.getMatchingString;
+import static org.ria.ifzz.RiaApp.utils.CustomFileReader.getMatchingCPMsString;
 import static org.ria.ifzz.RiaApp.utils.CustomFileReader.readFromStream;
 
 //@RunWith(SpringRunner.class)
@@ -74,10 +74,7 @@ class FileExtractorTest implements CustomFileReader {
     }
 
     private List<Integer> getCPMs() throws IOException {
-        return getFileContents().stream().skip(2).map(line -> {
-            line = getMatchingString(line, 3);
-            return line;
-        }).map(Integer::parseInt).collect(Collectors.toList());
+        return getFileContents().stream().skip(2).map(CustomFileReader::getMatchingCPMsString).map(Integer::parseInt).collect(Collectors.toList());
     }
 
     @Test
@@ -89,10 +86,7 @@ class FileExtractorTest implements CustomFileReader {
 
     @Test
     void setCPMs() throws IOException {
-        List<Integer> CPMs = getFileContents().stream().skip(2).map(line -> {
-            line = getMatchingString(line, 3);
-            return line;
-        }).map(Integer::parseInt).collect(Collectors.toList());
+        List<Integer> CPMs = getFileContents().stream().skip(2).map(CustomFileReader::getMatchingCPMsString).map(Integer::parseInt).collect(Collectors.toList());
         assertTrue(CPMs.contains(1976));
     }
 

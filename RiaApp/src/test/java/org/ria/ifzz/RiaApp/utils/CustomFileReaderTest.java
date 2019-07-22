@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
@@ -31,10 +32,9 @@ class CustomFileReaderTest {
 
     private DataFileMetadata getFileContents() throws IOException {
         ClassLoader classLoader = getClass().getClassLoader();
-        File file = new File(classLoader.getResource("example/A16_244.txt").getFile());
+        File file = new File(Objects.requireNonNull(classLoader.getResource("example/A16_244.txt")).getFile());
         FileInputStream input = new FileInputStream(file);
-        MultipartFile multipartFile = new MockMultipartFile("file",
-                file.getName(), "text/plain", IOUtils.toByteArray(input));
+        MultipartFile multipartFile = new MockMultipartFile("file", file.getName(), "text/plain", IOUtils.toByteArray(input));
         return new DataFileMetadata(multipartFile);
     }
 
@@ -85,14 +85,14 @@ class CustomFileReaderTest {
     @Test
     void getPatternFromMetadata() {
         List<String> streamMetadata = metadata.getContents().get();
-        String hormonePattern = streamMetadata.get(4).replace(HORMONE_PATTERN_UNNECESSARY_PART,"");
+        String hormonePattern = streamMetadata.get(4).replace(HORMONE_PATTERN_UNNECESSARY_PART, "");
         assertEquals("KORTYZOL_5_MIN", hormonePattern);
     }
 
     @Test
     void getCleanFileName() {
         List<String> streamMetadata = metadata.getContents().get();
-        String filename = streamMetadata.get(0).replace(FILENAME_UNNECESSARY_PART,"");
+        String filename = streamMetadata.get(0).replace(FILENAME_UNNECESSARY_PART, "");
         assertEquals("A16_244.txt", filename);
     }
 

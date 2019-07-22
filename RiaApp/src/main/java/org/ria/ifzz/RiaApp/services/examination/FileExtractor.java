@@ -1,6 +1,7 @@
 package org.ria.ifzz.RiaApp.services.examination;
 
 import org.ria.ifzz.RiaApp.models.results.ControlCurve;
+import org.ria.ifzz.RiaApp.utils.CustomFileReader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.stream.IntStream;
 
 import static org.ria.ifzz.RiaApp.models.pattern.HormonesPattern.CORTISOL_PATTERN;
 import static org.ria.ifzz.RiaApp.services.strategies.SpreadCounter.isSpread;
-import static org.ria.ifzz.RiaApp.utils.CustomFileReader.getMatchingString;
+import static org.ria.ifzz.RiaApp.utils.CustomFileReader.getMatchingCPMsString;
 import static org.ria.ifzz.RiaApp.utils.constants.ExaminationConstants.CORTISOL_5MIN;
 
 public interface FileExtractor {
@@ -31,10 +32,7 @@ public interface FileExtractor {
      * @return List containing CPM values as Strings
      */
     static List<Integer> setCPMs(List<String> metadata) {
-        return metadata.stream().map(line -> {
-            line = getMatchingString(line, 3);
-            return line;
-        }).map(Integer::parseInt).collect(Collectors.toList());
+        return metadata.stream().map(CustomFileReader::getMatchingCPMsString).map(Integer::parseInt).collect(Collectors.toList());
     }
 
     /**
