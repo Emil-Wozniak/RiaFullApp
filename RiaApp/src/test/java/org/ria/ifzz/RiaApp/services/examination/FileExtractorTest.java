@@ -37,13 +37,14 @@ class FileExtractorTest implements CustomFileReader {
         fileContent = new ArrayList<>();
         probeNumbers = new ArrayList<>();
         fileContent = new ArrayList<>();
-        ControlCurve controlCurve1 = new ControlCurve("A16_244.txt", "KORTYZOL_5_MIN", 1, "Total", 49, true);
-        ControlCurve controlCurve2 = new ControlCurve("A16_244.txt", "KORTYZOL_5_MIN", 1, "Total", 32, false);
-        ControlCurve controlCurve3 = new ControlCurve("A16_244.txt", "KORTYZOL_5_MIN", 1, "Total", 36, false);
-        ControlCurve controlCurve4 = new ControlCurve("A16_244.txt", "KORTYZOL_5_MIN", 1, "Total", 458, false);
-        ControlCurve controlCurve5 = new ControlCurve("A16_244.txt", "KORTYZOL_5_MIN", 1, "Total", 459, false);
-        ControlCurve controlCurve6 = new ControlCurve("A16_244.txt", "KORTYZOL_5_MIN", 1, "Total", 447, false);
         controlCurves = new ArrayList<>();
+        String pattern = "KORTYZOL_5_MIN", identifier = "A16_244.txt", NSB = "NSB", Zero = "Zero";
+        ControlCurve controlCurve1 = new ControlCurve(identifier, pattern, 3, NSB, 49, isFlagged());
+        ControlCurve controlCurve2 = new ControlCurve(identifier, pattern, 4, NSB, 32, isFlagged());
+        ControlCurve controlCurve3 = new ControlCurve(identifier, pattern, 5, NSB, 36, isFlagged());
+        ControlCurve controlCurve4 = new ControlCurve(identifier, pattern, 6, Zero, 458, isFlagged());
+        ControlCurve controlCurve5 = new ControlCurve(identifier, pattern, 7, Zero, 459, isFlagged());
+        ControlCurve controlCurve6 = new ControlCurve(identifier, pattern, 8, Zero, 447, isFlagged());
         controlCurves.add(null);
         controlCurves.add(null);
         controlCurves.add(controlCurve1);
@@ -53,6 +54,8 @@ class FileExtractorTest implements CustomFileReader {
         controlCurves.add(controlCurve5);
         controlCurves.add(controlCurve6);
     }
+
+    boolean isFlagged() {return controlCurves.get(0).getCpm() == 49;}
 
     @AfterEach
     void tearDown() {
