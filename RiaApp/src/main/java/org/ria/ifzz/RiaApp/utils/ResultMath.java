@@ -20,34 +20,12 @@ interface ResultMath {
         return values.size();
     }
 
-    static Double averageTwo(Double first, Double second) {
-        double result = (first + second) / 2;
-        return Math.ceil(result);
-    }
-
-    static double averageThree(double first, double second, double third) {
-        double result = (first + second + third) / 3;
-        Math.ceil(result);
-        double ceil = Math.ceil(result);
-        return ceil;
-    }
-
     static List<Double> subtractTableElements(Double subtrahend, List<Double> values) {
-        return values
-                .stream()
-                .map(element -> (subtrahend - element)).collect(Collectors.toList());
+        return values.stream().map(element -> (subtrahend - element)).collect(Collectors.toList());
     }
 
-    static List<Double> subtractTablesElement(List<Integer> subtrahend, double value) {
-        Double sub;
-        Double result;
-        List<Double> results = new ArrayList<>();
-        for (int i = 0; i < subtrahend.size(); i++) {
-            sub = Double.valueOf(subtrahend.get(i));
-            result = sub - value;
-            results.add(result);
-        }
-        return results;
+    static List<Double> subtractTablesElement(List<Integer> subtrahends, double value) {
+        return subtrahends.stream().map(Double::valueOf).map(subtrahend -> subtrahend - value).collect(Collectors.toList());
     }
 
     static List<Double> divideTableCeilElements(double factor, List<Double> values) {
@@ -90,7 +68,6 @@ interface ResultMath {
         return values.stream().map(element -> (element * multiplier)).collect(Collectors.toList());
     }
 
-
     static double sum(List<Double> values) {
         double product = values.stream().mapToDouble(value -> Precision.round(value, 2)).sum();
         product = Precision.round(product, 2);
@@ -98,26 +75,18 @@ interface ResultMath {
     }
 
     static Double sumProduct(List<Double> factor, List<Double> multiplier) {
-
-        double product;
         List<Pair<Double, Double>> pairs = new ArrayList<>();
         for (int i = 0; i < multiplier.size(); i++) {
-            pairs.add(new Pair<>(
-                    factor.get(i),
-                    multiplier.get(i)));
+            pairs.add(new Pair<>(factor.get(i),multiplier.get(i)));
         }
-        product = pairs.parallelStream()
-                .mapToDouble(p -> p.getFirst() * p.getSecond())
-                .map(element -> Precision.round(element, 1)).sum();
+        double product;
+        product = pairs.parallelStream().mapToDouble(p -> p.getFirst() * p.getSecond()).map(element -> Precision.round(element, 1)).sum();
         product = Precision.round(product, 3);
         return product;
     }
 
     static Double sumsq(List<Double> values) {
-        return values
-                .parallelStream()
-                .mapToDouble(element -> Math.pow(element, 2))
-                .sum();
+        return values.parallelStream().mapToDouble(element -> Math.pow(element, 2)).sum();
     }
 
     /**
@@ -130,9 +99,9 @@ interface ResultMath {
      */
     static double round(double value, int places) {
         if (places < 0) throw new IllegalArgumentException();
-        BigDecimal bd = new BigDecimal(value);
-        bd = bd.setScale(places, RoundingMode.HALF_UP);
-        return bd.doubleValue();
+        BigDecimal decimal = new BigDecimal(value);
+        decimal = decimal.setScale(places, RoundingMode.HALF_UP);
+        return decimal.doubleValue();
     }
 }
 

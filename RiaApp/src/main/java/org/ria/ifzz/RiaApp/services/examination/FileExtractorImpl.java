@@ -64,7 +64,6 @@ public class FileExtractorImpl<ER extends ExaminationResult> implements FileExtr
             ControlCurve controlCurvePoint = new ControlCurve(filename, pattern, probeNumbers.get(i), positions.get(i), CPMs.get(i), flags.get(i));
             controlCurves.add(controlCurvePoint);
         }
-        controlCurves.forEach(System.out::println);
         return controlCurves;
     }
 

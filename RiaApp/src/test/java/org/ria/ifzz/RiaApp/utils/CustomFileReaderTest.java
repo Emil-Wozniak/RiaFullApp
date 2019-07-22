@@ -44,7 +44,7 @@ class CustomFileReaderTest {
     void readFromStream() {
         List<String> streamMetadata = metadata.getContents().get();
         List<String> examinationResult = new ArrayList<>();
-        CustomFileReader.addExactedDataToResults(examinationResult,streamMetadata);
+        CustomFileReader.addFilenameAndPattern(examinationResult,streamMetadata);
         List<String> results = streamMetadata.stream().map(this::isDataResult).collect(Collectors.toList());
         removeEmpty(results);
         examinationResult.addAll(results);

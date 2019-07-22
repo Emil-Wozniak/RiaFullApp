@@ -30,7 +30,7 @@ public class ControlCurveService extends FileExtractorImpl<ControlCurve> impleme
      */
     public List<ControlCurve> create(List<String> metadata) throws ControlCurveException {
         List<ControlCurve> controlCurves = new ArrayList<>();
-        controlCurves = generateResults(controlCurves,metadata);
+        controlCurves = generateResults(controlCurves, metadata);
         controlCurveRepository.saveAll(controlCurves);
         return controlCurves;
     }

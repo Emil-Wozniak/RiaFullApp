@@ -34,7 +34,6 @@ public class ExaminationResultController implements CustomFileReader {
 
     @PostMapping(value = "/")
     public ResponseEntity<?> handleFileUpload(@Valid DataFileMetadata metadata, Principal principal) throws IOException {
-
         List<String> examinationContent = readFromStream(metadata);
 
         try {
