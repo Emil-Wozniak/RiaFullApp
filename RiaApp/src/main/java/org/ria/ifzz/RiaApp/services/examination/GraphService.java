@@ -33,7 +33,6 @@ public class GraphService {
         this.graphLineRepository = graphLineRepository;
     }
 
-
     public void create(List<String> metadata) {
         double correlation = countResultUtil.setCorrelation(setStandardPattern(metadata));
         double zeroBindingPercentage = countResultUtil.setZeroBindingPercent();
