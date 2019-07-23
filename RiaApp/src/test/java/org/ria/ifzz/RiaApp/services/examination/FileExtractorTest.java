@@ -21,7 +21,6 @@ import java.util.stream.IntStream;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.ria.ifzz.RiaApp.utils.CustomFileReader.getMatchingCPMsString;
 import static org.ria.ifzz.RiaApp.utils.CustomFileReader.readFromStream;
 
 //@RunWith(SpringRunner.class)

@@ -30,7 +30,6 @@ class ControlCurveServiceTest {
         controlCurves = new ArrayList<>();
     }
 
-
     @AfterEach
     void tearDown() {
         controlCurves.clear();

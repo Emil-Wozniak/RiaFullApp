@@ -8,7 +8,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
 
+import static java.util.stream.DoubleStream.*;
+import static org.ria.ifzz.RiaApp.models.pattern.HormonesPattern.CORTISOL_PATTERN;
 import static org.ria.ifzz.RiaApp.utils.constants.DomainConstants.*;
 import static org.ria.ifzz.RiaApp.utils.constants.ExaminationConstants.COLUMN_SPLICER;
 
@@ -77,5 +80,13 @@ public interface CustomFileReader {
         int columnNumber = 3;
         List<String> wordInLine = Arrays.asList(line.split(COLUMN_SPLICER));
         return wordInLine.get(columnNumber);
+    }
+
+    static List<Double> getStandardPattern(List<String> metadata) {
+        List<Double> hormonePattern = new ArrayList<>();
+        if (metadata.get(1).equals("KORTYZOL_5_MIN")) {
+            hormonePattern = of(CORTISOL_PATTERN).boxed().collect(Collectors.toCollection(ArrayList::new));
+        }
+        return hormonePattern;
     }
 }

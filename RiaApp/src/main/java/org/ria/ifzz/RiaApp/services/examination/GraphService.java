@@ -5,6 +5,7 @@ import org.ria.ifzz.RiaApp.models.graph.GraphLine;
 import org.ria.ifzz.RiaApp.repositories.results.GraphLineRepository;
 import org.ria.ifzz.RiaApp.repositories.results.GraphRepository;
 import org.ria.ifzz.RiaApp.utils.CountResultUtil;
+import org.ria.ifzz.RiaApp.utils.CustomFileReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -13,13 +14,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.DoubleStream;
 
-import static org.ria.ifzz.RiaApp.models.pattern.HormonesPattern.CORTISOL_PATTERN;
+import static org.ria.ifzz.RiaApp.utils.CustomFileReader.getStandardPattern;
 
 @Service
-public class GraphService {
+public class GraphService implements CustomFileReader {
 
     private Logger LOGGER = LoggerFactory.getLogger(this.getClass());
     private List<GraphLine> graphLines = new ArrayList<>();
@@ -34,7 +33,7 @@ public class GraphService {
     }
 
     public void create(List<String> metadata) {
-        double correlation = countResultUtil.setCorrelation(setStandardPattern(metadata));
+        double correlation = countResultUtil.setCorrelation(getStandardPattern(metadata));
         double zeroBindingPercentage = countResultUtil.setZeroBindingPercent();
         double regressionParameterB = countResultUtil.getRegressionParameterB();
 
@@ -51,7 +50,7 @@ public class GraphService {
     private List<GraphLine> createGraphLines(String filename, List<String> metadata, Graph graph) {
         List<Double> listX = countResultUtil.getLogDoseList();
         List<Double> listY = countResultUtil.getLogarithmRealZeroTable();
-        List<Double> patternPoints = setStandardPattern(metadata);
+        List<Double> patternPoints = getStandardPattern(metadata);
         try {
             graphLines = new ArrayList<>();
             for (int i = 0; i < listX.size(); i++) {
@@ -67,16 +66,6 @@ public class GraphService {
         }
         LOGGER.info("Graph created with: " + graphLines.size() + " lines");
         return graphLines;
-    }
-
-
-    private List<Double> setStandardPattern(List<String> metadata) {
-        List<Double> hormonePattern = new ArrayList<>();
-        if (metadata.get(1).equals("KORTYZOL_5_MIN")) {
-            LOGGER.info("Pattern detected: " + metadata.get(1));
-            hormonePattern = DoubleStream.of(CORTISOL_PATTERN).boxed().collect(Collectors.toCollection(ArrayList::new));
-        }
-        return hormonePattern;
     }
 
     public ResponseEntity<?> findAll() {

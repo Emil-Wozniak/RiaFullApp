@@ -1,53 +1,95 @@
 package org.ria.ifzz.RiaApp.services.examination;
 
+import com.opentable.db.postgres.embedded.EmbeddedPostgres;
+import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.ria.ifzz.RiaApp.models.DataFileMetadata;
+import org.ria.ifzz.RiaApp.models.graph.Graph;
 import org.ria.ifzz.RiaApp.models.graph.GraphLine;
 import org.ria.ifzz.RiaApp.utils.CountResultUtil;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.ria.ifzz.RiaApp.utils.CustomFileReader;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import java.math.BigInteger;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.ria.ifzz.RiaApp.utils.CustomFileReader.readFromStream;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
+//@RunWith(SpringRunner.class)
+//@SpringBootTest
 @ActiveProfiles("test")
-class GraphServiceTest {
+//@Transactional
+class GraphServiceTest implements CustomFileReader {
 
     @Resource
     private EntityManager entityManager;
 
+    CountResultUtil countResultUtil;
     private List<GraphLine> graphLines;
-    private CountResultUtil countResultUtil;
+    private List<String> metadata;
+    private Graph graph;
 
     @BeforeEach
-    void setUp() {
-    graphLines = new ArrayList<>();
-    countResultUtil = new CountResultUtil();
+    void setUp() throws IOException {
+        getFileContents();
+        graphLines = new ArrayList<>();
+        double correlation = 0.986814;
+        double zeroBindingPercentage = 21.0;
+        double regressionParameterB = -1.0575;
+        String filename = "A16_244.txt";
+        String pattern = "KORTYZOL_5_MIN";
+        graph = new Graph(filename, pattern, correlation, zeroBindingPercentage, regressionParameterB);
     }
 
     @AfterEach
     void tearDown() {
+        metadata.clear();
+    }
+
+    private List<String> getFileContents() throws IOException {
+        ClassLoader classLoader = getClass().getClassLoader();
+        File file = new File(classLoader.getResource("example/A16_244.txt").getFile());
+        FileInputStream input = new FileInputStream(file);
+        MultipartFile multipartFile = new MockMultipartFile("file",
+                file.getName(), "text/plain", IOUtils.toByteArray(input));
+        DataFileMetadata metadata = new DataFileMetadata(multipartFile);
+        this.metadata = readFromStream(metadata);
+        return this.metadata;
+    }
+
+
+    @Test
+    void testEmbeddedPg() throws Exception {
+        try (EmbeddedPostgres pg = EmbeddedPostgres.start();
+             Connection connection = pg.getPostgresDatabase().getConnection()) {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT 1");
+            assertTrue(resultSet.next());
+            assertEquals(1, resultSet.getInt(1));
+            assertFalse(resultSet.next());
+        } catch (Exception error) {
+            System.out.print(error.getMessage());
+            fail();
+        }
     }
 
     @Test
-    public void testDatabase() {
-        Query query = entityManager.createNativeQuery("SELECT 1");
-        assertEquals(BigInteger.valueOf(1L), query.getSingleResult());
-    }
-
-    @Test
-    void create() {
+    void create_graph() {
+        assertNotNull(graph);
     }
 
     @Test

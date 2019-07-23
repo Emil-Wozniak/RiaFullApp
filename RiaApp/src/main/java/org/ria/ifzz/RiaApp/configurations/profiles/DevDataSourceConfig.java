@@ -10,7 +10,7 @@ import org.springframework.context.annotation.PropertySource;
 
 @Configuration
 @Profile("dev")
-@PropertySource("classpath:/application.properties")
+@PropertySource("classpath:/dev-database-config.properties")
 public class DevDataSourceConfig {
 
     @Value("${development_info}")
