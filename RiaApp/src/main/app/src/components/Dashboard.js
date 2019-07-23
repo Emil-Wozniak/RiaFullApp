@@ -12,6 +12,7 @@ class Dashboard extends Component {
     }
 
     render() {
+        const {examination_points} = this.props.examination_point;
         return (
             <Container>
                 <Row>
@@ -54,7 +55,7 @@ Dashboard.propTypes = {
 };
 
 const mapStateToProps = state => ({
-    file_entity: state.file_entity
+    examination_point: state.examination_point
 });
 
 export default connect(mapStateToProps, {getExaminationPoints})(Dashboard)

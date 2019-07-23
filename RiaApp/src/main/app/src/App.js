@@ -1,10 +1,10 @@
 import React from 'react';
-import compose from "recompose/compose";
 import PropTypes from "prop-types";
 import "./App.css";
 import store from "./store";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import { Provider } from "react-redux";
+import {BrowserRouter as Router, Route} from "react-router-dom";
+import {Provider} from "react-redux";
+import Dashboard from "./components/Dashboard";
 
 function App() {
     const state = {
@@ -16,19 +16,14 @@ function App() {
     return (
         <Provider store={store}>
             <Router>
-            <div className="App">
-                <header className="App-header">
-                    <p>
-                        Edit <code>src/App.js</code> and save to reload.
-                    </p>
-                    <a className="App-link"
-                       href="https://reactjs.org"
-                       target="_blank"
-                       rel="noopener noreferrer">
-                        Learn React
-                    </a>
-                </header>
-            </div>
+                <div className="App">
+                    <header className="App-header">
+                        <p>
+                            Edit <code>src/App.js</code> and save to reload.
+                        </p>
+                    </header>
+                    <Route exact path={"/"} component={Dashboard}/>
+                </div>
             </Router>
         </Provider>
     );

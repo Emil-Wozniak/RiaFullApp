@@ -8,7 +8,9 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import java.util.List;
 
 @RepositoryRestResource
-public interface ExaminationPointRepository extends CrudRepository< ExaminationPoint, Long> {
+public interface ExaminationPointRepository extends CrudRepository<ExaminationPoint, Long> {
 
     List<ExaminationPoint> findAllByIdentifier(@NonNull String identifier);
+
+    List<ExaminationPoint> findByProbeNumberAndIdentifierOrderByProbeNumber(@NonNull Integer probeNumber, @NonNull String identifier);
 }
