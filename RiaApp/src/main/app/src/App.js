@@ -17,12 +17,7 @@ function App() {
         <Provider store={store}>
             <Router>
                 <div className="App">
-                    <header className="App-header">
-                        <p>
-                            Edit <code>src/App.js</code> and save to reload.
-                        </p>
-                    </header>
-                    <Route exact path={"/"} component={Dashboard}/>
+                    <Route exact path={"/dashboard"} component={Dashboard}/>
                 </div>
             </Router>
         </Provider>

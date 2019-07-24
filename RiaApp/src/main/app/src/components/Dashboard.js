@@ -3,18 +3,21 @@ import {connect} from "react-redux";
 import {getExaminationPoints} from "../actions/examinationPointActions";
 import PropTypes from "prop-types";
 import Paper from "@material-ui/core/Paper";
-import {Col, Container, Row, Table} from "reactstrap";
+import {Col, Container, Row} from "reactstrap";
+import ExaminationPoint from "./examinationPoint/ExaminationPoint";
 
 class Dashboard extends Component {
 
-    componentWillMount() {
+    componentDidMount() {
         this.props.getExaminationPoints();
     }
 
     render() {
         const {examination_points} = this.props.examination_point;
+
         return (
             <Container>
+                <br/>
                 <Row>
                     <Col md={12}>
                         <br/>
@@ -22,24 +25,13 @@ class Dashboard extends Component {
                             <Col>
                                 <p className="text-left">Files:</p>
                             </Col>
-                            <Table striped>
-                                <thead>
-                                <tr>
-                                    <th/>
-                                    <th>File Name</th>
-                                    <th>Content Type:</th>
-                                    <th/>
-                                </tr>
-                                </thead>
-                                {/*{file_entities*/}
-                                {/*    .sort((a, b) => a.id < b.id)*/}
-                                {/*    .map(file_entity => (*/}
-                                {/*        <FileEntity*/}
-                                {/*            key={file_entity.id}*/}
-                                {/*            file_entity={file_entity}*/}
-                                {/*        />*/}
-                                {/*    ))}*/}
-                            </Table>
+                            <Col>
+                                {
+                                    examination_points.map(examination_point => (
+                                        <ExaminationPoint key={examination_point.id} examination_point={examination_point}/>
+                                    ))
+                                }
+                            </Col>
                         </Paper>
                     </Col>
                 </Row>

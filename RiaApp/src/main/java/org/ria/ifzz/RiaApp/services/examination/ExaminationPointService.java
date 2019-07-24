@@ -35,9 +35,9 @@ public class ExaminationPointService extends FileExtractorImpl<ExaminationPoint>
         examinationPointRepository.saveAll(examinationPoints);
     }
 
-    public ResponseEntity<?> getExaminationResults() {
-        List<ExaminationPoint> examinationPoints = (List<ExaminationPoint>) examinationPointRepository.findAll();
-        return !examinationPoints.isEmpty() ? new ResponseEntity<>(examinationPoints, HttpStatus.FOUND) : new ResponseEntity<>(response.put("message", "No results available"), HttpStatus.NOT_FOUND);
+    public List<ExaminationPoint> getExaminationResults() {
+        return  (List<ExaminationPoint>) examinationPointRepository.findAll();
+//        return !examinationPoints.isEmpty() ? new ResponseEntity<>(examinationPoints, HttpStatus.FOUND) : new ResponseEntity<>(response.put("message", "No results available"), HttpStatus.NOT_FOUND);
     }
 
     public ResponseEntity<?> getExaminationResultsByFilename(String filename) {

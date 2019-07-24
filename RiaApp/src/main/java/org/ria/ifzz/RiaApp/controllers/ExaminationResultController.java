@@ -12,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.EntityManager;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.security.Principal;
@@ -70,8 +69,8 @@ public class ExaminationResultController implements CustomFileReader {
         return metadata.getContents().get().get(0).replace(FILENAME_UNNECESSARY_PART, "");
     }
 
-    @GetMapping("/")
-    public ResponseEntity<?> getExaminationPoints() {
+    @GetMapping("/all/")
+    public List<ExaminationPoint> getExaminationPoints() {
         return service.getExaminationResults();
     }
 
