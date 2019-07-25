@@ -42,8 +42,25 @@ class Result extends Component {
         const examination_results = examination_points.map(examination_point =>
             (<ExaminationResult key={examination_point.id} examination_point={examination_point}/>));
 
+        const ng_condition = examination_results.ng === null ?
+            <tr>
+                <th>filename:</th>
+                <th>probe:</th>
+                <th>&#8470;</th>
+                <th>cpm</th>
+            </tr> :
+            <tr>
+                <th>file name:</th>
+                <th>probe:</th>
+                <th>&#8470;</th>
+                <th>cpm</th>
+                <th>ng</th>
+                <th>x&#772;</th>
+            </tr>;
+
         return (
             <React.Fragment>
+
                 <Container>
                     <br/>
                     <Paper>
@@ -71,14 +88,7 @@ class Result extends Component {
                     <Paper>
                         <Table striped id="file_data">
                             <thead>
-                            <tr>
-                                <th>filename:</th>
-                                <th>probe:</th>
-                                <th>&#8470;</th>
-                                <th>cpm</th>
-                                <th>ng</th>
-                                <th>x&#772;</th>
-                            </tr>
+                            {ng_condition}
                             </thead>
                             {examination_results}
                         </Table>
