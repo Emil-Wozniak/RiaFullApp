@@ -2,11 +2,8 @@ import React, {Component} from 'react';
 import Col from "reactstrap/es/Col";
 import CanvasJSReact from "../../canvasjs/canvasjs.react";
 import {number} from "prop-types";
-import {Container, Row} from "reactstrap";
 
 let CanvasJSChart = CanvasJSReact.CanvasJSChart;
-const startTime = 0;
-const endTime = 10;
 
 class GraphLine extends Component {
 
@@ -60,8 +57,8 @@ class GraphLine extends Component {
                 first = varAverage[0];
                 last = varAverage[6];
             }
-            var outside = 67.5;
-            var inside = 40.5;
+            const outside = 67.5;
+            const inside = 40.5;
             middle = (first + last) / 2;
 
             second = (first / 100) * outside;
@@ -92,19 +89,20 @@ class GraphLine extends Component {
             zoomEnabled: true,
             animationEnabled: true,
             title: {
-                text: "Calibration curve:"
+                text: "Calibration curve:",
+                fontSize: 12
             },
             toolTip: {
                 shared: true
             },
             legend: {
                 fontFamily: "SF mono",
-                fontweight: "bold"
+                fontSize: 10,
+                fontWeight: "bold"
             },
             axisX: {
                 title: "Logarithm (ng/ml)",
                 fontFamily: "Helvetica, Arial, Sans-Serif",
-                fontSize:10,
                 interval: x_axis(),
                 gridDashType: "dot",
                 interlacedColor: "#e5ffff",
@@ -114,7 +112,8 @@ class GraphLine extends Component {
                     enabled: true,
                     snapToDataPoint: true,
                     labelFontFamily: "SF mono",
-                    labelFontColor: "#e5ffff"
+                    labelFontColor: "#e5ffff",
+                    fontSize:10
                 }
             },
             axisY: {

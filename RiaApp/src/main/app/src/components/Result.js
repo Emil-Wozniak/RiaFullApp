@@ -2,19 +2,21 @@ import React, {Component} from 'react';
 import {connect} from "react-redux";
 import PropTypes from "prop-types";
 import {getControlCurve} from "../actions/controlCurveActions"
-import {Col, Container, Row} from "reactstrap";
+import {Col, Container, Row, Table} from "reactstrap";
 import Paper from "@material-ui/core/Paper";
 import ControlCurve from "./models/control_curve/ControlCurve";
 import ExaminationResult from "./models/examination_result/ExaminationResult";
 import {getGraph, getGraphLines} from "../actions/graphActions";
 import Graph from "./models/graph/Graph";
 import GraphLine from "./models/graph/GraphLine";
+import {getExaminationPoints} from "../actions/examinationPointActions";
 
 class Result extends Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
-            errors: {}
+            errors: {},
+            examination_points: []
         };
     }
 
@@ -23,6 +25,9 @@ class Result extends Component {
         this.props.getControlCurve(identifier);
         this.props.getGraph(identifier);
         this.props.getGraphLines(identifier);
+        if (this.state.examination_points.length === 0) {
+            this.setState()
+        }
     }
 
     componentWillReceiveProps(nextProps) {
@@ -37,6 +42,9 @@ class Result extends Component {
         const {graph} = this.props.graph;
         const {graph_lines} = this.props.graph;
 
+        const examination_results = examination_points.map(examination_point =>
+            (<ExaminationResult key={examination_point.id} examination_point={examination_point}/>));
+
         return (
             <React.Fragment>
                 <Container>
@@ -46,12 +54,11 @@ class Result extends Component {
                         <Col>Control Curve:</Col>
                         <hr/>
                         <Row>
-                            <Col xs="4" s="4" m="3" lg="2">
+                            <Col xs="4" s="4" m="4" lg="3">
                                 {control_curves.map(control_curve =>
-                                    (<ControlCurve key={control_curve.id}
-                                                   control_curve={control_curve}/>))}
+                                    (<ControlCurve key={control_curve.id} control_curve={control_curve}/>))}
                             </Col>
-                            <Col xs="8" s="8" m="7" lg="6">
+                            <Col xs="8" s="8" m="8" lg="7">
                                 <Paper>
                                     <GraphLine key={graph_lines.id} graph_lines={graph_lines}/>
                                 </Paper>
@@ -65,23 +72,19 @@ class Result extends Component {
                     </Paper>
                     <br/>
                     <Paper>
-                        <br/>
-                        <Row>
-                            <Col>filename</Col>
-                            <Col>position</Col>
-                            <Col>probe number</Col>
-                            <Col>cpm</Col>
-                            <Col>ng</Col>
-                            <Col>flagged</Col>
-                        </Row>
-                        <hr/>
-                        <Row>
-                            <Col>
-                                {examination_points.map(examination_point =>
-                                    (<ExaminationResult key={examination_point.id}
-                                                        examination_point={examination_point}/>))}
-                            </Col>
-                        </Row>
+                    <Table striped id="file_data">
+                        <thead>
+                        <tr>
+                            <th>filename:</th>
+                            <th>probe:</th>
+                            <th>&#8470;</th>
+                            <th>cpm</th>
+                            <th>ng</th>
+                            <th>x&#772;</th>
+                        </tr>
+                        </thead>
+                        {examination_results}
+                    </Table>
                     </Paper>
                 </Container>
             </React.Fragment>
@@ -105,7 +108,8 @@ const mapStateToProps = state => ({
     graph: state.graph,
     getControlCurve,
     getGraph,
-    getGraphLines
+    getGraphLines,
+    getExaminationPoints
 });
 
-export default connect(mapStateToProps, {getControlCurve, getGraph, getGraphLines})(Result);
+export default connect(mapStateToProps, {getControlCurve, getGraph, getGraphLines, getExaminationPoints})(Result);
