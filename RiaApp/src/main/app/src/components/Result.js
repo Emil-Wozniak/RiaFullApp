@@ -15,8 +15,7 @@ class Result extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            errors: {},
-            examination_points: []
+            errors: {}
         };
     }
 
@@ -25,9 +24,7 @@ class Result extends Component {
         this.props.getControlCurve(identifier);
         this.props.getGraph(identifier);
         this.props.getGraphLines(identifier);
-        if (this.state.examination_points.length === 0) {
-            this.setState()
-        }
+        this.props.getExaminationPoints()
     }
 
     componentWillReceiveProps(nextProps) {
@@ -72,19 +69,19 @@ class Result extends Component {
                     </Paper>
                     <br/>
                     <Paper>
-                    <Table striped id="file_data">
-                        <thead>
-                        <tr>
-                            <th>filename:</th>
-                            <th>probe:</th>
-                            <th>&#8470;</th>
-                            <th>cpm</th>
-                            <th>ng</th>
-                            <th>x&#772;</th>
-                        </tr>
-                        </thead>
-                        {examination_results}
-                    </Table>
+                        <Table striped id="file_data">
+                            <thead>
+                            <tr>
+                                <th>filename:</th>
+                                <th>probe:</th>
+                                <th>&#8470;</th>
+                                <th>cpm</th>
+                                <th>ng</th>
+                                <th>x&#772;</th>
+                            </tr>
+                            </thead>
+                            {examination_results}
+                        </Table>
                     </Paper>
                 </Container>
             </React.Fragment>
