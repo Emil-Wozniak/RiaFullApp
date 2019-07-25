@@ -77,4 +77,12 @@ public class GraphService implements CustomFileReader {
         List<GraphLine> graphLines = (List<GraphLine>) graphLineRepository.findAll();
         return new ResponseEntity<>(graphLines, HttpStatus.FOUND);
     }
+
+    public List<Graph> getGraph(String identifier) {
+        return graphRepository.findAllByIdentifier(identifier);
+    }
+
+    public List<GraphLine> getGraphLines(String identifier) {
+        return graphLineRepository.findAllByFilename(identifier);
+    }
 }

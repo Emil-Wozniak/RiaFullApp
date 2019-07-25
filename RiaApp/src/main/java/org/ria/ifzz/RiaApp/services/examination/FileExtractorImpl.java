@@ -92,7 +92,7 @@ public class FileExtractorImpl<ER extends ExaminationResult> implements FileExtr
                         pattern_point == 1 || pattern_point == 2) ? TOTAL :
                         pattern_point == 3 || pattern_point == 4 || pattern_point == 5 ? NSB :
                                 pattern_point == 6 || pattern_point == 7 || pattern_point == 8 ? ZERO
-                                        : pattern_point < 22 ? getPattern(pattern, pattern_point) : CONTROL_POINT).collect(Collectors.toList());
+                                        : pattern_point < 23 ? getPattern(pattern, pattern_point) : CONTROL_POINT).collect(Collectors.toList());
             case ExaminationPoint:
                 return probeNumbers.stream().skip(24).map(probeNumber -> {
                     int position = probeNumber - CONTROL_CURVE_LENGTH;

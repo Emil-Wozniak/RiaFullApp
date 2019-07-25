@@ -42,7 +42,7 @@ public interface FileExtractor {
      */
     static String getPattern(String pattern, int pattern_point) {
         if (pattern.equals(CORTISOL_5MIN)) {
-            double point = CORTISOL_PATTERN[pattern_point - 8];
+            double point = CORTISOL_PATTERN[pattern_point - 9];
             return String.valueOf(point);
         }
         return "";

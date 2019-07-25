@@ -1,11 +1,12 @@
 package org.ria.ifzz.RiaApp.controllers;
 
+import org.ria.ifzz.RiaApp.models.graph.Graph;
+import org.ria.ifzz.RiaApp.models.graph.GraphLine;
 import org.ria.ifzz.RiaApp.services.examination.GraphService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/graph/")
@@ -27,4 +28,14 @@ public class GraphController {
     public ResponseEntity<?> getGraphsLines(){
         return graphService.findAllLines();
     }
+
+    @GetMapping("/{identifier}")
+    public List<Graph> getGraph(@PathVariable String identifier){
+        return graphService.getGraph(identifier);
+    }
+
+    @GetMapping("/lines/{identifier}")
+        public List<GraphLine> getGraphLines(@PathVariable String identifier){
+        return graphService.getGraphLines(identifier);
+        }
 }

@@ -40,11 +40,6 @@ public class ControlCurveService extends FileExtractorImpl<ControlCurve> impleme
         return new ResponseEntity<>(controlCurves, HttpStatus.FOUND);
     }
 
-    public ResponseEntity<?> findByProbeNumberOrderByIdentifier(Integer probeNumber) {
-        ControlCurve controlCurve = controlCurveRepository.findByProbeNumberOrderByIdentifier(probeNumber);
-        return new ResponseEntity<>(controlCurve, HttpStatus.FOUND);
-    }
-
     public List<ControlCurve> getControlCurves(String identifier) {
         return controlCurveRepository.findAllByIdentifier(identifier);
     }
