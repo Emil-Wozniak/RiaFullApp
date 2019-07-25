@@ -4,7 +4,7 @@ import {getExaminationPoints} from "../actions/examinationPointActions";
 import PropTypes from "prop-types";
 import Paper from "@material-ui/core/Paper";
 import {Col, Container, Row} from "reactstrap";
-import ExaminationPoint from "./examinationPoint/ExaminationPoint";
+import ExaminationPoint from "./models/examination_point/ExaminationPoint";
 
 class Fileboard extends Component {
 
