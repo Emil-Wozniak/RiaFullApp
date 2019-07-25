@@ -6,7 +6,7 @@ import Paper from "@material-ui/core/Paper";
 import {Col, Container, Row} from "reactstrap";
 import ExaminationPoint from "./examinationPoint/ExaminationPoint";
 
-class Dashboard extends Component {
+class Fileboard extends Component {
 
     componentDidMount() {
         this.props.getExaminationPoints();
@@ -26,11 +26,9 @@ class Dashboard extends Component {
                                 <p className="text-left">Files:</p>
                             </Col>
                             <Col>
-                                {
-                                    examination_points.map(examination_point => (
-                                        <ExaminationPoint key={examination_point.id} examination_point={examination_point}/>
-                                    ))
-                                }
+                                {examination_points.map(examination_point =>
+                                    (<ExaminationPoint key={examination_point.id}
+                                                       examination_point={examination_point}/>))}
                             </Col>
                         </Paper>
                     </Col>
@@ -40,7 +38,7 @@ class Dashboard extends Component {
     }
 }
 
-Dashboard.propTypes = {
+Fileboard.propTypes = {
     classes: PropTypes.object.isRequired,
     examination_point: PropTypes.object.isRequired,
     getExaminationPoints: PropTypes.func.isRequired
@@ -50,4 +48,4 @@ const mapStateToProps = state => ({
     examination_point: state.examination_point
 });
 
-export default connect(mapStateToProps, {getExaminationPoints})(Dashboard)
+export default connect(mapStateToProps, {getExaminationPoints})(Fileboard)

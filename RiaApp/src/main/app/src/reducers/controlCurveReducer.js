@@ -1,17 +1,17 @@
 import * as types from "../actions/types";
 
 const initial_state = {
-    examination_points: [],
-    examination_point: {},
+    control_curves: [],
+    control_curve: {},
     errors: {}
 };
 
 export default function (state = initial_state, action) {
     switch (action.type) {
-        case types.GET_EXAMINATION_POINTS:
+        case types.GET_CONTROL_CURVES:
             return {
                 ...state,
-                examination_points: action.payload
+                control_curves: action.payload
             };
         case types.GET_ERRORS:
             return {

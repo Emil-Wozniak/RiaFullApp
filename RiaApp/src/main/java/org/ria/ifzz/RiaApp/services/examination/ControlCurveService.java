@@ -44,5 +44,9 @@ public class ControlCurveService extends FileExtractorImpl<ControlCurve> impleme
         ControlCurve controlCurve = controlCurveRepository.findByProbeNumberOrderByIdentifier(probeNumber);
         return new ResponseEntity<>(controlCurve, HttpStatus.FOUND);
     }
+
+    public List<ControlCurve> getControlCurves(String identifier) {
+        return controlCurveRepository.findAllByIdentifier(identifier);
+    }
 }
 

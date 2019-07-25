@@ -4,20 +4,16 @@ import "./App.css";
 import store from "./store";
 import {BrowserRouter as Router, Route} from "react-router-dom";
 import {Provider} from "react-redux";
-import Dashboard from "./components/Dashboard";
+import Fileboard from "./components/Fileboard";
+import Result from "./components/Result";
 
 function App() {
-    const state = {
-        direction: "row",
-        justify: "center",
-        alignItems: "center"
-    };
-
     return (
         <Provider store={store}>
             <Router>
                 <div className="App">
-                    <Route exact path={"/dashboard"} component={Dashboard}/>
+                    <Route exact path="/files" component={Fileboard}/>
+                    <Route exact path="/file/:identifier" component={Result}/>
                 </div>
             </Router>
         </Provider>
