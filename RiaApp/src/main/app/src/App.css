@@ -23,11 +23,22 @@
   color: #61dafb;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.Control-Curve-Font{
+  font-family: "SF Mono", sans-serif, sans-serif, Helvetica;
+  font-size: 10px;
+  text-align: center;
+  font-weight: bolder;
+  padding-right: 0;
+  padding-left: 0;
+  margin: 0;
+}
+
+.Graph-Font{
+  font-family: "SF Mono", sans-serif, sans-serif, Helvetica;
+  font-size: 14px;
+  text-align: center;
+  font-weight: bold;
+  padding-right: 0;
+  padding-left: 0;
+  margin: 0;
 }

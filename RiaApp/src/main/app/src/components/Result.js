@@ -46,17 +46,20 @@ class Result extends Component {
                         <Col>Control Curve:</Col>
                         <hr/>
                         <Row>
-                            <Col xs="4" s="4" m="4" lg="4">
+                            <Col xs="4" s="4" m="3" lg="2">
                                 {control_curves.map(control_curve =>
                                     (<ControlCurve key={control_curve.id}
                                                    control_curve={control_curve}/>))}
                             </Col>
-                            <Paper>
-                                <Col xs="6" s="6" m="6" lg="6">
+                            <Col xs="8" s="8" m="7" lg="6">
+                                <Paper>
                                     <GraphLine key={graph_lines.id} graph_lines={graph_lines}/>
+                                </Paper>
+                                <Paper>
+                                    <hr/>
                                     {graph.map(graph => (<Graph key={graph.id} graph={graph}/>))}
-                                </Col>
-                            </Paper>
+                                </Paper>
+                            </Col>
                         </Row>
                         <br/>
                     </Paper>

@@ -8,11 +8,10 @@ class ControlCurve extends Component {
         const condition = control_curve.flagged === false;
         return (
             <React.Fragment>
-                    <Row>
-                        <Col/>
-                        <Col>{control_curve.position}</Col>
-                        <Col>{control_curve.cpm}</Col>
-                        <Col>{condition ? <CheckBoxOutlineBlank/> : <CheckBoxOutlined/>}</Col>
+                    <Row className={"Control-Curve-Font"}>
+                        <Col className={"Control-Curve-Font"}>{control_curve.position}</Col>
+                        <Col className={"Control-Curve-Font"}>{control_curve.cpm}</Col>
+                        <div className={"Control-Curve-Font"}>{condition ? <CheckBoxOutlineBlank/> : <CheckBoxOutlined/>}</div>
                     </Row>
             </React.Fragment>
         );
