@@ -78,4 +78,9 @@ public class ExaminationResultController implements CustomFileReader {
     public ResponseEntity<?> getExaminationResultsByFilename(@PathVariable String filename) {
         return service.getExaminationResultsByFilename(filename);
     }
+
+    @DeleteMapping("/{filename}")
+    public ResponseEntity<?> deleteExaminationPoint(@PathVariable String filename){
+        return service.deleteExaminationPoint(filename);
+    }
 }

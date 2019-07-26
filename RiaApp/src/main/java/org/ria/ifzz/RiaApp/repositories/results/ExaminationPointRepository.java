@@ -13,4 +13,6 @@ public interface ExaminationPointRepository extends CrudRepository<ExaminationPo
     List<ExaminationPoint> findAllByIdentifier(@NonNull String identifier);
 
     List<ExaminationPoint> findByProbeNumberAndIdentifierOrderByProbeNumber(@NonNull Integer probeNumber, @NonNull String identifier);
+
+    ExaminationPoint findByIdentifier(@NonNull String identifier);
 }

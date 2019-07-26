@@ -17,7 +17,7 @@ import java.util.Map;
 public class ExaminationPointService extends FileExtractorImpl<ExaminationPoint> {
 
     private final ExaminationPointRepository examinationPointRepository;
-    private Map<String,String> response = new HashMap<>();
+    private Map<String,String> response;
 
     public ExaminationPointService(CountResultUtil countResultUtil, ExaminationPointRepository examinationPointRepository) {
         super(new ExaminationPoint(), countResultUtil);
@@ -43,5 +43,13 @@ public class ExaminationPointService extends FileExtractorImpl<ExaminationPoint>
     public ResponseEntity<?> getExaminationResultsByFilename(String filename) {
         List<ExaminationPoint> examinationPoints = examinationPointRepository.findAllByIdentifier(filename);
         return !examinationPoints.isEmpty() ?  new ResponseEntity<>(examinationPoints, HttpStatus.FOUND): new ResponseEntity<>(response.put("message", "No results available"), HttpStatus.NOT_FOUND);
+    }
+
+    public ResponseEntity<?> deleteExaminationPoint(String filename) {
+        List<ExaminationPoint> examinationPoint = examinationPointRepository.findAllByIdentifier(filename);
+        examinationPointRepository.deleteAll(examinationPoint);
+        response =new HashMap<>();
+        response.put("message", "delete successfully");
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

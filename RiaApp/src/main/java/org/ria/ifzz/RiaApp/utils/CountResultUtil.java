@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -118,15 +119,12 @@ public class CountResultUtil implements ResultMath {
         List<Double> multiplication = multiplyList(100.0, subtraction);
         List<Double> result = divideTableCeilElements(binding, multiplication);
         if (result != null) {
-            Double pointer;
-            for (int i = 0; i < result.size(); i++) {
-                pointer = result.get(i);
+            for (Double pointer : result) {
                 if (pointer.isNaN() || pointer.isInfinite()) {
                     LOGGER.warn("Binding percent has infinite or NaN points;");
-                } else {
-                    LOGGER.info("Binding percent: " + i + ": " + pointer);
                 }
             }
+            LOGGER.info("Binding percent: " + Arrays.toString(result.toArray()));
         }
         bindingPercent = result;
     }
@@ -145,13 +143,12 @@ public class CountResultUtil implements ResultMath {
             System.out.println(e.getMessage() + " " + e.getCause());
         }
         if (logTable != null) {
-            for (int i = 0; i < logTable.size(); i++) {
-                if (logTable.get(i).isNaN() || logTable.get(i).isInfinite()) {
+            for (Double point : logTable) {
+                if (point.isNaN() || point.isInfinite()) {
                     LOGGER.warn("Logarithm Real Zero has infinite or NaN points;");
-                } else {
-                    LOGGER.info("Logarithm Real Zero: " + i + ": " + logTable.get(i));
                 }
             }
+            LOGGER.info("Logarithm Real Zero: " + ": " + Arrays.toString(logTable.toArray()));
         }
         logarithmRealZeroTable = logTable;
     }
@@ -163,11 +160,15 @@ public class CountResultUtil implements ResultMath {
     * = sum(N25:N40)/ count(M25:M40)- N19 => regressionParameterB* sum(M25:M40) / count(M25:M40)
     */
     public void countRegressionParameterA() {
-        Double sumLogRealZero = sum(logarithmRealZeroTable);
-        Double countLogDose = count(logDoseList);
-        Double sumLogDose = sum(logDoseList);
-        regressionParameterA = sumLogRealZero / countLogDose - regressionParameterB * sumLogDose / countLogDose;
-        LOGGER.info("Regression Parameter A = " + regressionParameterA);
+        try {
+            Double sumLogRealZero = sum(logarithmRealZeroTable);
+            Double countLogDose = count(logDoseList);
+            Double sumLogDose = sum(logDoseList);
+            regressionParameterA = sumLogRealZero / countLogDose - regressionParameterB * sumLogDose / countLogDose;
+            LOGGER.info("Regression Parameter A = " + regressionParameterA);
+        } catch (Exception error) {
+            LOGGER.error(error.getMessage());
+        }
     }
 
     /* Excel version:
@@ -178,25 +179,29 @@ public class CountResultUtil implements ResultMath {
     * =(COUNT(M25:M40) *SUMPRODUCT(M25:M40;N25:N40) -SUM(M25:M40)*SUM(N25:N40))/(COUNT(M25:M40)*SUMSQ(M25:M40)-(SUM(M25:M40))^2)
      */
     public void countRegressionParameterB() {
-        List<Double> realZeroPrecision1 = logarithmTable1(logarithmRealZeroTable);
-        double firstFactor;
-        double secondFactor;
-        Double logDoseCount = count(logDoseList);
-        Double sum = sumProduct(logDoseList, realZeroPrecision1); // logarithmRealZeroTable in this place have to be in first flouting point
-        Double sumLogDose = sum(logDoseList);
-        Double sumLogRealZero = sum(logarithmRealZeroTable);
-        firstFactor = getPointSubtract(logDoseCount * sum, sumLogDose * sumLogRealZero);
-        double firstFactorInPrecision2 = Precision.round(firstFactor, 2);
+        try {
+            List<Double> realZeroPrecision1 = logarithmTable1(logarithmRealZeroTable);
+            double firstFactor;
+            double secondFactor;
+            Double logDoseCount = count(logDoseList);
+            Double sum = sumProduct(logDoseList, realZeroPrecision1); // logarithmRealZeroTable in this place have to be in first flouting point
+            Double sumLogDose = sum(logDoseList);
+            Double sumLogRealZero = sum(logarithmRealZeroTable);
+            firstFactor = getPointSubtract(logDoseCount * sum, sumLogDose * sumLogRealZero);
+            double firstFactorInPrecision2 = Precision.round(firstFactor, 2);
 
-        Double countSecond = count(logDoseList);
-        Double sumsqSecondFactor = sumsq(logDoseList);
-        double sqr = sum(logDoseList);
-        sqr = Math.pow(sqr, 2);
+            Double countSecond = count(logDoseList);
+            Double sumsqSecondFactor = sumsq(logDoseList);
+            double sqr = sum(logDoseList);
+            sqr = Math.pow(sqr, 2);
 
-        secondFactor = getPointSubtract(countSecond * sumsqSecondFactor, sqr);
+            secondFactor = getPointSubtract(countSecond * sumsqSecondFactor, sqr);
 
-        double resultSum = firstFactor / secondFactor;
-        regressionParameterB = Precision.round(resultSum, 4);
+            double resultSum = firstFactor / secondFactor;
+            regressionParameterB = Precision.round(resultSum, 4);
+        } catch (Exception error) {
+            LOGGER.error(error.getMessage() + "has occurred");
+        }
     }
 
     /* Excel version:
