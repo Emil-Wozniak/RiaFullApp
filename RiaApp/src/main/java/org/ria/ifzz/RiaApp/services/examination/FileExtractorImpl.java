@@ -48,6 +48,7 @@ public class FileExtractorImpl<ER extends ExaminationResult> implements FileExtr
             case ExaminationPoint:
                 flags = isFlagged(controlCurves, CPMs);
                 List<String> NGs = setNg(controlCurves, CPMs);
+//                List<String> ngAvg = NGs.stream().map()
                 return createExaminationPoints(filename, pattern,
                         probeNumbers.stream().skip(24).collect(Collectors.toList()), positions,
                         CPMs.stream().skip(24).collect(Collectors.toList()),
@@ -140,6 +141,12 @@ public class FileExtractorImpl<ER extends ExaminationResult> implements FileExtr
         countResultUtil.countRegressionParameterA();
         return CPMs.stream().map(point -> countResultUtil.countNg(Double.valueOf(point))).map(String::valueOf).collect(Collectors.toList());
     }
+
+//    private List<String> setAvg(List<String> NGs){
+//        for (int i = 0; i < NGs.size(); i++) {
+//return 0
+//        }
+//    }
 
     private void setStandardPattern(String fileData) {
         if (fileData.equals(CORTISOL_5MIN)) {

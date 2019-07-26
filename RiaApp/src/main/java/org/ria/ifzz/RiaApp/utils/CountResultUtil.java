@@ -5,6 +5,7 @@ import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 import org.apache.commons.math3.util.Precision;
 import org.ria.ifzz.RiaApp.exception.ControlCurveException;
 import org.ria.ifzz.RiaApp.models.results.ControlCurve;
+import org.ria.ifzz.RiaApp.models.results.ExaminationPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -14,6 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.lang.Double.parseDouble;
 import static org.ria.ifzz.RiaApp.models.pattern.HormonesPattern.CORTISOL_PATTERN;
 import static org.ria.ifzz.RiaApp.utils.ResultMath.*;
 
@@ -225,6 +227,10 @@ public class CountResultUtil implements ResultMath {
         } else {
             return 0.0;
         }
+    }
+
+    public double countAverage(double countResult1, double countResult2) {
+        return (countResult1 + countResult2) / 2;
     }
 
     public double setCorrelation(List<Double> pattern) {

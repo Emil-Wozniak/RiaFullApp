@@ -23,6 +23,21 @@
   color: #61dafb;
 }
 
+.FileBoard-Title{
+  font-family: "SF Mono", sans-serif, Helvetica, sans-serif;
+  font-weight: bolder;
+  text-align: left;
+  padding-left: 2em;
+  padding-top: 1em;
+}
+
+.FileBoard-Cell-Text{
+  font-family: "SF Mono", sans-serif, Helvetica, sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  padding-top: 1.5em;
+}
+
 .Control-Curve-Font{
   font-family: "SF Mono", sans-serif, sans-serif, Helvetica;
   font-size: 10px;
@@ -45,4 +60,14 @@
 
 .Examination-Result-Average {
   font-weight: 800;
+}
+
+.Examination-Result-Buttons{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.Examination-Result-Button-Back{
+  margin-top: 2em;
 }

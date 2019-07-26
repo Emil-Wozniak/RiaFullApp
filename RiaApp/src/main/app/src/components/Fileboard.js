@@ -3,8 +3,9 @@ import {connect} from "react-redux";
 import {getExaminationPoints} from "../actions/examinationPointActions";
 import PropTypes from "prop-types";
 import Paper from "@material-ui/core/Paper";
-import {Col, Container, Row} from "reactstrap";
+import {Col, Container, Table} from "reactstrap";
 import ExaminationPoint from "./models/examination_point/ExaminationPoint";
+import UploadFile from "../request/upload/UploadFile";
 
 class Fileboard extends Component {
 
@@ -14,26 +15,34 @@ class Fileboard extends Component {
 
     render() {
         const {examination_points} = this.props.examination_point;
+        const files = examination_points.map(examination_point =>
+            (<ExaminationPoint key={examination_point.id}
+                               examination_point={examination_point}/>));
 
         return (
-            <Container>
+            <React.Fragment>
+                <UploadFile/>
                 <br/>
-                <Row>
-                    <Col md={12}>
-                        <br/>
-                        <Paper>
-                            <Col>
-                                <p className="text-left">Files:</p>
-                            </Col>
-                            <Col>
-                                {examination_points.map(examination_point =>
-                                    (<ExaminationPoint key={examination_point.id}
-                                                       examination_point={examination_point}/>))}
-                            </Col>
-                        </Paper>
-                    </Col>
-                </Row>
-            </Container>
+                <Container>
+                    <Paper>
+                        <Col className={"FileBoard-Title"}>
+                            <h4>Files:</h4>
+                        </Col>
+                        <hr/>
+                        <Table striped id="file_data">
+                            <thead>
+                            <tr>
+                                <th/>
+                                <th>filename:</th>
+                                <th>pattern:</th>
+                            </tr>
+                            </thead>
+                            {files}
+                        </Table>
+                    </Paper>
+                </Container>
+            </React.Fragment>
+
         );
     }
 }

@@ -10,6 +10,9 @@ import {getGraph, getGraphLines} from "../actions/graphActions";
 import Graph from "./models/graph/Graph";
 import GraphLine from "./models/graph/GraphLine";
 import {getExaminationPoints} from "../actions/examinationPointActions";
+import ReactToExcel from "react-html-table-to-excel";
+import IconButton from "@material-ui/core/IconButton";
+import {ArrowBack} from "@material-ui/icons";
 
 class Result extends Component {
     constructor(props) {
@@ -86,6 +89,18 @@ class Result extends Component {
                     </Paper>
                     <br/>
                     <Paper>
+                        <Row className={"Examination-Result-Buttons"}>
+                            <IconButton href="/dashboard" className={"Examination-Result-Button-Back"}>
+                                <ArrowBack/>
+                            </IconButton>
+                            <ReactToExcel
+                                className="fa fa-download fa-2x"
+                                table="file_data"
+                                filename="file_data"
+                                sheet="sheet 1"
+                                buttonText=""
+                            />
+                        </Row>
                         <Table striped id="file_data">
                             <thead>
                             {ng_condition}
