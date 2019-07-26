@@ -2,6 +2,7 @@ package org.ria.ifzz.RiaApp.services.examination;
 
 import org.ria.ifzz.RiaApp.models.graph.Graph;
 import org.ria.ifzz.RiaApp.models.graph.GraphLine;
+import org.ria.ifzz.RiaApp.models.results.ControlCurve;
 import org.ria.ifzz.RiaApp.repositories.results.GraphLineRepository;
 import org.ria.ifzz.RiaApp.repositories.results.GraphRepository;
 import org.ria.ifzz.RiaApp.utils.CountResultUtil;

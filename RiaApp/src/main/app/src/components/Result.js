@@ -13,6 +13,7 @@ import {getExaminationPoints} from "../actions/examinationPointActions";
 import ReactToExcel from "react-html-table-to-excel";
 import IconButton from "@material-ui/core/IconButton";
 import {ArrowBack} from "@material-ui/icons";
+import GraphLineCountMeter from "./models/control_curve/GraphLineCountMeter";
 
 class Result extends Component {
     constructor(props) {
@@ -45,6 +46,9 @@ class Result extends Component {
         const examination_results = examination_points.map(examination_point =>
             (<ExaminationResult key={examination_point.id} examination_point={examination_point}/>));
 
+        const curve_points = control_curves.map(control_curve =>
+            (<ControlCurve key={control_curve.id} control_curve={control_curve}/>));
+
         const ng_condition = examination_results.ng === null ?
             <tr>
                 <th>filename:</th>
@@ -63,29 +67,39 @@ class Result extends Component {
 
         return (
             <React.Fragment>
-
                 <Container>
                     <br/>
                     <Paper>
-                        <br/>
-                        <Col>Control Curve:</Col>
-                        <hr/>
-                        <Row>
-                            <Col xs="4" s="4" m="4" lg="3">
-                                {control_curves.map(control_curve =>
-                                    (<ControlCurve key={control_curve.id} control_curve={control_curve}/>))}
-                            </Col>
-                            <Col xs="8" s="8" m="8" lg="7">
-                                <Paper>
-                                    <GraphLine key={graph_lines.id} graph_lines={graph_lines}/>
-                                </Paper>
-                                <Paper>
-                                    <hr/>
-                                    {graph.map(graph => (<Graph key={graph.id} graph={graph}/>))}
-                                </Paper>
-                            </Col>
-                        </Row>
-                        <br/>
+                        <Container>
+                            <Col className={"FileBoard-Title"}>Control Curve:</Col>
+                            <hr/>
+                            <Row>
+                                <Col xs="4" s="4" m="4" lg="4">
+                                    <Paper>
+                                        <Table striped id="file_data">
+                                            <thead>
+                                            <tr>
+                                                <th className={"Cell-Text"}>point:</th>
+                                                <th className={"Cell-Text"}>cpm:</th>
+                                                <th className={"Cell-Text"}>read:</th>
+                                            </tr>
+                                            </thead>
+                                            {curve_points}
+                                        </Table>
+                                    </Paper>
+                                </Col>
+                                <Col xs="8" s="8" m="8" lg="7">
+                                    <Paper>
+                                        <GraphLine key={graph_lines.id} graph_lines={graph_lines}/>
+                                    </Paper>
+                                    <Paper>
+                                        <hr/>
+                                        {graph.map(graph => (<Graph key={graph.id} graph={graph}/>))}
+                                    </Paper>
+                                </Col>
+                            </Row>
+                            <br/>
+                        </Container>
                     </Paper>
                     <br/>
                     <Paper>

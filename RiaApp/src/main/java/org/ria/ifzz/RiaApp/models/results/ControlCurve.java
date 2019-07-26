@@ -24,4 +24,5 @@ public class ControlCurve extends ExaminationResult {
     @NonNull String position;
     @NonNull Integer cpm;
     @NonNull boolean flagged;
+    @Setter Double meterRead;
 }

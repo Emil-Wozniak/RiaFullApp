@@ -89,4 +89,12 @@ public interface CustomFileReader {
         }
         return hormonePattern;
     }
+
+    static List<Double> getStandardPattern2(String pattern) {
+        List<Double> hormonePattern = new ArrayList<>();
+        if (pattern.equals("KORTYZOL_5_MIN")) {
+            hormonePattern = of(CORTISOL_PATTERN).boxed().collect(Collectors.toCollection(ArrayList::new));
+        }
+        return hormonePattern;
+    }
 }

@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.ria.ifzz.RiaApp.services.examination.FileExtractor.*;
+import static org.ria.ifzz.RiaApp.utils.CustomFileReader.getStandardPattern2;
 import static org.ria.ifzz.RiaApp.utils.EvenOdd.isOdd;
 import static org.ria.ifzz.RiaApp.utils.constants.ControlCurveConstants.*;
 import static org.ria.ifzz.RiaApp.utils.constants.ExaminationConstants.CONTROL_CURVE_LENGTH;
@@ -44,11 +45,11 @@ public class FileExtractorImpl<ER extends ExaminationResult> implements FileExtr
             case ControlCurve:
                 List<Boolean> flags = isFlagged(CPMs);
                 controlCurves = createControlCurve(filename, pattern, probeNumbers, positions, CPMs, flags);
+                controlCurvesMeterRead(pattern, controlCurves);
                 return (List<ER>) controlCurves;
             case ExaminationPoint:
                 flags = isFlagged(controlCurves, CPMs);
                 List<String> NGs = setNg(controlCurves, CPMs);
-//                List<String> ngAvg = NGs.stream().map()
                 return createExaminationPoints(filename, pattern,
                         probeNumbers.stream().skip(24).collect(Collectors.toList()), positions,
                         CPMs.stream().skip(24).collect(Collectors.toList()),
@@ -56,6 +57,14 @@ public class FileExtractorImpl<ER extends ExaminationResult> implements FileExtr
                         NGs.stream().skip(24).collect(Collectors.toList()));
             default:
                 throw new ClassCastException();
+        }
+    }
+
+    private void controlCurvesMeterRead(String pattern, List<ControlCurve> controlCurves) throws ControlCurveException {
+        List<Double> meterRead = setMeterRead(pattern, controlCurves);
+        for (int i = 0; i < meterRead.size(); i++) {
+            double read = meterRead.get(i);
+            controlCurves.get(i+8).setMeterRead(read);
         }
     }
 
@@ -142,15 +151,23 @@ public class FileExtractorImpl<ER extends ExaminationResult> implements FileExtr
         return CPMs.stream().map(point -> countResultUtil.countNg(Double.valueOf(point))).map(String::valueOf).collect(Collectors.toList());
     }
 
-//    private List<String> setAvg(List<String> NGs){
-//        for (int i = 0; i < NGs.size(); i++) {
-//return 0
-//        }
-//    }
-
     private void setStandardPattern(String fileData) {
         if (fileData.equals(CORTISOL_5MIN)) {
             countResultUtil.logDose();
         }
+    }
+
+    private List<Double> setMeterRead(String pattern, List<ControlCurve> controlCurves) throws ControlCurveException {
+        countResultUtil.createStandardListWithCPMs(controlCurves);
+        countResultUtil.setStandardsCpmWithFlags(controlCurves);
+        countResultUtil.bindingPercent();
+        countResultUtil.logarithmRealZero();
+        countResultUtil.logDose();
+        countResultUtil.setCorrelation(getStandardPattern2(pattern));
+        countResultUtil.setZeroBindingPercent();
+        countResultUtil.countRegressionParameterB();
+        countResultUtil.countRegressionParameterA();
+        List<Double> meterRead = countResultUtil.countMeterReading();
+        return meterRead;
     }
 }

@@ -15,11 +15,11 @@ class ExaminationPoint extends Component {
             "";
         const filename = (examination_point.probeNumber === 25) ?
             <td><Link to={`/file/${examination_point.identifier}`}>
-                <Col className={"FileBoard-Cell-Text"}>{examination_point.identifier}</Col>
+                <Col className={"Cell-Text"}>{examination_point.identifier}</Col>
             </Link></td> : "";
         const pattern = examination_point.probeNumber === 25 ?
             <td>
-                <Col className={"FileBoard-Cell-Text"}>{examination_point.pattern}</Col>
+                <Col className={"Cell-Text"}>{examination_point.pattern}</Col>
             </td> : "";
 
         return (

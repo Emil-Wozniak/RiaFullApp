@@ -1,73 +1,71 @@
 .App {
-  text-align: center;
+    text-align: center;
 }
 
 .App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 40vmin;
-  pointer-events: none;
+    animation: App-logo-spin infinite 20s linear;
+    height: 40vmin;
+    pointer-events: none;
 }
 
 .App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+    background-color: #282c34;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
 }
 
 .App-link {
-  color: #61dafb;
+    color: #61dafb;
 }
 
-.FileBoard-Title{
-  font-family: "SF Mono", sans-serif, Helvetica, sans-serif;
-  font-weight: bolder;
-  text-align: left;
-  padding-left: 2em;
-  padding-top: 1em;
+.FileBoard-Title {
+    font-family: "SF Mono", sans-serif, Helvetica, sans-serif;
+    font-weight: bolder;
+    text-align: left;
+    padding-left: 2em;
+    padding-top: 1em;
 }
 
-.FileBoard-Cell-Text{
-  font-family: "SF Mono", sans-serif, Helvetica, sans-serif;
-  font-size: 14px;
-  font-weight: 800;
-  padding-top: 1.5em;
+.Cell-Text {
+    font-family: "SF Mono", sans-serif, Helvetica, sans-serif;
+    font-size: 14px;
+    font-weight: 800;
 }
 
-.Control-Curve-Font{
-  font-family: "SF Mono", sans-serif, sans-serif, Helvetica;
-  font-size: 10px;
-  text-align: center;
-  font-weight: bolder;
-  padding-right: 0;
-  padding-left: 0;
-  margin: 0;
+.Control-Curve-Font {
+    font-family: "SF Mono", sans-serif, sans-serif, Helvetica;
+    font-size: 10px;
+    text-align: center;
+    font-weight: bolder;
+    padding: 0 !important;
+    padding-top: 0.1em !important;
 }
 
-.Graph-Font{
-  font-family: "SF Mono", sans-serif, sans-serif, Helvetica;
-  font-size: 14px;
-  text-align: center;
-  font-weight: bold;
-  padding-right: 0;
-  padding-left: 0;
-  margin: 0;
+.Graph-Font {
+    font-family: "SF Mono", sans-serif, sans-serif, Helvetica;
+    font-size: 14px;
+    text-align: center;
+    font-weight: bold;
+    padding-right: 0;
+    padding-left: 0;
+    margin: 0;
 }
 
 .Examination-Result-Average {
-  font-weight: 800;
+    font-weight: 800;
 }
 
-.Examination-Result-Buttons{
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
+.Examination-Result-Buttons {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
 
-.Examination-Result-Button-Back{
-  margin-top: 2em;
+.Examination-Result-Button-Back {
+    margin-top: 2em;
 }

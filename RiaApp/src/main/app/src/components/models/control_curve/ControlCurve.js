@@ -1,18 +1,21 @@
 import React, {Component} from 'react';
-import {Col, Row} from "reactstrap";
-import {CheckBoxOutlineBlank, CheckBoxOutlined} from "@material-ui/icons";
+import {Col} from "reactstrap";
 
 class ControlCurve extends Component {
     render() {
         const {control_curve} = this.props;
-        const condition = control_curve.flagged === false;
+        const flag_condition = control_curve.flagged === true;
+        let meterRead = control_curve.meterRead;
+        const fixed = meterRead !== null ? parseFloat(meterRead).toFixed(2) : "-";
         return (
             <React.Fragment>
-                    <Row className={"Control-Curve-Font"}>
-                        <Col className={"Control-Curve-Font"}>{control_curve.position}</Col>
-                        <Col className={"Control-Curve-Font"}>{control_curve.cpm}</Col>
-                        <div className={"Control-Curve-Font"}>{condition ? <CheckBoxOutlineBlank/> : <CheckBoxOutlined/>}</div>
-                    </Row>
+                <tr className={"Control-Curve-Font"}>
+                    <td className={"Control-Curve-Font"}><Col>{control_curve.position}</Col></td>
+                    <td className={"Control-Curve-Font"}
+                        style={{backgroundColor: flag_condition ? "#f05545" : "striped"}}><Col
+                        className={"Control-Curve-Font"}>{control_curve.cpm}</Col></td>
+                    <td className={"Control-Curve-Font"}><Col>{fixed}</Col></td>
+                </tr>
             </React.Fragment>
         );
     }
