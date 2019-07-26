@@ -7,17 +7,17 @@ class ExaminationResult extends Component {
         const {examination_point} = this.props;
         const ng_condition = examination_point.ng === "0.0";
         const filename = (examination_point.identifier !== null) ?
-            <Col Cell-Text>{examination_point.identifier}</Col> : "";
+            <Col className={"cell-font-format"}>{examination_point.identifier}</Col> : "";
         const position = (examination_point.position !== null) ?
             <td className={"Examination-Result-Average"}>{examination_point.position}</td>
             : "";
         const probe_number = (examination_point.probeNumber !== null) ?
-            <Col Cell-Text>{examination_point.probeNumber}</Col> : "";
+            <Col className={"cell-font-format"}>{examination_point.probeNumber}</Col> : "";
         const cpm = (examination_point.cpm !== null) ?
-            <Col Cell-Text>{examination_point.cpm}</Col> : "";
+            <Col className={"cell-font-format"}>{examination_point.cpm}</Col> : "";
         const ng = (examination_point.ng !== null) ?
             <td style={{backgroundColor: ng_condition ? "#f05545" : "striped"}}>
-                <Col Cell-Text> {examination_point.ng}</Col>
+                <Col className={"cell-font-format"}> {examination_point.ng}</Col>
             </td>
             : "";
         const condition = examination_point.flagged === false;

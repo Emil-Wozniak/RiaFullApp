@@ -39,7 +39,6 @@ class UploadFile extends Component {
         let data = new FormData();
         data.append("file", this.state.file);
         data.append("name", this.state.file.name);
-        console.log(data);
         fetch("http://localhost:8080/api/examination/", {
             method: "POST",
             body: data

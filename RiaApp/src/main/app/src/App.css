@@ -31,7 +31,7 @@
     padding-top: 1em;
 }
 
-.Cell-Text {
+.cell-font-format {
     font-family: "SF Mono", sans-serif, Helvetica, sans-serif;
     font-size: 14px;
     font-weight: 800;
@@ -39,7 +39,7 @@
 
 .Control-Curve-Font {
     font-family: "SF Mono", sans-serif, sans-serif, Helvetica;
-    font-size: 10px;
+    font-size: 12px;
     text-align: center;
     font-weight: bolder;
     padding: 0 !important;
@@ -48,12 +48,11 @@
 
 .Graph-Font {
     font-family: "SF Mono", sans-serif, sans-serif, Helvetica;
-    font-size: 14px;
+    font-size: 12px;
     text-align: center;
     font-weight: bold;
-    padding-right: 0;
-    padding-left: 0;
-    margin: 0;
+    padding: 0 !important;
+    padding-top: 0.1em !important;
 }
 
 .Examination-Result-Average {
@@ -69,3 +68,4 @@
 .Examination-Result-Button-Back {
     margin-top: 2em;
 }
+

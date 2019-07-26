@@ -13,10 +13,6 @@ class GraphLine extends Component {
             <Col>{line.x}</Col>
         ));
 
-        const y_axis = () => graph_lines.map(line => (
-            <Col>{line.y}</Col>
-        ));
-
         var dataError = [];
         var dataPoints = [];
         let slopeLine = [];

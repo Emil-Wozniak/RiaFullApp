@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from "prop-types";
 import "./App.css";
 import store from "./store";
 import {BrowserRouter as Router, Route} from "react-router-dom";
@@ -36,8 +35,5 @@ function App() {
     );
 }
 
-App.propTypes = {
-    classes: PropTypes.object.isRequired
-};
 
 export default App;

@@ -48,6 +48,8 @@ class Result extends Component {
         const curve_points = control_curves.map(control_curve =>
             (<ControlCurve key={control_curve.id} control_curve={control_curve}/>));
 
+        const graph_props = graph.map(graph => (<Graph key={graph.id} graph={graph}/>));
+
         const ng_condition = examination_results.ng === null ?
             <tr>
                 <th>filename:</th>
@@ -75,12 +77,12 @@ class Result extends Component {
                             <Row>
                                 <Col xs="4" s="4" m="4" lg="4">
                                     <Paper>
-                                        <Table striped id="file_data">
+                                        <Table striped className={"Graph-Font"}>
                                             <thead>
                                             <tr>
-                                                <th className={"Cell-Text"}>point:</th>
-                                                <th className={"Cell-Text"}>cpm:</th>
-                                                <th className={"Cell-Text"}>read:</th>
+                                                <th>point:</th>
+                                                <th>cpm:</th>
+                                                <th>read:</th>
                                             </tr>
                                             </thead>
                                             {curve_points}
@@ -92,8 +94,16 @@ class Result extends Component {
                                         <GraphLine key={graph_lines.id} graph_lines={graph_lines}/>
                                     </Paper>
                                     <Paper>
-                                        <hr/>
-                                        {graph.map(graph => (<Graph key={graph.id} graph={graph}/>))}
+                                        <Table striped>
+                                            <thead>
+                                            <tr>
+                                            <th className={"Cell-Text"}>Correlation:</th>
+                                            <th className={"Cell-Text"}>Zero Binding %:</th>
+                                            <th className={"Cell-Text"}>Regression.:</th>
+                                            </tr>
+                                            </thead>
+                                            {graph_props}
+                                        </Table>
                                     </Paper>
                                 </Col>
                             </Row>
@@ -131,7 +141,6 @@ Result.propTypes = {
     control_curve: PropTypes.object.isRequired,
     examination_point: PropTypes.object.isRequired,
     graph: PropTypes.object.isRequired,
-    errors: PropTypes.object.isRequired,
     getControlCurve: PropTypes.func.isRequired,
     getGraph: PropTypes.func.isRequired,
     getGraphLines: PropTypes.func.isRequired
