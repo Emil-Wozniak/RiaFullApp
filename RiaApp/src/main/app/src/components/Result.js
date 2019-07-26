@@ -13,7 +13,6 @@ import {getExaminationPoints} from "../actions/examinationPointActions";
 import ReactToExcel from "react-html-table-to-excel";
 import IconButton from "@material-ui/core/IconButton";
 import {ArrowBack} from "@material-ui/icons";
-import GraphLineCountMeter from "./models/control_curve/GraphLineCountMeter";
 
 class Result extends Component {
     constructor(props) {
