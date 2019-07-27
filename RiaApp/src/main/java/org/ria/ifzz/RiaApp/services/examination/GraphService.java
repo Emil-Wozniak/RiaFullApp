@@ -6,7 +6,7 @@ import org.ria.ifzz.RiaApp.models.graph.GraphLine;
 import org.ria.ifzz.RiaApp.repositories.results.GraphLineRepository;
 import org.ria.ifzz.RiaApp.repositories.results.GraphRepository;
 import org.ria.ifzz.RiaApp.utils.counter.Counter;
-import org.ria.ifzz.RiaApp.utils.CustomFileReader;
+import org.ria.ifzz.RiaApp.utils.reader.CustomFileReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.ria.ifzz.RiaApp.utils.CustomFileReader.getStandardPattern;
+import static org.ria.ifzz.RiaApp.utils.reader.CustomFileReader.getStandardPattern;
 
 @Service
 public class GraphService implements CustomFileReader {

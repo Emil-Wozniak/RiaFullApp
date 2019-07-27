@@ -8,7 +8,7 @@ import org.ria.ifzz.RiaApp.models.results.ExaminationPoint;
 import org.ria.ifzz.RiaApp.repositories.results.ExaminationPointRepository;
 import org.ria.ifzz.RiaApp.services.examination.ExaminationPointService;
 import org.ria.ifzz.RiaApp.services.strategies.ExaminationResultSolution;
-import org.ria.ifzz.RiaApp.utils.CustomFileReader;
+import org.ria.ifzz.RiaApp.utils.reader.CustomFileReader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.ria.ifzz.RiaApp.utils.CustomFileReader.readFromStream;
+import static org.ria.ifzz.RiaApp.utils.reader.CustomFileReader.readFromStream;
 import static org.ria.ifzz.RiaApp.utils.constants.DomainConstants.FILENAME_UNNECESSARY_PART;
 
 @RestController

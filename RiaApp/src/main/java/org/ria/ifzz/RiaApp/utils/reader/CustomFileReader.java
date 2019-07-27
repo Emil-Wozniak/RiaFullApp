@@ -1,4 +1,4 @@
-package org.ria.ifzz.RiaApp.utils;
+package org.ria.ifzz.RiaApp.utils.reader;
 
 import org.jetbrains.annotations.NotNull;
 import org.ria.ifzz.RiaApp.models.DataFileMetadata;
@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.DoubleStream;
 
 import static java.util.stream.DoubleStream.*;
 import static org.ria.ifzz.RiaApp.models.pattern.HormonesPattern.CORTISOL_PATTERN;

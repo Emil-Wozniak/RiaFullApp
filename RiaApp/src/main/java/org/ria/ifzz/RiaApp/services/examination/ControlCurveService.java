@@ -4,7 +4,7 @@ import org.ria.ifzz.RiaApp.exception.ControlCurveException;
 import org.ria.ifzz.RiaApp.models.results.ControlCurve;
 import org.ria.ifzz.RiaApp.repositories.results.ControlCurveRepository;
 import org.ria.ifzz.RiaApp.utils.counter.Counter;
-import org.ria.ifzz.RiaApp.utils.CustomFileReader;
+import org.ria.ifzz.RiaApp.utils.reader.CustomFileReader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;

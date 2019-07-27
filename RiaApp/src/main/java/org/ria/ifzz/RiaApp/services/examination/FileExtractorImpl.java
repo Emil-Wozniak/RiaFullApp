@@ -5,8 +5,9 @@ import org.ria.ifzz.RiaApp.models.results.ControlCurve;
 import org.ria.ifzz.RiaApp.models.results.ExaminationPoint;
 import org.ria.ifzz.RiaApp.models.results.ExaminationResult;
 import org.ria.ifzz.RiaApp.models.results.RESULT_CLAZZ;
+import org.ria.ifzz.RiaApp.utils.counter.Algorithms;
 import org.ria.ifzz.RiaApp.utils.counter.Counter;
-import org.ria.ifzz.RiaApp.utils.CustomFileReader;
+import org.ria.ifzz.RiaApp.utils.reader.CustomFileReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,11 +16,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.ria.ifzz.RiaApp.services.examination.FileExtractor.*;
-import static org.ria.ifzz.RiaApp.utils.CustomFileReader.getStandardPattern2;
-import static org.ria.ifzz.RiaApp.utils.EvenOdd.isOdd;
 import static org.ria.ifzz.RiaApp.utils.constants.ControlCurveConstants.*;
 import static org.ria.ifzz.RiaApp.utils.constants.ExaminationConstants.CONTROL_CURVE_LENGTH;
 import static org.ria.ifzz.RiaApp.utils.constants.ExaminationConstants.CORTISOL_5MIN;
+import static org.ria.ifzz.RiaApp.utils.reader.CustomFileReader.getStandardPattern2;
 
 public class FileExtractorImpl<ER extends ExaminationResult> implements FileExtractor, CustomFileReader {
 
@@ -64,7 +64,6 @@ public class FileExtractorImpl<ER extends ExaminationResult> implements FileExtr
         }
     }
 
-    //TODO custom exception?
     private void controlCurvesMeterRead(String pattern, List<ControlCurve> controlCurves) throws ControlCurveException {
         try {
             List<Double> meterRead = setMeterRead(pattern, controlCurves);
@@ -89,11 +88,12 @@ public class FileExtractorImpl<ER extends ExaminationResult> implements FileExtr
     @SuppressWarnings("unchecked")
     private List<ER> createExaminationPoints(String filename, String pattern, List<Integer> probeNumbers, List<String> positions, List<Integer> CPMs, List<Boolean> flags, List<String> NGs) {
         List<ExaminationPoint> examinationPoints = new ArrayList<>();
+        List<Double> averages = getAverage(NGs);
         for (int i = 0; i < probeNumbers.size(); i++) {
             ExaminationPoint examinationPoint = new ExaminationPoint(filename, pattern, probeNumbers.get(i), positions.get(i), CPMs.get(i), flags.get(i), NGs.get(i));
+            setAverage(averages, examinationPoint);
             examinationPoints.add(examinationPoint);
         }
-        setAverage(NGs);
         return (List<ER>) examinationPoints;
     }
 
@@ -170,6 +170,16 @@ public class FileExtractorImpl<ER extends ExaminationResult> implements FileExtr
         }
     }
 
+    /**
+     * meterRead represents level of hormone value in Control Curve Point,
+     * ie: expected in position 8 of Cortisol Curve is 1.25 pg per ml,
+     * and meterRead could be 0.89 pg per ml
+     *
+     * @param pattern       read hormone pattern from file
+     * @param controlCurves List of already generated Control Curve values
+     * @return values of actual read pattern level
+     * @throws ControlCurveException is thrown when ControlCurve wasn't created, so generates a meterRead isn't possible
+     */
     private List<Double> setMeterRead(String pattern, List<ControlCurve> controlCurves) throws ControlCurveException {
         try {
             counter.createStandardListWithCPMs(controlCurves);
@@ -188,7 +198,7 @@ public class FileExtractorImpl<ER extends ExaminationResult> implements FileExtr
         return new ArrayList<>();
     }
 
-    private List<Double> setAverage(List<String> NGs) {
+    private List<Double> getAverage(List<String> NGs) {
         List<Double> result = new ArrayList<>();
         double pointA = -1.0, pointB = -1.0;
         for (String ng : NGs) {
@@ -196,13 +206,22 @@ public class FileExtractorImpl<ER extends ExaminationResult> implements FileExtr
                 pointA = Double.parseDouble(ng);
             } else if (pointB == -1.0 && ng != null) {
                 pointB = Double.parseDouble(ng);
-            } else {
-                double avg = (pointA + pointB ) / 2.0;
+            }
+            if (pointA != -1.0 && pointB != -1.0) {
+                double avg = (pointA + pointB) / 2.0;
+                avg = avoidNaNsOrInfinite(avg);
                 result.add(avg);
                 pointA = -1.0;
                 pointB = -1.0;
             }
         }
         return result;
+    }
+
+    private void setAverage(List<Double> averages, ExaminationPoint examinationPoint) {
+        if (isOdd(examinationPoint.getProbeNumber())) {
+            int j = Integer.parseInt(examinationPoint.getPosition()) - 1;
+            examinationPoint.setAverage(averages.get(j));
+        }
     }
 }

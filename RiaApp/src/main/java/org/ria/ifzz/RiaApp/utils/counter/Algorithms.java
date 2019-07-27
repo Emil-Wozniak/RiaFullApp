@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 /**
  * performs mathematical algorithms
  */
-interface Math {
+public interface Algorithms {
 
     static double count(List<Double> values) {
         return values.size();

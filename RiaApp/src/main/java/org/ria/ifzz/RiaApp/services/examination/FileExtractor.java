@@ -1,7 +1,7 @@
 package org.ria.ifzz.RiaApp.services.examination;
 
 import org.ria.ifzz.RiaApp.models.results.ControlCurve;
-import org.ria.ifzz.RiaApp.utils.CustomFileReader;
+import org.ria.ifzz.RiaApp.utils.reader.CustomFileReader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +10,6 @@ import java.util.stream.IntStream;
 
 import static org.ria.ifzz.RiaApp.models.pattern.HormonesPattern.CORTISOL_PATTERN;
 import static org.ria.ifzz.RiaApp.services.strategies.SpreadCounter.isSpread;
-import static org.ria.ifzz.RiaApp.utils.CustomFileReader.getMatchingCPMsString;
 import static org.ria.ifzz.RiaApp.utils.constants.ExaminationConstants.CORTISOL_5MIN;
 
 public interface FileExtractor {
@@ -108,5 +107,13 @@ public interface FileExtractor {
 
     static boolean flagCondition(int cpm, List<ControlCurve> controlCurves) {
         return (cpm < controlCurves.get(2).getCpm() || cpm < controlCurves.get(3).getCpm() || cpm < controlCurves.get(4).getCpm()) || (cpm > controlCurves.get(5).getCpm() || cpm > controlCurves.get(6).getCpm() || cpm > controlCurves.get(7).getCpm());
+    }
+
+    static double avoidNaNsOrInfinite(double value) {
+        return (Double.isNaN(value) || Double.isInfinite(value)) ? 0.0 : value;
+    }
+
+    static boolean isOdd(int i) {
+        return i % 2 == 1;
     }
 }

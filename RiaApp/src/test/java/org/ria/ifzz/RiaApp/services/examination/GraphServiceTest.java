@@ -9,7 +9,7 @@ import org.ria.ifzz.RiaApp.models.DataFileMetadata;
 import org.ria.ifzz.RiaApp.models.graph.Graph;
 import org.ria.ifzz.RiaApp.models.graph.GraphLine;
 import org.ria.ifzz.RiaApp.utils.counter.Counter;
-import org.ria.ifzz.RiaApp.utils.CustomFileReader;
+import org.ria.ifzz.RiaApp.utils.reader.CustomFileReader;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,7 +27,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.ria.ifzz.RiaApp.utils.CustomFileReader.readFromStream;
+import static org.ria.ifzz.RiaApp.utils.reader.CustomFileReader.readFromStream;
 
 //@RunWith(SpringRunner.class)
 //@SpringBootTest

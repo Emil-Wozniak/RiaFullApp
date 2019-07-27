@@ -26,4 +26,5 @@ public class ExaminationPoint extends ExaminationResult {
     @NonNull Integer cpm;
     @NonNull boolean flagged;
     @NonNull String ng;
+    @Setter Double average;
 }
