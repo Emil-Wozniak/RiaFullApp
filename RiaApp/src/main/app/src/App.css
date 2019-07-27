@@ -37,7 +37,15 @@
     font-weight: 800;
 }
 
-.Control-Curve-Font {
+.control-curve-col{
+    flex: 0 0 33.333333%;
+    max-width: 33.333333%;
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+}
+
+.control-curve-font {
     font-family: "SF Mono", sans-serif, sans-serif, Helvetica;
     font-size: 12px;
     text-align: center;

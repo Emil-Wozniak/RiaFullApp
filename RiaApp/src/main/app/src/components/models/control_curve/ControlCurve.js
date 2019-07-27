@@ -1,22 +1,20 @@
 import React, {Component} from 'react';
-import {Col} from "reactstrap";
 
 class ControlCurve extends Component {
     render() {
-        const {control_curve} = this.props;
-        const flag_condition = control_curve.flagged === true;
-        let meterRead = control_curve.meterRead;
-        const fixed = meterRead !== null ? parseFloat(meterRead).toFixed(2) : "-";
+        const {position, cpm, flagged, meterRead} = this.props.control_curve;
+        const read = meterRead !== null ? parseFloat(meterRead) : "-";
+        const position_style = position === "Total" || position === "O" || position === "2.5" || position === "10.0" || position === "40.0" || position === "K" ?
+            {backgroundColor: "#cfd8dc"} : {backgroundColor: "#fff"};
 
         return (
             <React.Fragment>
                 <tbody>
-                <tr className={"Control-Curve-Font"}>
-                    <td className={"Control-Curve-Font"}><Col>{control_curve.position}</Col></td>
-                    <td className={"Control-Curve-Font"}
-                        style={{backgroundColor: flag_condition ? "#f05545" : "striped"}}><Col
-                        className={"Control-Curve-Font"}>{control_curve.cpm}</Col></td>
-                    <td className={"Control-Curve-Font"}><Col>{fixed}</Col></td>
+                <tr style={position_style} className={"control-curve-font"}>
+                    <td className={"control-curve-font"}>{position}</td>
+                    <td className={"control-curve-font"}
+                        style={{backgroundColor: flagged ? "#f05545" : "striped"}}>{cpm}</td>
+                    <td className={"control-curve-font"}>{read}</td>
                 </tr>
                 </tbody>
             </React.Fragment>

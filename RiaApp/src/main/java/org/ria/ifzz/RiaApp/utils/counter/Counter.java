@@ -250,7 +250,7 @@ public class Counter implements Algorithms {
     public List<Double> countMeterReading() {
         return standardsCPM.stream().map(point -> Precision.round((pow(10, ((log10(getPointSubtract(point, zero)
                 * 100 / binding / (100 - (getPointSubtract(point, zero))
-                * 100 / binding)) - regressionParameterA) / regressionParameterB))), 4))
+                * 100 / binding)) - regressionParameterA) / regressionParameterB))), 2))
                 .collect(Collectors.toList());
     }
 }

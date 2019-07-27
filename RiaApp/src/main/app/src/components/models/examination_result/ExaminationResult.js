@@ -1,24 +1,19 @@
 import React, {Component} from 'react';
-import Col from "reactstrap/es/Col";
 
 class ExaminationResult extends Component {
     render() {
-        const {probeNumber, position, cpm, flagged, ng, id, identifier, pattern, average} = this.props.examination_point;
-        const filename = probeNumber === 25 ? <Col className={"cell-font-format"}>{identifier}</Col> :
-            probeNumber === 26 ? <Col className={"cell-font-format"}>{pattern}</Col> : <Col/>;
+        const {probeNumber, position, cpm, flagged, ng, average} = this.props.examination_point;
+        const isOdd = parseInt(position) % 2 === 1 ? {backgroundColor: "#cfd8dc"} : {backgroundColor: "#fff"};
 
         return (
             <React.Fragment>
                 <tbody>
-                <tr>
+                <tr style={isOdd}>
                     <td className={"Examination-Result-Average"}>{position}</td>
-                    <td><Col className={"cell-font-format"}>{probeNumber}</Col></td>
-                    <td><Col className={"cell-font-format"}>{cpm}</Col></td>
-                    <td style={{backgroundColor: flagged ? "#f05545" : "striped"}}>
-                        <Col className={"cell-font-format"}>{ng}</Col>
-                    </td>
-                    <td><Col className={"cell-font-format"}>{average}</Col></td>
-                    <td>{filename}</td>
+                    <td className={"cell-font-format"}>{probeNumber}</td>
+                    <td className={"cell-font-format"}>{cpm}</td>
+                    <td style={{backgroundColor: flagged ? "#f05545" : "striped"}} className={"cell-font-format"}>{ng}</td>
+                    <td className={"cell-font-format"}>{average}</td>
                 </tr>
                 </tbody>
             </React.Fragment>

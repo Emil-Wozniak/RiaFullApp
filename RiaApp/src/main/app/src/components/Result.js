@@ -51,7 +51,6 @@ class Result extends Component {
 
         const ng_condition = examination_results.ng === null ?
             <tr>
-                <th>filename:</th>
                 <th>probe:</th>
                 <th>&#8470;</th>
                 <th>cpm</th>
@@ -62,7 +61,6 @@ class Result extends Component {
                 <th>cpm</th>
                 <th>ng</th>
                 <th>x&#772;</th>
-                <th>info:</th>
             </tr>;
 
         return (
@@ -71,12 +69,11 @@ class Result extends Component {
                     <br/>
                     <Paper>
                         <Container>
-                            <Col className={"FileBoard-Title"}>Control Curve:</Col>
-                            <hr/>
+                            <br/>
                             <Row>
-                                <Col xs="4" s="4" m="4" lg="4">
+                                <div className={"control-curve-col"}>
                                     <Paper>
-                                        <Table striped className={"Graph-Font"}>
+                                        <Table>
                                             <thead>
                                             <tr>
                                                 <th>point:</th>
@@ -87,7 +84,7 @@ class Result extends Component {
                                             {curve_points}
                                         </Table>
                                     </Paper>
-                                </Col>
+                                </div>
                                 <Col xs="8" s="8" m="8" lg="7">
                                     <Paper>
                                         <GraphLine key={graph_lines.id} graph_lines={graph_lines}/>
