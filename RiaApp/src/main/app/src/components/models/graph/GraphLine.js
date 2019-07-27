@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import Col from "reactstrap/es/Col";
 import CanvasJSReact from "../../canvasjs/canvasjs.react";
 import {number} from "prop-types";
 
@@ -9,12 +8,9 @@ class GraphLine extends Component {
 
     render() {
         const {graph_lines} = this.props;
-        const x_axis = () => graph_lines.map(line => (
-            <Col>{line.x}</Col>
-        ));
 
-        var dataError = [];
-        var dataPoints = [];
+        const dataError = [];
+        const dataPoints = [];
         let slopeLine = [];
         let xArray = [];
         let varY1 = [];
@@ -40,28 +36,19 @@ class GraphLine extends Component {
             varAverage.push(middle);
         }
 
-        function getAxis(varAverage) {
-            let first = 0;
-            let second = 0;
-            let third = 0;
-            let middle = 0;
-            let fifth = 0;
-            let sixth = 0;
-            let last = 0;
-
+        const getAxis = (varAverage) => {
+            let first = 0, last = 0;
             for (let index = 0; index < varAverage.length; index++) {
                 first = varAverage[0];
                 last = varAverage[6];
             }
             const outside = 67.5;
             const inside = 40.5;
-            middle = (first + last) / 2;
-
-            second = (first / 100) * outside;
-            third = (first / 100) * inside;
-
-            fifth = (last / 100) * inside;
-            sixth = (last / 100) * outside;
+            let middle = (first + last) / 2;
+            let second = (first / 100) * outside;
+            let third = (first / 100) * inside;
+            let fifth = (last / 100) * inside;
+            let sixth = (last / 100) * outside;
 
             slopeArray.push(first);
             slopeArray.push(second);
@@ -70,7 +57,7 @@ class GraphLine extends Component {
             slopeArray.push(fifth);
             slopeArray.push(sixth);
             slopeArray.push(last);
-        }
+        };
 
         getAxis(varAverage);
 
@@ -99,7 +86,7 @@ class GraphLine extends Component {
             axisX: {
                 title: "Logarithm (ng/ml)",
                 fontFamily: "Helvetica, Arial, Sans-Serif",
-                interval: x_axis(),
+                interval: xArray,
                 gridDashType: "dot",
                 interlacedColor: "#e5ffff",
                 gridThickness: 2,

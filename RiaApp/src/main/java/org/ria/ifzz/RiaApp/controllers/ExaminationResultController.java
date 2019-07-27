@@ -2,6 +2,7 @@ package org.ria.ifzz.RiaApp.controllers;
 
 import org.jetbrains.annotations.NotNull;
 import org.ria.ifzz.RiaApp.exception.ControlCurveException;
+import org.ria.ifzz.RiaApp.exception.GraphException;
 import org.ria.ifzz.RiaApp.models.DataFileMetadata;
 import org.ria.ifzz.RiaApp.models.results.ExaminationPoint;
 import org.ria.ifzz.RiaApp.repositories.results.ExaminationPointRepository;
@@ -39,7 +40,7 @@ public class ExaminationResultController implements CustomFileReader {
     }
 
     @PostMapping(value = "/")
-    public ResponseEntity<?> handleFileUpload(@Valid DataFileMetadata metadata, Principal principal) throws IOException, ControlCurveException {
+    public ResponseEntity<?> handleFileUpload(@Valid DataFileMetadata metadata, Principal principal) throws IOException, ControlCurveException, GraphException {
         List<String> examinationContent = readFromStream(metadata);
 
         try {
@@ -57,7 +58,7 @@ public class ExaminationResultController implements CustomFileReader {
     }
 
     @NotNull
-    private ResponseEntity<?> getSuccessResponse(List<String> examinationContent) throws ControlCurveException {
+    private ResponseEntity<?> getSuccessResponse(List<String> examinationContent) throws ControlCurveException, GraphException {
         solution.setMetadata(examinationContent);
         solution.create();
         response.put("message", "Upload successful");

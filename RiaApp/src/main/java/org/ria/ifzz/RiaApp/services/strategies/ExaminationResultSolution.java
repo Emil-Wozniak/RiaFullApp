@@ -3,6 +3,7 @@ package org.ria.ifzz.RiaApp.services.strategies;
 import lombok.Setter;
 import lombok.ToString;
 import org.ria.ifzz.RiaApp.exception.ControlCurveException;
+import org.ria.ifzz.RiaApp.exception.GraphException;
 import org.ria.ifzz.RiaApp.models.results.ControlCurve;
 import org.ria.ifzz.RiaApp.services.examination.ControlCurveService;
 import org.ria.ifzz.RiaApp.services.examination.ExaminationPointService;
@@ -65,7 +66,7 @@ public class ExaminationResultSolution extends ExaminationResultStrategyImpl {
     }
 
     @Override
-    boolean isGraphPoint() {
+    boolean isGraphPoint() throws GraphException {
         if (!controlCurvePoints.isEmpty()) {
             graphService.create(metadata);
         }

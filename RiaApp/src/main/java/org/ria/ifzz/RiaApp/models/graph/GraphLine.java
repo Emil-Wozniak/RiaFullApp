@@ -16,11 +16,9 @@ public class GraphLine {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NonNull String filename;
-    @NonNull String pattern;
     @NonNull Double x;
     @NonNull Double y;
     @NonNull Double standard;
-    @NonNull Double meterReading;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "graph_id", updatable = false, nullable = false)

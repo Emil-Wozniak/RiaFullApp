@@ -7,6 +7,8 @@ import org.ria.ifzz.RiaApp.models.results.ExaminationResult;
 import org.ria.ifzz.RiaApp.models.results.RESULT_CLAZZ;
 import org.ria.ifzz.RiaApp.utils.CountResultUtil;
 import org.ria.ifzz.RiaApp.utils.CustomFileReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +25,7 @@ public class FileExtractorImpl<ER extends ExaminationResult> implements FileExtr
 
     private ER examinationResult;
     private final CountResultUtil countResultUtil;
+    private Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     FileExtractorImpl(ER examinationResult, CountResultUtil countResultUtil) {
         this.examinationResult = examinationResult;
@@ -32,8 +35,8 @@ public class FileExtractorImpl<ER extends ExaminationResult> implements FileExtr
     @SuppressWarnings("unchecked")
     List<ER> generateResults(List<ControlCurve> controlCurves, List<String> metadata) throws ControlCurveException {
         RESULT_CLAZZ clazz = RESULT_CLAZZ.valueOf(examinationResult.getClass().getSimpleName());
-        String filename = metadata.get(0);
-        String pattern = metadata.get(1);
+        String filename = metadata.get(0).trim();
+        String pattern = metadata.get(1).trim();
         setStandardPattern(metadata.get(1));
         metadata = metadata.stream().skip(2).collect(Collectors.toList());
 
@@ -60,11 +63,16 @@ public class FileExtractorImpl<ER extends ExaminationResult> implements FileExtr
         }
     }
 
+    //TODO custom exception?
     private void controlCurvesMeterRead(String pattern, List<ControlCurve> controlCurves) throws ControlCurveException {
-        List<Double> meterRead = setMeterRead(pattern, controlCurves);
-        for (int i = 0; i < meterRead.size(); i++) {
-            double read = meterRead.get(i);
-            controlCurves.get(i+8).setMeterRead(read);
+        try{
+            List<Double> meterRead = setMeterRead(pattern, controlCurves);
+            for (int i = 0; i < meterRead.size(); i++) {
+                double read = meterRead.get(i);
+                controlCurves.get(i+8).setMeterRead(read);
+            }
+        }catch (ControlCurveException error){
+            LOGGER.error("Couldn't perform meter read, " + error.getMessage());
         }
     }
 
@@ -158,16 +166,20 @@ public class FileExtractorImpl<ER extends ExaminationResult> implements FileExtr
     }
 
     private List<Double> setMeterRead(String pattern, List<ControlCurve> controlCurves) throws ControlCurveException {
-        countResultUtil.createStandardListWithCPMs(controlCurves);
-        countResultUtil.setStandardsCpmWithFlags(controlCurves);
-        countResultUtil.bindingPercent();
-        countResultUtil.logarithmRealZero();
-        countResultUtil.logDose();
-        countResultUtil.setCorrelation(getStandardPattern2(pattern));
-        countResultUtil.setZeroBindingPercent();
-        countResultUtil.countRegressionParameterB();
-        countResultUtil.countRegressionParameterA();
-        List<Double> meterRead = countResultUtil.countMeterReading();
-        return meterRead;
+        try{
+            countResultUtil.createStandardListWithCPMs(controlCurves);
+            countResultUtil.setStandardsCpmWithFlags(controlCurves);
+            countResultUtil.bindingPercent();
+            countResultUtil.logarithmRealZero();
+            countResultUtil.logDose();
+            countResultUtil.setCorrelation(getStandardPattern2(pattern));
+            countResultUtil.setZeroBindingPercent();
+            countResultUtil.countRegressionParameterB();
+            countResultUtil.countRegressionParameterA();
+            return countResultUtil.countMeterReading();
+        } catch (Exception error){
+            LOGGER.error(error.getMessage());
+        }
+        return new ArrayList<>();
     }
 }

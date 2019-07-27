@@ -32,7 +32,10 @@ public interface FileExtractor {
      * @return List containing CPM values as Strings
      */
     static List<Integer> setCPMs(List<String> metadata) {
-        return metadata.stream().map(CustomFileReader::getMatchingCPMsString).map(Integer::parseInt).collect(Collectors.toList());
+        return metadata.stream()
+                .map(CustomFileReader::getMatchingCPMsString)
+                .map(Integer::parseInt)
+                .collect(Collectors.toList());
     }
 
     /**

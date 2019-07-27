@@ -51,8 +51,7 @@ class GraphServiceTest implements CustomFileReader {
         double zeroBindingPercentage = 21.0;
         double regressionParameterB = -1.0575;
         String filename = "A16_244.txt";
-        String pattern = "KORTYZOL_5_MIN";
-        graph = new Graph(filename, pattern, correlation, zeroBindingPercentage, regressionParameterB);
+        graph = new Graph(filename, correlation, zeroBindingPercentage, regressionParameterB);
     }
 
     @AfterEach
@@ -60,7 +59,7 @@ class GraphServiceTest implements CustomFileReader {
         metadata.clear();
     }
 
-    private List<String> getFileContents() throws IOException {
+    private void getFileContents() throws IOException {
         ClassLoader classLoader = getClass().getClassLoader();
         File file = new File(classLoader.getResource("example/A16_244.txt").getFile());
         FileInputStream input = new FileInputStream(file);
@@ -68,7 +67,6 @@ class GraphServiceTest implements CustomFileReader {
                 file.getName(), "text/plain", IOUtils.toByteArray(input));
         DataFileMetadata metadata = new DataFileMetadata(multipartFile);
         this.metadata = readFromStream(metadata);
-        return this.metadata;
     }
 
 

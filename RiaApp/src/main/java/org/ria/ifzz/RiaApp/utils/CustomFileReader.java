@@ -84,7 +84,7 @@ public interface CustomFileReader {
 
     static List<Double> getStandardPattern(List<String> metadata) {
         List<Double> hormonePattern = new ArrayList<>();
-        if (metadata.get(1).equals("KORTYZOL_5_MIN")) {
+        if (metadata.get(1).trim().equals("KORTYZOL_5_MIN")) {
             hormonePattern = of(CORTISOL_PATTERN).boxed().collect(Collectors.toCollection(ArrayList::new));
         }
         return hormonePattern;

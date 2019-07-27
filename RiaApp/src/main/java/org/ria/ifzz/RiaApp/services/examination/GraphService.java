@@ -1,8 +1,8 @@
 package org.ria.ifzz.RiaApp.services.examination;
 
+import org.ria.ifzz.RiaApp.exception.GraphException;
 import org.ria.ifzz.RiaApp.models.graph.Graph;
 import org.ria.ifzz.RiaApp.models.graph.GraphLine;
-import org.ria.ifzz.RiaApp.models.results.ControlCurve;
 import org.ria.ifzz.RiaApp.repositories.results.GraphLineRepository;
 import org.ria.ifzz.RiaApp.repositories.results.GraphRepository;
 import org.ria.ifzz.RiaApp.utils.CountResultUtil;
@@ -33,19 +33,23 @@ public class GraphService implements CustomFileReader {
         this.graphLineRepository = graphLineRepository;
     }
 
-    public void create(List<String> metadata) {
-        double correlation = countResultUtil.setCorrelation(getStandardPattern(metadata));
-        double zeroBindingPercentage = countResultUtil.setZeroBindingPercent();
-        double regressionParameterB = countResultUtil.getRegressionParameterB();
+    public void create(List<String> metadata) throws GraphException {
+        double correlation = 0.0, zeroBindingPercentage = 0.0, regressionParameterB = 0.0;
+        try {
+            correlation = countResultUtil.setCorrelation(getStandardPattern(metadata));
+            zeroBindingPercentage = countResultUtil.setZeroBindingPercent();
+            regressionParameterB = countResultUtil.getRegressionParameterB();
 
-        String filename = metadata.get(0);
-        String pattern = metadata.get(1);
-        Graph graph = new Graph(filename, pattern, correlation, zeroBindingPercentage, regressionParameterB);
+            String filename = metadata.get(0).trim();
+            Graph graph = new Graph(filename, correlation, zeroBindingPercentage, regressionParameterB);
 
-        graphLines = createGraphLines(filename, metadata, graph);
-        graph.setGraphLines(graphLines);
-        graphRepository.save(graph);
-        graphLineRepository.saveAll(graphLines);
+            graphLines = createGraphLines(filename, metadata, graph);
+            graph.setGraphLines(graphLines);
+            graphRepository.save(graph);
+            graphLineRepository.saveAll(graphLines);
+        } catch (GraphException graphError) {
+            throw new GraphException("create method failed because: ", correlation, zeroBindingPercentage);
+        }
     }
 
     private List<GraphLine> createGraphLines(String filename, List<String> metadata, Graph graph) {
@@ -58,8 +62,7 @@ public class GraphService implements CustomFileReader {
                 double x = listX.get(i);
                 double y = listY.get(i);
                 double patternPoint = patternPoints.get(i);
-                List<Double> meterReadingPg = countResultUtil.countMeterReading();
-                GraphLine graphCurveLine = new GraphLine(filename, metadata.get(0), x, y, patternPoint, meterReadingPg.get(i), graph);
+                GraphLine graphCurveLine = new GraphLine(filename, x, y, patternPoint, graph);
                 graphLines.add(graphCurveLine);
             }
         } catch (Exception error) {
