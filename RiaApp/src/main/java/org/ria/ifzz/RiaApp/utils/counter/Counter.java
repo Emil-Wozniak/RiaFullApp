@@ -220,7 +220,6 @@ public class Counter implements Algorithms {
     public Double countNg(Double CPM) {
         double result = ((log10((CPM - zero.doubleValue()) * 100 / binding.doubleValue() / (100 - (CPM - zero.doubleValue()) * 100 / binding.doubleValue())) - regressionParameterA) / regressionParameterB);
         double power = pow(10, result);
-        power = Precision.round(power, 2);
         return avoidNaNsOrInfinite(power);
     }
 

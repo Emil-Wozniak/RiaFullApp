@@ -1,5 +1,6 @@
 package org.ria.ifzz.RiaApp.services.examination;
 
+import org.apache.commons.math3.util.Precision;
 import org.ria.ifzz.RiaApp.models.results.ControlCurve;
 import org.ria.ifzz.RiaApp.utils.reader.CustomFileReader;
 
@@ -110,7 +111,7 @@ public interface FileExtractor {
     }
 
     static double avoidNaNsOrInfinite(double value) {
-        return (Double.isNaN(value) || Double.isInfinite(value)) ? 0.0 : value;
+        return (Double.isNaN(value) || Double.isInfinite(value)) ? 0.0 : Precision.round(value, 2);
     }
 
     static boolean isOdd(int i) {

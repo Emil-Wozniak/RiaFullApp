@@ -57,12 +57,12 @@ class Result extends Component {
                 <th>cpm</th>
             </tr> :
             <tr>
-                <th>file name:</th>
                 <th>probe:</th>
                 <th>&#8470;</th>
                 <th>cpm</th>
                 <th>ng</th>
                 <th>x&#772;</th>
+                <th>info:</th>
             </tr>;
 
         return (
