@@ -4,33 +4,24 @@ import Col from "reactstrap/es/Col";
 
 class ExaminationResult extends Component {
     render() {
-        const {examination_point} = this.props;
-        const ng_condition = examination_point.ng === "0.0";
-        const filename = (examination_point.identifier !== null) ?
-            <Col className={"cell-font-format"}>{examination_point.identifier}</Col> : "";
-        const position = (examination_point.position !== null) ?
-            <td className={"Examination-Result-Average"}>{examination_point.position}</td>
-            : "";
-        const probe_number = (examination_point.probeNumber !== null) ?
-            <Col className={"cell-font-format"}>{examination_point.probeNumber}</Col> : "";
-        const cpm = (examination_point.cpm !== null) ?
-            <Col className={"cell-font-format"}>{examination_point.cpm}</Col> : "";
-        const ng = (examination_point.ng !== null) ?
+        const {probeNumber, position, cpm, flagged, ng, id, identifier, pattern} = this.props.examination_point;
+        const ng_condition = ng === "0.0";
+        const ng_value = (ng !== null) ?
             <td style={{backgroundColor: ng_condition ? "#f05545" : "striped"}}>
-                <Col className={"cell-font-format"}> {examination_point.ng}</Col>
+                <Col className={"cell-font-format"}> {ng}</Col>
             </td>
             : "";
-        const condition = examination_point.flagged === false;
+        const condition = flagged === false;
 
         return (
             <React.Fragment>
                 <tbody>
                 <tr>
-                    <td>{filename}</td>
-                    {position}
-                    <td>{probe_number}</td>
-                    <td>{cpm}</td>
-                    {ng}
+                    <td><Col className={"cell-font-format"}>{identifier}</Col></td>
+                    <td className={"Examination-Result-Average"}>{position}</td>
+                    <td><Col className={"cell-font-format"}>{probeNumber}</Col></td>
+                    <td><Col className={"cell-font-format"}>{cpm}</Col></td>
+                    {ng_value}
                     <td>{condition ? <CheckBoxOutlineBlank/> : <CheckBoxOutlined/>}</td>
                 </tr>
                 </tbody>
