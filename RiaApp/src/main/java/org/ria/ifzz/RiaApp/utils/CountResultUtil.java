@@ -219,8 +219,7 @@ public class CountResultUtil implements ResultMath {
         double firstPart = ((Math.log10((CPM - zero) * 100 / binding / (100 - (CPM - zero) * 100 / binding)) - regressionParameterA) / regressionParameterB);
         double power = Math.pow(10, firstPart);
         power = Precision.round(power, 2);
-        power = Precision.round(power, 2);
-        if (!Double.isNaN(power)) {
+        if (!Double.isNaN(power)&&!Double.isInfinite(power)) {
             return power;
         } else {
             return 0.0;

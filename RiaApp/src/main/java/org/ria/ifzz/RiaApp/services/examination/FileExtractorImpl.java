@@ -58,6 +58,7 @@ public class FileExtractorImpl<ER extends ExaminationResult> implements FileExtr
                         CPMs.stream().skip(24).collect(Collectors.toList()),
                         flags.stream().skip(24).collect(Collectors.toList()),
                         NGs.stream().skip(24).collect(Collectors.toList()));
+
             default:
                 throw new ClassCastException();
         }
@@ -65,13 +66,13 @@ public class FileExtractorImpl<ER extends ExaminationResult> implements FileExtr
 
     //TODO custom exception?
     private void controlCurvesMeterRead(String pattern, List<ControlCurve> controlCurves) throws ControlCurveException {
-        try{
+        try {
             List<Double> meterRead = setMeterRead(pattern, controlCurves);
             for (int i = 0; i < meterRead.size(); i++) {
                 double read = meterRead.get(i);
-                controlCurves.get(i+8).setMeterRead(read);
+                controlCurves.get(i + 8).setMeterRead(read);
             }
-        }catch (ControlCurveException error){
+        } catch (ControlCurveException error) {
             LOGGER.error("Couldn't perform meter read, " + error.getMessage());
         }
     }
@@ -92,6 +93,7 @@ public class FileExtractorImpl<ER extends ExaminationResult> implements FileExtr
             ExaminationPoint examinationPoint = new ExaminationPoint(filename, pattern, probeNumbers.get(i), positions.get(i), CPMs.get(i), flags.get(i), NGs.get(i));
             examinationPoints.add(examinationPoint);
         }
+        setAverage(NGs);
         return (List<ER>) examinationPoints;
     }
 
@@ -156,7 +158,10 @@ public class FileExtractorImpl<ER extends ExaminationResult> implements FileExtr
         countResultUtil.logarithmRealZero();
         countResultUtil.countRegressionParameterB();
         countResultUtil.countRegressionParameterA();
-        return CPMs.stream().map(point -> countResultUtil.countNg(Double.valueOf(point))).map(String::valueOf).collect(Collectors.toList());
+        return CPMs.stream()
+                .map(point -> countResultUtil.countNg(Double.valueOf(point)))
+                .map(String::valueOf)
+                .collect(Collectors.toList());
     }
 
     private void setStandardPattern(String fileData) {
@@ -166,7 +171,7 @@ public class FileExtractorImpl<ER extends ExaminationResult> implements FileExtr
     }
 
     private List<Double> setMeterRead(String pattern, List<ControlCurve> controlCurves) throws ControlCurveException {
-        try{
+        try {
             countResultUtil.createStandardListWithCPMs(controlCurves);
             countResultUtil.setStandardsCpmWithFlags(controlCurves);
             countResultUtil.bindingPercent();
@@ -177,9 +182,27 @@ public class FileExtractorImpl<ER extends ExaminationResult> implements FileExtr
             countResultUtil.countRegressionParameterB();
             countResultUtil.countRegressionParameterA();
             return countResultUtil.countMeterReading();
-        } catch (Exception error){
+        } catch (Exception error) {
             LOGGER.error(error.getMessage());
         }
         return new ArrayList<>();
+    }
+
+    private List<Double> setAverage(List<String> NGs) {
+        List<Double> result = new ArrayList<>();
+        double pointA = -1.0, pointB = -1.0;
+        for (String ng : NGs) {
+            if (pointA == -1.0 && ng != null) {
+                pointA = Double.parseDouble(ng);
+            } else if (pointB == -1.0 && ng != null) {
+                pointB = Double.parseDouble(ng);
+            } else {
+                double avg = (pointA + pointB ) / 2.0;
+                result.add(avg);
+                pointA = -1.0;
+                pointB = -1.0;
+            }
+        }
+        return result;
     }
 }

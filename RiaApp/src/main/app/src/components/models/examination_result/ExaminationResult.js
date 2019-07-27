@@ -6,11 +6,6 @@ class ExaminationResult extends Component {
     render() {
         const {probeNumber, position, cpm, flagged, ng, id, identifier, pattern} = this.props.examination_point;
         const ng_condition = ng === "0.0";
-        const ng_value = (ng !== null) ?
-            <td style={{backgroundColor: ng_condition ? "#f05545" : "striped"}}>
-                <Col className={"cell-font-format"}> {ng}</Col>
-            </td>
-            : "";
         const condition = flagged === false;
 
         return (
@@ -21,7 +16,9 @@ class ExaminationResult extends Component {
                     <td className={"Examination-Result-Average"}>{position}</td>
                     <td><Col className={"cell-font-format"}>{probeNumber}</Col></td>
                     <td><Col className={"cell-font-format"}>{cpm}</Col></td>
-                    {ng_value}
+                    <td style={{backgroundColor: ng_condition ? "#f05545" : "striped"}}>
+                        <Col className={"cell-font-format"}> {ng}</Col>
+                    </td>
                     <td>{condition ? <CheckBoxOutlineBlank/> : <CheckBoxOutlined/>}</td>
                 </tr>
                 </tbody>

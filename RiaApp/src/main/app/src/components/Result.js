@@ -39,8 +39,7 @@ class Result extends Component {
     render() {
         const {examination_points} = this.props.examination_point;
         const {control_curves} = this.props.control_curve;
-        const {graph} = this.props.graph;
-        const {graph_lines} = this.props.graph;
+        const {graph, graph_lines} = this.props.graph;
 
         const examination_results = examination_points.map(examination_point =>
             (<ExaminationResult key={examination_point.id} examination_point={examination_point}/>));
@@ -97,9 +96,9 @@ class Result extends Component {
                                         <Table striped>
                                             <thead>
                                             <tr>
-                                            <th className={"Cell-Text"}>Correlation:</th>
-                                            <th className={"Cell-Text"}>Zero Binding %:</th>
-                                            <th className={"Cell-Text"}>Regression.:</th>
+                                                <th className={"Cell-Text"}>Correlation:</th>
+                                                <th className={"Cell-Text"}>Zero Binding %:</th>
+                                                <th className={"Cell-Text"}>Regression.:</th>
                                             </tr>
                                             </thead>
                                             {graph_props}

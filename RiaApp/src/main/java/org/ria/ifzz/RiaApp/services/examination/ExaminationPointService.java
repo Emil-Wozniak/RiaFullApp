@@ -37,7 +37,6 @@ public class ExaminationPointService extends FileExtractorImpl<ExaminationPoint>
 
     public List<ExaminationPoint> getExaminationResults() {
         return  (List<ExaminationPoint>) examinationPointRepository.findAll();
-//        return !examinationPoints.isEmpty() ? new ResponseEntity<>(examinationPoints, HttpStatus.FOUND) : new ResponseEntity<>(response.put("message", "No results available"), HttpStatus.NOT_FOUND);
     }
 
     public ResponseEntity<?> getExaminationResultsByFilename(String filename) {
