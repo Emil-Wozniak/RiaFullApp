@@ -5,7 +5,7 @@ import org.ria.ifzz.RiaApp.models.graph.Graph;
 import org.ria.ifzz.RiaApp.models.graph.GraphLine;
 import org.ria.ifzz.RiaApp.repositories.results.GraphLineRepository;
 import org.ria.ifzz.RiaApp.repositories.results.GraphRepository;
-import org.ria.ifzz.RiaApp.utils.CountResultUtil;
+import org.ria.ifzz.RiaApp.utils.counter.Counter;
 import org.ria.ifzz.RiaApp.utils.CustomFileReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,12 +23,12 @@ public class GraphService implements CustomFileReader {
 
     private Logger LOGGER = LoggerFactory.getLogger(this.getClass());
     private List<GraphLine> graphLines = new ArrayList<>();
-    private final CountResultUtil countResultUtil;
+    private final Counter counter;
     private final GraphRepository graphRepository;
     private final GraphLineRepository graphLineRepository;
 
-    public GraphService(CountResultUtil countResultUtil, GraphRepository graphRepository, GraphLineRepository graphLineRepository) {
-        this.countResultUtil = countResultUtil;
+    public GraphService(Counter counter, GraphRepository graphRepository, GraphLineRepository graphLineRepository) {
+        this.counter = counter;
         this.graphRepository = graphRepository;
         this.graphLineRepository = graphLineRepository;
     }
@@ -36,9 +36,9 @@ public class GraphService implements CustomFileReader {
     public void create(List<String> metadata) throws GraphException {
         double correlation = 0.0, zeroBindingPercentage = 0.0, regressionParameterB = 0.0;
         try {
-            correlation = countResultUtil.setCorrelation(getStandardPattern(metadata));
-            zeroBindingPercentage = countResultUtil.setZeroBindingPercent();
-            regressionParameterB = countResultUtil.getRegressionParameterB();
+            correlation = counter.setCorrelation(getStandardPattern(metadata));
+            zeroBindingPercentage = counter.setZeroBindingPercent();
+            regressionParameterB = counter.getRegressionParameterB();
 
             String filename = metadata.get(0).trim();
             Graph graph = new Graph(filename, correlation, zeroBindingPercentage, regressionParameterB);
@@ -53,8 +53,8 @@ public class GraphService implements CustomFileReader {
     }
 
     private List<GraphLine> createGraphLines(String filename, List<String> metadata, Graph graph) {
-        List<Double> listX = countResultUtil.getLogDoseList();
-        List<Double> listY = countResultUtil.getLogarithmRealZeroTable();
+        List<Double> listX = counter.getLogDoseList();
+        List<Double> listY = counter.getLogarithmRealZeroTable();
         List<Double> patternPoints = getStandardPattern(metadata);
         try {
             graphLines = new ArrayList<>();

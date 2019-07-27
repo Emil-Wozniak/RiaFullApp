@@ -8,7 +8,7 @@ import org.ria.ifzz.RiaApp.models.results.ControlCurve;
 import org.ria.ifzz.RiaApp.services.examination.ControlCurveService;
 import org.ria.ifzz.RiaApp.services.examination.ExaminationPointService;
 import org.ria.ifzz.RiaApp.services.examination.GraphService;
-import org.ria.ifzz.RiaApp.utils.CountResultUtil;
+import org.ria.ifzz.RiaApp.utils.counter.Counter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -23,17 +23,17 @@ public class ExaminationResultSolution extends ExaminationResultStrategyImpl {
     @Setter
     private List<String> metadata;
     Logger LOGGER = LoggerFactory.getLogger(this.getClass());
-    private final CountResultUtil countResultUtil;
+    private final Counter counter;
     private final ControlCurveService controlCurveService;
     private final GraphService graphService;
     private final ExaminationPointService examinationPointService;
     private List<ControlCurve> controlCurvePoints = new ArrayList<>();
 
-    public ExaminationResultSolution(CountResultUtil countResultUtil,
+    public ExaminationResultSolution(Counter counter,
                                      ControlCurveService controlCurveService,
                                      GraphService graphService,
                                      ExaminationPointService examinationPointService) {
-        this.countResultUtil = countResultUtil;
+        this.counter = counter;
         this.controlCurveService = controlCurveService;
         this.graphService = graphService;
         this.examinationPointService = examinationPointService;

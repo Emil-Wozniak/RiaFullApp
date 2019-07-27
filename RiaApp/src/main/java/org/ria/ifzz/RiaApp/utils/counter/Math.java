@@ -1,4 +1,4 @@
-package org.ria.ifzz.RiaApp.utils;
+package org.ria.ifzz.RiaApp.utils.counter;
 
 import org.apache.commons.math3.util.Pair;
 import org.apache.commons.math3.util.Precision;
@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 /**
  * performs mathematical algorithms
  */
-interface ResultMath {
+interface Math {
 
     static double count(List<Double> values) {
         return values.size();
@@ -40,7 +40,7 @@ interface ResultMath {
         List<Double> resultTable;
         resultTable = logarithmTable
                 .stream()
-                .map(Math::log10)
+                .map(java.lang.Math::log10)
                 .map(element -> Precision.round(element, 3))
                 .map(element -> round(element, 2))
                 .collect(Collectors.toList());
@@ -86,7 +86,7 @@ interface ResultMath {
     }
 
     static Double sumsq(List<Double> values) {
-        return values.parallelStream().mapToDouble(element -> Math.pow(element, 2)).sum();
+        return values.parallelStream().mapToDouble(element -> java.lang.Math.pow(element, 2)).sum();
     }
 
     /**

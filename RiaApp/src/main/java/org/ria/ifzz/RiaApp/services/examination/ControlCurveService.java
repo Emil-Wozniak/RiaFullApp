@@ -3,7 +3,7 @@ package org.ria.ifzz.RiaApp.services.examination;
 import org.ria.ifzz.RiaApp.exception.ControlCurveException;
 import org.ria.ifzz.RiaApp.models.results.ControlCurve;
 import org.ria.ifzz.RiaApp.repositories.results.ControlCurveRepository;
-import org.ria.ifzz.RiaApp.utils.CountResultUtil;
+import org.ria.ifzz.RiaApp.utils.counter.Counter;
 import org.ria.ifzz.RiaApp.utils.CustomFileReader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,8 +17,8 @@ public class ControlCurveService extends FileExtractorImpl<ControlCurve> impleme
 
     private final ControlCurveRepository controlCurveRepository;
 
-    public ControlCurveService(ControlCurveRepository controlCurveRepository, CountResultUtil countResultUtil) {
-        super(new ControlCurve(), countResultUtil);
+    public ControlCurveService(ControlCurveRepository controlCurveRepository, Counter counter) {
+        super(new ControlCurve(), counter);
         this.controlCurveRepository = controlCurveRepository;
     }
 

@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.ria.ifzz.RiaApp.models.DataFileMetadata;
 import org.ria.ifzz.RiaApp.models.graph.Graph;
 import org.ria.ifzz.RiaApp.models.graph.GraphLine;
-import org.ria.ifzz.RiaApp.utils.CountResultUtil;
+import org.ria.ifzz.RiaApp.utils.counter.Counter;
 import org.ria.ifzz.RiaApp.utils.CustomFileReader;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
@@ -38,7 +38,7 @@ class GraphServiceTest implements CustomFileReader {
     @Resource
     private EntityManager entityManager;
 
-    CountResultUtil countResultUtil;
+    Counter counter;
     private List<GraphLine> graphLines;
     private List<String> metadata;
     private Graph graph;

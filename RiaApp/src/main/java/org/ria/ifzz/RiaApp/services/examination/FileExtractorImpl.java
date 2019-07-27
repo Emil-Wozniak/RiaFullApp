@@ -5,7 +5,7 @@ import org.ria.ifzz.RiaApp.models.results.ControlCurve;
 import org.ria.ifzz.RiaApp.models.results.ExaminationPoint;
 import org.ria.ifzz.RiaApp.models.results.ExaminationResult;
 import org.ria.ifzz.RiaApp.models.results.RESULT_CLAZZ;
-import org.ria.ifzz.RiaApp.utils.CountResultUtil;
+import org.ria.ifzz.RiaApp.utils.counter.Counter;
 import org.ria.ifzz.RiaApp.utils.CustomFileReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,12 +24,12 @@ import static org.ria.ifzz.RiaApp.utils.constants.ExaminationConstants.CORTISOL_
 public class FileExtractorImpl<ER extends ExaminationResult> implements FileExtractor, CustomFileReader {
 
     private ER examinationResult;
-    private final CountResultUtil countResultUtil;
+    private final Counter counter;
     private Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
-    FileExtractorImpl(ER examinationResult, CountResultUtil countResultUtil) {
+    FileExtractorImpl(ER examinationResult, Counter counter) {
         this.examinationResult = examinationResult;
-        this.countResultUtil = countResultUtil;
+        this.counter = counter;
     }
 
     @SuppressWarnings("unchecked")
@@ -152,36 +152,36 @@ public class FileExtractorImpl<ER extends ExaminationResult> implements FileExtr
      * @param CPMs          List of integers from CPM metadata column
      */
     private List<String> setNg(List<ControlCurve> controlCurves, List<Integer> CPMs) throws ControlCurveException {
-        countResultUtil.createStandardListWithCPMs(controlCurves);
-        countResultUtil.setStandardsCpmWithFlags(controlCurves);
-        countResultUtil.bindingPercent();
-        countResultUtil.logarithmRealZero();
-        countResultUtil.countRegressionParameterB();
-        countResultUtil.countRegressionParameterA();
+        counter.createStandardListWithCPMs(controlCurves);
+        counter.setStandardsCpmWithFlags(controlCurves);
+        counter.bindingPercent();
+        counter.logarithmRealZero();
+        counter.countRegressionParameterB();
+        counter.countRegressionParameterA();
         return CPMs.stream()
-                .map(point -> countResultUtil.countNg(Double.valueOf(point)))
+                .map(point -> counter.countNg(Double.valueOf(point)))
                 .map(String::valueOf)
                 .collect(Collectors.toList());
     }
 
     private void setStandardPattern(String fileData) {
         if (fileData.equals(CORTISOL_5MIN)) {
-            countResultUtil.logDose();
+            counter.logDose();
         }
     }
 
     private List<Double> setMeterRead(String pattern, List<ControlCurve> controlCurves) throws ControlCurveException {
         try {
-            countResultUtil.createStandardListWithCPMs(controlCurves);
-            countResultUtil.setStandardsCpmWithFlags(controlCurves);
-            countResultUtil.bindingPercent();
-            countResultUtil.logarithmRealZero();
-            countResultUtil.logDose();
-            countResultUtil.setCorrelation(getStandardPattern2(pattern));
-            countResultUtil.setZeroBindingPercent();
-            countResultUtil.countRegressionParameterB();
-            countResultUtil.countRegressionParameterA();
-            return countResultUtil.countMeterReading();
+            counter.createStandardListWithCPMs(controlCurves);
+            counter.setStandardsCpmWithFlags(controlCurves);
+            counter.bindingPercent();
+            counter.logarithmRealZero();
+            counter.logDose();
+            counter.setCorrelation(getStandardPattern2(pattern));
+            counter.setZeroBindingPercent();
+            counter.countRegressionParameterB();
+            counter.countRegressionParameterA();
+            return counter.countMeterReading();
         } catch (Exception error) {
             LOGGER.error(error.getMessage());
         }

@@ -1,4 +1,4 @@
-package org.ria.ifzz.RiaApp.utils;
+package org.ria.ifzz.RiaApp.utils.counter;
 
 import lombok.Getter;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
@@ -15,10 +15,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.ria.ifzz.RiaApp.models.pattern.HormonesPattern.CORTISOL_PATTERN;
-import static org.ria.ifzz.RiaApp.utils.ResultMath.*;
+import static org.ria.ifzz.RiaApp.utils.counter.Math.*;
 
 @Component
-public class CountResultUtil implements ResultMath {
+public class Counter implements Math {
 
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
 
@@ -193,7 +193,7 @@ public class CountResultUtil implements ResultMath {
             Double countSecond = count(logDoseList);
             Double sumsqSecondFactor = sumsq(logDoseList);
             double sqr = sum(logDoseList);
-            sqr = Math.pow(sqr, 2);
+            sqr = java.lang.Math.pow(sqr, 2);
 
             secondFactor = getPointSubtract(countSecond * sumsqSecondFactor, sqr);
 
@@ -216,8 +216,8 @@ public class CountResultUtil implements ResultMath {
      * @return the value of hormone nanograms in the sample
      */
     public Double countNg(Double CPM) {
-        double firstPart = ((Math.log10((CPM - zero) * 100 / binding / (100 - (CPM - zero) * 100 / binding)) - regressionParameterA) / regressionParameterB);
-        double power = Math.pow(10, firstPart);
+        double firstPart = ((java.lang.Math.log10((CPM - zero) * 100 / binding / (100 - (CPM - zero) * 100 / binding)) - regressionParameterA) / regressionParameterB);
+        double power = java.lang.Math.pow(10, firstPart);
         power = Precision.round(power, 2);
         if (!Double.isNaN(power)&&!Double.isInfinite(power)) {
             return power;
@@ -237,7 +237,7 @@ public class CountResultUtil implements ResultMath {
         }
         PearsonsCorrelation pearsonsCorrelation = new PearsonsCorrelation();
         double correlation = pearsonsCorrelation.correlation(logDoseListArray, logarithmRealZeroArray);
-        double correlationPow = Math.pow(correlation, 2);
+        double correlationPow = java.lang.Math.pow(correlation, 2);
         correlationPow = Precision.round(correlationPow, 6);
         LOGGER.info("Correlation: " + correlationPow);
         return correlationPow;
@@ -252,7 +252,7 @@ public class CountResultUtil implements ResultMath {
 
     public List<Double> countMeterReading() {
         return standardsCPM.stream()
-                .map(point -> Precision.round((Math.pow(10, ((Math.log10(getPointSubtract(point, zero)
+                .map(point -> Precision.round((java.lang.Math.pow(10, ((java.lang.Math.log10(getPointSubtract(point, zero)
                         * 100 / binding / (100 - (getPointSubtract(point, zero))
                         * 100 / binding)) - regressionParameterA) / regressionParameterB))), 4))
                 .collect(Collectors.toList());
