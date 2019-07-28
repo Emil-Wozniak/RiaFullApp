@@ -153,7 +153,6 @@ public class FileExtractorImpl<ER extends ExaminationResult> implements FileExtr
      * @param CPMs          List of integers from CPM metadata column
      */
     private List<String> setNg(List<ControlCurve> controlCurves, List<Integer> CPMs) throws ControlCurveException {
-//        counter = new Counter();
         counter.createStandardListWithCPMs(controlCurves);
         counter.setStandardsCpmWithFlags(controlCurves);
         counter.bindingPercent();

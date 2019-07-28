@@ -7,7 +7,6 @@ import org.ria.ifzz.RiaApp.exception.ControlCurveException;
 import org.ria.ifzz.RiaApp.models.results.ControlCurve;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -139,7 +138,7 @@ public class Counter implements Algorithms {
     =LOG(H23/(100-H23))
      */
     public void logarithmRealZero() {
-        List<Double> logTable = null;
+        List<Double> logTable = new ArrayList<>();
         try {
             List<Double> subtractPercentNO = subtractTableElements(100.0, bindingPercent);
             List<Double> divideTable = divisionTable(bindingPercent, subtractPercentNO);
@@ -185,6 +184,7 @@ public class Counter implements Algorithms {
      */
     public void countRegressionParameterB() {
         try {
+            regressionParameterB = null;
             List<Double> realZeroPrecision1 = logarithmTable1(logarithmRealZeroTable);
             Double firstFactor;
             Double secondFactor;
@@ -203,7 +203,7 @@ public class Counter implements Algorithms {
 
             double resultSum = firstFactor / secondFactor;
             regressionParameterB = Precision.round(resultSum, 4);
-            LOGGER.info("regressionParameterB: " + regressionParameterB);
+            LOGGER.info("Regression Parameter B: " + regressionParameterB);
         } catch (Exception error) {
             LOGGER.error(error.getMessage() + "has occurred");
         }

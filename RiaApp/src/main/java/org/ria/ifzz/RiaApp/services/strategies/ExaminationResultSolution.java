@@ -27,7 +27,7 @@ public class ExaminationResultSolution extends ExaminationResultStrategyImpl {
     private final ControlCurveService controlCurveService;
     private final GraphService graphService;
     private final ExaminationPointService examinationPointService;
-    private List<ControlCurve> controlCurvePoints = new ArrayList<>();
+    private List<ControlCurve> controlCurvePoints;
 
     public ExaminationResultSolution(Counter counter,
                                      ControlCurveService controlCurveService,
@@ -52,6 +52,7 @@ public class ExaminationResultSolution extends ExaminationResultStrategyImpl {
     @Override
     boolean isControlCurve() throws ControlCurveException {
         if (metadata.size() >= 1) {
+            controlCurvePoints = new ArrayList<>();
             controlCurvePoints.addAll(controlCurveService.create(metadata.subList(0,26)));
         }
         return false;
