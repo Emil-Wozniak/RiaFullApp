@@ -87,7 +87,7 @@ class Result extends Component {
                                 </div>
                                 <Col xs="8" s="8" m="8" lg="7">
                                     <Paper>
-                                        <GraphLine key={graph_lines.id} graph_lines={graph_lines}/>
+                                        <GraphLine key={graph_lines.id} graph_lines={graph_lines} graph={graph}/>
                                     </Paper>
                                     <Paper>
                                         <Table striped>

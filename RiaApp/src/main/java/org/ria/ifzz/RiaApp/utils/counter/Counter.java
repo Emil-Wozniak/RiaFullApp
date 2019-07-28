@@ -8,18 +8,20 @@ import org.ria.ifzz.RiaApp.models.results.ControlCurve;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static java.lang.Math.*;
+import static java.lang.Math.log10;
+import static java.lang.Math.pow;
 import static org.ria.ifzz.RiaApp.models.pattern.HormonesPattern.CORTISOL_PATTERN;
 import static org.ria.ifzz.RiaApp.services.examination.FileExtractor.avoidNaNsOrInfinite;
 import static org.ria.ifzz.RiaApp.utils.counter.Algorithms.*;
 
-@Component
+@Service
 public class Counter implements Algorithms {
 
     private Logger LOGGER = LoggerFactory.getLogger(getClass());
@@ -30,14 +32,15 @@ public class Counter implements Algorithms {
     private Integer binding;
 
     @Getter
-    private List<Double> logDoseList;
+    private List<Double> logDoseList = new ArrayList<>();
     @Getter
-    private List<Double> logarithmRealZeroTable;
+    private List<Double> logarithmRealZeroTable = new ArrayList<>();
     @Getter
-    private Double regressionParameterB;
-    private Double regressionParameterA;
-    private List<Double> bindingPercent;
-    private List<Integer> standardsCPM;
+    private Double regressionParameterB = null;
+    @Getter
+    private Double regressionParameterA = null;
+    private List<Double> bindingPercent = new ArrayList<>();
+    private List<Integer> standardsCPM = new ArrayList<>();
 
     public void createStandardListWithCPMs(List<ControlCurve> controlCurves) throws ControlCurveException {
         try {
@@ -183,14 +186,13 @@ public class Counter implements Algorithms {
     public void countRegressionParameterB() {
         try {
             List<Double> realZeroPrecision1 = logarithmTable1(logarithmRealZeroTable);
-            double firstFactor;
-            double secondFactor;
+            Double firstFactor;
+            Double secondFactor;
             Double logDoseCount = count(logDoseList);
             Double sum = sumProduct(logDoseList, realZeroPrecision1); // logarithmRealZeroTable in this place have to be in first flouting point
             Double sumLogDose = sum(logDoseList);
             Double sumLogRealZero = sum(logarithmRealZeroTable);
             firstFactor = getPointSubtract(logDoseCount * sum, sumLogDose * sumLogRealZero);
-            double firstFactorInPrecision2 = Precision.round(firstFactor, 2);
 
             Double countSecond = count(logDoseList);
             Double sumsqSecondFactor = sumsq(logDoseList);
@@ -201,6 +203,7 @@ public class Counter implements Algorithms {
 
             double resultSum = firstFactor / secondFactor;
             regressionParameterB = Precision.round(resultSum, 4);
+            LOGGER.info("regressionParameterB: " + regressionParameterB);
         } catch (Exception error) {
             LOGGER.error(error.getMessage() + "has occurred");
         }

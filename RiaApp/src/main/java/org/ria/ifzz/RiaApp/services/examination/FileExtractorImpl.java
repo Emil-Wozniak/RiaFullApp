@@ -5,7 +5,6 @@ import org.ria.ifzz.RiaApp.models.results.ControlCurve;
 import org.ria.ifzz.RiaApp.models.results.ExaminationPoint;
 import org.ria.ifzz.RiaApp.models.results.ExaminationResult;
 import org.ria.ifzz.RiaApp.models.results.RESULT_CLAZZ;
-import org.ria.ifzz.RiaApp.utils.counter.Algorithms;
 import org.ria.ifzz.RiaApp.utils.counter.Counter;
 import org.ria.ifzz.RiaApp.utils.reader.CustomFileReader;
 import org.slf4j.Logger;
@@ -19,12 +18,13 @@ import static org.ria.ifzz.RiaApp.services.examination.FileExtractor.*;
 import static org.ria.ifzz.RiaApp.utils.constants.ControlCurveConstants.*;
 import static org.ria.ifzz.RiaApp.utils.constants.ExaminationConstants.CONTROL_CURVE_LENGTH;
 import static org.ria.ifzz.RiaApp.utils.constants.ExaminationConstants.CORTISOL_5MIN;
+import static org.ria.ifzz.RiaApp.utils.constants.ExtractorConstants.*;
 import static org.ria.ifzz.RiaApp.utils.reader.CustomFileReader.getStandardPattern2;
 
 public class FileExtractorImpl<ER extends ExaminationResult> implements FileExtractor, CustomFileReader {
 
     private ER examinationResult;
-    private final Counter counter;
+    private Counter counter;
     private Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     FileExtractorImpl(ER examinationResult, Counter counter) {
@@ -112,9 +112,10 @@ public class FileExtractorImpl<ER extends ExaminationResult> implements FileExtr
                         pattern_point == 1 || pattern_point == 2) ? TOTAL :
                         pattern_point == 3 || pattern_point == 4 || pattern_point == 5 ? NSB :
                                 pattern_point == 6 || pattern_point == 7 || pattern_point == 8 ? ZERO
-                                        : pattern_point < 23 ? getPattern(pattern, pattern_point) : CONTROL_POINT).collect(Collectors.toList());
+                                        : pattern_point < 23 ? getPattern(pattern, pattern_point) : CONTROL_POINT)
+                        .collect(Collectors.toList());
             case ExaminationPoint:
-                return probeNumbers.stream().skip(24).map(probeNumber -> {
+                return probeNumbers.stream().skip(CONTROL_CURVE_POINTS).map(probeNumber -> {
                     int position = probeNumber - CONTROL_CURVE_LENGTH;
                     return isOdd(position) ? (position + 1) / 2 : position / 2;
                 }).map(String::valueOf).collect(Collectors.toList());
@@ -125,8 +126,8 @@ public class FileExtractorImpl<ER extends ExaminationResult> implements FileExtr
 
     private List<Boolean> isFlagged(List<Integer> CPMs) {
         List<Integer> points = setProbeNumber(CPMs.size());
-        List<Boolean> NSB = getZeroOrNsbFlag(CPMs, 2, 4);
-        List<Boolean> Zeros = getZeroOrNsbFlag(CPMs, 5, 7);
+        List<Boolean> NSB = getZeroOrNsbFlag(CPMs, NSB_START, NSB_END);
+        List<Boolean> Zeros = getZeroOrNsbFlag(CPMs, ZERO_START, ZERO_END);
         List<Boolean> flagged = points.stream().limit(8).map(point -> setFlag(point, NSB, Zeros)).collect(Collectors.toList());
         flagged.addAll(getPatternFlags(CPMs));
         return flagged;
@@ -152,6 +153,7 @@ public class FileExtractorImpl<ER extends ExaminationResult> implements FileExtr
      * @param CPMs          List of integers from CPM metadata column
      */
     private List<String> setNg(List<ControlCurve> controlCurves, List<Integer> CPMs) throws ControlCurveException {
+//        counter = new Counter();
         counter.createStandardListWithCPMs(controlCurves);
         counter.setStandardsCpmWithFlags(controlCurves);
         counter.bindingPercent();
@@ -200,19 +202,19 @@ public class FileExtractorImpl<ER extends ExaminationResult> implements FileExtr
 
     private List<Double> getAverage(List<String> NGs) {
         List<Double> result = new ArrayList<>();
-        double pointA = -1.0, pointB = -1.0;
+        double pointA = UNKNOWN_POINT, pointB = UNKNOWN_POINT;
         for (String ng : NGs) {
-            if (pointA == -1.0 && ng != null) {
+            if (pointA == UNKNOWN_POINT && ng != null) {
                 pointA = Double.parseDouble(ng);
-            } else if (pointB == -1.0 && ng != null) {
+            } else if (pointB == UNKNOWN_POINT && ng != null) {
                 pointB = Double.parseDouble(ng);
             }
-            if (pointA != -1.0 && pointB != -1.0) {
-                double avg = (pointA + pointB) / 2.0;
-                avg = avoidNaNsOrInfinite(avg);
-                result.add(avg);
-                pointA = -1.0;
-                pointB = -1.0;
+            if (pointA != UNKNOWN_POINT && pointB != UNKNOWN_POINT) {
+                double average = (pointA + pointB) / HALF;
+                average = avoidNaNsOrInfinite(average);
+                result.add(average);
+                pointA = UNKNOWN_POINT;
+                pointB = UNKNOWN_POINT;
             }
         }
         return result;

@@ -50,8 +50,9 @@ class GraphServiceTest implements CustomFileReader {
         double correlation = 0.986814;
         double zeroBindingPercentage = 21.0;
         double regressionParameterB = -1.0575;
+        double regressionParameterA = 1.0575;
         String filename = "A16_244.txt";
-        graph = new Graph(filename, correlation, zeroBindingPercentage, regressionParameterB);
+        graph = new Graph(filename, correlation, zeroBindingPercentage, regressionParameterB, regressionParameterA);
     }
 
     @AfterEach

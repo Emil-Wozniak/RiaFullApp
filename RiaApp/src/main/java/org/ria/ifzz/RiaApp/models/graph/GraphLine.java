@@ -10,7 +10,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Getter
 @ToString
-public class GraphLine {
+public class GraphLine implements AbstractGraph{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

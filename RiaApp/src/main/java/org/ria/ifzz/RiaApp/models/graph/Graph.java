@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @RequiredArgsConstructor
 @ToString
-public class Graph {
+public class Graph  implements AbstractGraph{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,6 +22,7 @@ public class Graph {
     @NonNull Double correlation;
     @NonNull Double zeroBindingPercent;
     @NonNull Double regressionParameterB;
+    @NonNull Double regressionParameterA;
 
     @Setter
     @LazyCollection(LazyCollectionOption.FALSE)

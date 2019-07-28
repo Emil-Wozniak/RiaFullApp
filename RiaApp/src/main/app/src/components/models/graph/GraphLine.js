@@ -8,20 +8,20 @@ class GraphLine extends Component {
 
     render() {
         const {graph_lines} = this.props;
+        const {graph} = this.props;
 
         const dataError = [];
         const dataPoints = [];
         let slopeLine = [];
-        let xArray = [];
+        let x_line = [];
         let varY1 = [];
         let varY2 = [];
         let varAverage = [];
-        let slopeArray = [];
+        let slope_line = [];
 
         for (let i = 0; i < graph_lines.length; i++) {
-
             if (graph_lines[i].id % 2 === 0) {
-                xArray.push(graph_lines[i].x);
+                x_line.push(graph_lines[i].x);
                 varY1.push(graph_lines[i].y);
             }
             if (!(graph_lines[i].id % 2 === 0)) {
@@ -36,35 +36,29 @@ class GraphLine extends Component {
             varAverage.push(middle);
         }
 
-        const getAxis = (varAverage) => {
-            let first = 0, last = 0;
-            for (let index = 0; index < varAverage.length; index++) {
-                first = varAverage[0];
-                last = varAverage[6];
+        let correlation, regressionA, regressionB;
+        const getAxis = function () {
+            let x_slope = [];
+            for (let i = 0; i < graph_lines.length; i++) {
+                x_slope.push(graph_lines[i].x);
             }
-            const outside = 67.5;
-            const inside = 40.5;
-            let middle = (first + last) / 2;
-            let second = (first / 100) * outside;
-            let third = (first / 100) * inside;
-            let fifth = (last / 100) * inside;
-            let sixth = (last / 100) * outside;
-
-            slopeArray.push(first);
-            slopeArray.push(second);
-            slopeArray.push(third);
-            slopeArray.push(middle);
-            slopeArray.push(fifth);
-            slopeArray.push(sixth);
-            slopeArray.push(last);
+            for (let i = 0; i < graph.length; i++) {
+                correlation = graph[i].correlation;
+                regressionA = graph[i].regressionParameterA;
+                regressionB = graph[i].regressionParameterB;
+            }
+            for (let i = 0; i < x_slope.length; i += 2) {
+                let y = parseFloat(x_slope[i]);
+                let point = (parseFloat(regressionB)) * y + parseFloat(regressionA);
+                slope_line.push(point);
+            }
         };
 
-        getAxis(varAverage);
-
-        for (let i = 0; i < xArray.length; i++) {
-            dataPoints.push({x: xArray[i], y: varAverage[i]});
-            dataError.push({x: xArray[i], y: [varY1[i], varY2[i]]});
-            slopeLine.push({x: xArray[i], y: slopeArray[i]});
+        getAxis();
+        for (let i = 0; i < x_line.length; i++) {
+            dataPoints.push({x: x_line[i], y: varAverage[i]});
+            dataError.push({x: x_line[i], y: [varY1[i], varY2[i]]});
+            slopeLine.push({x: x_line[i], y: slope_line[i]});
         }
 
         const options = {
@@ -86,7 +80,7 @@ class GraphLine extends Component {
             axisX: {
                 title: "Logarithm (ng/ml)",
                 fontFamily: "Helvetica, Arial, Sans-Serif",
-                interval: xArray,
+                interval: x_line,
                 gridDashType: "dot",
                 interlacedColor: "#e5ffff",
                 gridThickness: 2,
@@ -96,14 +90,14 @@ class GraphLine extends Component {
                     snapToDataPoint: true,
                     labelFontFamily: "SF mono",
                     labelFontColor: "#e5ffff",
-                    fontSize:10
+                    fontSize: 10
                 }
             },
             axisY: {
                 interval: 0.2,
                 title: "Logarithm B",
                 fontFamily: "Helvetica, Arial, Sans-Serif",
-                fontSize:10,
+                fontSize: 10,
                 includeZero: true,
                 intervalType: number,
                 lineColor: "blue",

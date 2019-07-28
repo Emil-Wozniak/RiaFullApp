@@ -20,8 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.ria.ifzz.RiaApp.utils.reader.CustomFileReader.readFromStream;
 import static org.ria.ifzz.RiaApp.utils.constants.DomainConstants.FILENAME_UNNECESSARY_PART;
+import static org.ria.ifzz.RiaApp.utils.reader.CustomFileReader.readFromStream;
 
 @RestController
 @RequestMapping("/api/examination/")
@@ -45,24 +45,14 @@ public class ExaminationResultController implements CustomFileReader {
 
         try {
             List<ExaminationPoint> point = repository.findByProbeNumberAndIdentifierOrderByProbeNumber(25, getIdentifier(metadata));
-            return (!point.isEmpty()) ? getNegativeResponse(metadata) : getSuccessResponse(examinationContent);
+            return (!point.isEmpty())
+                    ? getNegativeResponse(metadata) :
+                    (examinationContent.size() == 24)
+                            ? getFileTooShortResponse(metadata)
+                            : getSuccessResponse(examinationContent);
         } catch (ControlCurveException curveError) {
             return new ResponseEntity<>(curveError.getMessage(), HttpStatus.BAD_REQUEST);
         }
-    }
-
-    @NotNull
-    private ResponseEntity<?> getNegativeResponse(@Valid DataFileMetadata metadata) {
-        response.put("message", "File: " + getIdentifier(metadata) + " already uploaded");
-        return new ResponseEntity<>(response, HttpStatus.FOUND);
-    }
-
-    @NotNull
-    private ResponseEntity<?> getSuccessResponse(List<String> examinationContent) throws ControlCurveException, GraphException {
-        solution.setMetadata(examinationContent);
-        solution.create();
-        response.put("message", "Upload successful");
-        return ResponseEntity.ok().body(response);
     }
 
     @NotNull
@@ -81,7 +71,26 @@ public class ExaminationResultController implements CustomFileReader {
     }
 
     @DeleteMapping("/{filename}")
-    public ResponseEntity<?> deleteExaminationPoint(@PathVariable String filename){
+    public ResponseEntity<?> deleteExaminationPoint(@PathVariable String filename) {
         return service.deleteExaminationPoint(filename);
+    }
+
+    @NotNull
+    private ResponseEntity<?> getNegativeResponse(@Valid DataFileMetadata metadata) {
+        response.put("message", "File: " + getIdentifier(metadata) + " already uploaded");
+        return new ResponseEntity<>(response, HttpStatus.FOUND);
+    }
+
+    @NotNull
+    private ResponseEntity<?> getSuccessResponse(List<String> examinationContent) throws ControlCurveException, GraphException {
+        solution.setMetadata(examinationContent);
+        solution.create();
+        response.put("message", "Upload successful");
+        return ResponseEntity.ok().body(response);
+    }
+
+    private ResponseEntity<?> getFileTooShortResponse(@Valid DataFileMetadata metadata) {
+        response.put("message", "File: " + getIdentifier(metadata) + " is too short");
+        return new ResponseEntity<>(response, HttpStatus.EXPECTATION_FAILED);
     }
 }

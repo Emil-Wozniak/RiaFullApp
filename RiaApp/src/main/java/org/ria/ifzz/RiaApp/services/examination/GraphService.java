@@ -1,5 +1,6 @@
 package org.ria.ifzz.RiaApp.services.examination;
 
+import org.apache.commons.math3.util.Precision;
 import org.ria.ifzz.RiaApp.exception.GraphException;
 import org.ria.ifzz.RiaApp.models.graph.Graph;
 import org.ria.ifzz.RiaApp.models.graph.GraphLine;
@@ -34,14 +35,18 @@ public class GraphService implements CustomFileReader {
     }
 
     public void create(List<String> metadata) throws GraphException {
-        double correlation = 0.0, zeroBindingPercentage = 0.0, regressionParameterB = 0.0;
+        double correlation = 0.0, zeroBindingPercentage = 0.0, regressionParameterB, regressionParameterA;
         try {
             correlation = counter.setCorrelation(getStandardPattern(metadata));
             zeroBindingPercentage = counter.setZeroBindingPercent();
             regressionParameterB = counter.getRegressionParameterB();
+            regressionParameterA = counter.getRegressionParameterA();
+
+            regressionParameterB = Precision.round(regressionParameterB, 3);
+            regressionParameterA = Precision.round(regressionParameterA, 3);
 
             String filename = metadata.get(0).trim();
-            Graph graph = new Graph(filename, correlation, zeroBindingPercentage, regressionParameterB);
+            Graph graph = new Graph(filename, correlation, zeroBindingPercentage, regressionParameterB, regressionParameterA);
 
             graphLines = createGraphLines(filename, metadata, graph);
             graph.setGraphLines(graphLines);
