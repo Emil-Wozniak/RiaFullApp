@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static java.util.stream.DoubleStream.*;
-import static org.ria.ifzz.RiaApp.models.pattern.HormonesPattern.CORTISOL_PATTERN;
+import static org.ria.ifzz.RiaApp.models.pattern.HormonesPattern.CURRENT_PATTERN;
 import static org.ria.ifzz.RiaApp.utils.constants.DomainConstants.*;
 import static org.ria.ifzz.RiaApp.utils.constants.ExaminationConstants.COLUMN_SPLICER;
 
@@ -84,7 +84,7 @@ public interface CustomFileReader {
     static List<Double> getStandardPattern(List<String> metadata) {
         List<Double> hormonePattern = new ArrayList<>();
         if (metadata.get(1).trim().equals("KORTYZOL_5_MIN")) {
-            hormonePattern = of(CORTISOL_PATTERN).boxed().collect(Collectors.toCollection(ArrayList::new));
+            hormonePattern = of(CURRENT_PATTERN).boxed().collect(Collectors.toCollection(ArrayList::new));
         }
         return hormonePattern;
     }
@@ -92,7 +92,7 @@ public interface CustomFileReader {
     static List<Double> getStandardPattern2(String pattern) {
         List<Double> hormonePattern = new ArrayList<>();
         if (pattern.equals("KORTYZOL_5_MIN")) {
-            hormonePattern = of(CORTISOL_PATTERN).boxed().collect(Collectors.toCollection(ArrayList::new));
+            hormonePattern = of(CURRENT_PATTERN).boxed().collect(Collectors.toCollection(ArrayList::new));
         }
         return hormonePattern;
     }

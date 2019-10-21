@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static org.ria.ifzz.RiaApp.models.pattern.HormonesPattern.CORTISOL_PATTERN;
+import static org.ria.ifzz.RiaApp.models.pattern.HormonesPattern.CURRENT_PATTERN;
 import static org.ria.ifzz.RiaApp.services.strategies.SpreadCounter.isSpread;
 import static org.ria.ifzz.RiaApp.utils.constants.ExaminationConstants.CORTISOL_5MIN;
 
@@ -45,7 +45,7 @@ public interface FileExtractor {
      */
     static String getPattern(String pattern, int pattern_point) {
         if (pattern.equals(CORTISOL_5MIN)) {
-            double point = CORTISOL_PATTERN[pattern_point - 9];
+            double point = CURRENT_PATTERN[pattern_point - 9];
             return String.valueOf(point);
         }
         return "";

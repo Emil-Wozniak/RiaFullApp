@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 import static java.lang.Math.log10;
 import static java.lang.Math.pow;
-import static org.ria.ifzz.RiaApp.models.pattern.HormonesPattern.CORTISOL_PATTERN;
+import static org.ria.ifzz.RiaApp.models.pattern.HormonesPattern.CURRENT_PATTERN;
 import static org.ria.ifzz.RiaApp.services.examination.FileExtractor.avoidNaNsOrInfinite;
 import static org.ria.ifzz.RiaApp.utils.counter.Algorithms.*;
 
@@ -105,7 +105,7 @@ public class Counter implements Algorithms {
      */
     public void logDose() {
         List<Double> standardPattern = new ArrayList<>();
-        for (double point : CORTISOL_PATTERN) {
+        for (double point : CURRENT_PATTERN) {
             standardPattern.add(point);
         }
         logDoseList = logarithmTable2(standardPattern);
